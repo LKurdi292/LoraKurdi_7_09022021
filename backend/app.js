@@ -6,7 +6,7 @@ const mysql = require('mysql2');
 const db = require('./models/index');
 
 const userRoutes = require('./routes/users');
-//const postRoutes = require('./routes/posts');
+const postRoutes = require('./routes/posts');
 //const commentRoutes = require('./routes/comments');
 
 // Création de l'app
@@ -16,8 +16,8 @@ const app = express();
 app.use(helmet());
 
 // Connexion de l'API à la bdd
-//db.sequelize.sync({ force: true }).then(result => {
 db.sequelize.sync().then(result => {
+	// db.sequelize.sync({ force: true }).then(result => {
 	console.log(result);
 }).catch( error =>  { console.log(error )});
 
@@ -39,7 +39,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Les Routes
 app.use('/api', userRoutes);
-//app.use('/api/posts', postRoutes);
+app.use('/api/posts', postRoutes);
 //app.use('/api/comments', commentRoutes);
 
 // Exportation de l'app

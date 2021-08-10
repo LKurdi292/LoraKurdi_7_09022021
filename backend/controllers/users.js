@@ -18,7 +18,6 @@ exports.signup = (req, res, next) => {
 
 	//hasher le mdp + nbr de tour de hashage
 	bcrypt.hash(req.body.password, 10)
-
 	.then(hash => {
 		// nouvel utilisateur, enregistrement dans la bdd
 		const user = {

@@ -6,7 +6,7 @@ const op = db.Sequelize.op;
 // Récupérer tous les posts
 exports.getAllPosts = (req, res, next) => {
 	Post.findAll({ 
-		attributes: { exclude: ['createdAt', 'updatedAt', 'userId', 'publicationDate']}
+		attributes: { exclude: ['createdAt', 'updatedAt']}
 	})
 	.then(data => res.status(200).send(data))
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
@@ -40,6 +40,7 @@ exports.createPost = (req, res, next) => {
 	if (req.file) {
 		// Créer le post
 		const post = {
+			// userId depuis middleware token 
 			userId : req.body.userId,
 			title : req.body.title,
 			publicationText : req.body.text,
@@ -60,6 +61,7 @@ exports.createPost = (req, res, next) => {
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),
+			likes: 0
 		};
 
 		// Sauvegarder dans la base

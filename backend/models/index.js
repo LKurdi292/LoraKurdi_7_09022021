@@ -51,7 +51,7 @@ db.User.belongsToMany(db.Post, {
 });
 
 	// Users et Comments
-// db.User.hasMany(db.Comment);
+// db.User.hasMany(db.Comment, {as: 'comments' });
 db.Comment.belongsTo(db.User, {
 	foreignKey: {
 		name: 'userId',

@@ -6,10 +6,10 @@ const userCtrl = require('../controllers/users');
 
 
 // S'inscrire
-router.post('/auth/signup', auth, userCtrl.signup);
+router.post('/auth/signup', userCtrl.signup);
 
 // Se connecter
-router.post('/auth/login', auth, userCtrl.login);
+router.post('/auth/login', userCtrl.login);
 
 // Voir son compte
 router.get('/users/myaccount/:id', auth, userCtrl.getMyAccount);
