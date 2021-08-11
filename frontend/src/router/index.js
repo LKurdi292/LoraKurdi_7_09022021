@@ -13,7 +13,7 @@ const routes = [
   {
     path: "/signup",
     name: "signup",
-    component: Auth,
+    component: Auth
   },
   {
     path: "/login",
@@ -21,7 +21,7 @@ const routes = [
     component: Auth,
   },
   {
-    path: "/myaccount",
+    path: "/myaccount/:id",
     name: "MyAccount",
     component: MyAccount,
   },

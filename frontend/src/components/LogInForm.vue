@@ -1,0 +1,91 @@
+<template>
+<!-- eslint-disable  -->
+	<h1>Log In</h1>
+	<form v-on:submit="logInUser">
+		
+		<!-- <label for="email">Email Adress</label><br/> -->
+		<input type="text" v-model="email" placeholder="Enter your email" id="email" ref="firstField"><br/>
+		
+		<!-- <label for="password">Password</label><br/> -->
+		<input type="text" v-model="password" id="password" placeholder="Type in your password"><br/>
+
+		<button :disabled="!isFormValid">Log in</button>
+	</form>
+</template>
+
+<script>
+import { ref, onMounted, computed } from 'vue';
+
+export default {
+	name: "LogInForm",
+	emits: ["loginuser"],
+	setup(context) {
+		const email = ref("");
+		const password = ref("");
+		const firstField = ref(null);
+
+		function logInUser() {
+			const user = {
+				email : email.value,
+				password : password.value,
+			}
+			// Envoyer à la vue parent 'auth' l'évènement et le user connecté
+			context.emit('loginuser', user);
+		}
+
+		// Focus de la souris sur le 1er champ text au chargement de la page
+		onMounted( () => {
+			firstField.value.focus();
+		})
+
+
+		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'login'
+		const isFormValid = computed(() => {
+			if (email.value !== "" && password.value !== "") {
+				return true;
+			} else {
+				return false;
+			}
+		})
+
+		return { email, firstField, password, logInUser, isFormValid };
+
+	},
+};
+</script>
+
+<style lang="scss" scoped>
+	
+	h1 {
+		width: 85%;
+		margin: 20px auto 30px;
+		text-align: left;
+		color: #182D80;
+	}
+	form {
+		width: 85%;
+		max-height: 65%;
+		margin: 10px auto;
+		text-align: left;
+		// border: 1px solid black;
+
+		input {
+			width: 250px;
+			height: 35px;
+			margin: 10px auto 20px;
+			padding-left: 2%;
+		}
+		button {
+			width: 100px;
+			margin: 30px auto 0;
+			height: auto;
+			padding: 2% 1%;
+			background-color: #fc3914;
+			color: white;
+			border: none;
+			font-weight: bold;
+			font-size: 18px;
+			cursor: pointer;
+		}
+	}
+</style>
