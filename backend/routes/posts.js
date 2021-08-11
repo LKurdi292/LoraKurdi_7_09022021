@@ -25,4 +25,8 @@ router.put('/:id', auth, postCtrl.updatePost);
 // Supprimer un post by id
 router.delete('/:id', auth, postCtrl.deletePost);
 
+// Liker un post
+	// ne fonctionne pas avec auth
+router.put('/like/:id', postCtrl.likeApost);
+
 module.exports = router;

@@ -1,5 +1,7 @@
 const db = require('../models/index');
+const { post } = require('../routes/users');
 const Post = db.Post;
+const User = db.User;
 const op = db.Sequelize.op;
 
 
@@ -26,8 +28,6 @@ exports.getLastPosts = (req, res, next) => {
 
 // Créer un post
 exports.createPost = (req, res, next) => {
-	//const postObject = JSON.parse(req.body.post);
-	console.log("je suis là 1");
 	
 	// Valid request
 	if (!req.body.title) {
@@ -70,13 +70,12 @@ exports.createPost = (req, res, next) => {
 
 // Modifier un post
 exports.updatePost = (req, res, next) => {
-	const id = req.params.id;
 
 	Post.update(
 		{title: req.body.title,
 		publicationText: req.body.text,
 		imageURL: req.body.imageURL},
-		{where: {id: id } }
+		{where: {id: postId } }
 	)
 	.then(num => {
 		if (num == 1) {
@@ -109,4 +108,50 @@ exports.deletePost = (req, res, next) => {
 	.catch(err => {
 		res.status(500).send({ message: "Un problème est survenu lors de la suppression du post" })
 	});
+};
+
+
+// Liker ou retirer son like d'un post
+exports.likeApost = (req, res, next) => {
+	const postId = req.params.id;
+
+	userId = req.body.userId;
+	likeValue = req.body.like;
+
+	Post.findByPk( postId )
+	.then( post => {
+		switch(likeValue) {
+			case 1: // le user like le post
+				Post.update(
+					{ likes: post.likes + 1 },
+					{ where: {id : postId} },
+				)
+				// ajout de [userId, postId] dans la table de jointure Like_Post
+				.then(() => {
+					post.addUser(userId);
+					User.findByPk(userId).then( user => {
+						user.addPost(postId);
+					})
+				})
+				.then(() => res.status(201).json({ message: 'Post aimé !'}))
+				break;
+			
+			case 0:
+				Post.update(
+					{ likes: post.likes - 1},
+					{ where: { id : postId }}
+				)
+				// retrait de [userId, postId] de la table de jointure Like_Post
+				.then(() => {
+					post.removeUser(userId);
+					User.findByPk(userId).then(user => {
+						user.removePost(postId);
+					})
+				})
+				.then(() => res.status(201).json({ message: 'Like retiré'}));
+				break;
+		}
+	})
+	.then(() => res.status(201))
+	.catch( error => res.status(500).send({ error, message: 'Impossible d\'aimer ce post'} ));
 };

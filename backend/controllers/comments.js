@@ -38,6 +38,13 @@ exports.modifyComment = (req, res, next) => {
 	});
 };
 
+// Avoir le nombre de likes d'un commentaire
+//exports.getLikes = (req, res, next) => {}
+
+
+
+
+
 //Supprimer un commentaire
 exports.deleteComment = (req, res, next) => {
 	commentId = req.params.id;
@@ -72,10 +79,10 @@ exports.likeAcomment = (req, res, next) => {
 					{ likes: comment.likes + 1 },
 					{ where: {id : commentId} },
 				)
-				// maj de la table de jointure [userId, commentId]
+				// ajout de [userId, commentId] dans la table de jointure Like_Comment
 				.then(() => {
 					comment.addUser(userId);
-					User.findByPk(userId).then(() => {
+					User.findByPk(userId).then( user => {
 						user.addComment(commentId);
 					})
 				})
@@ -83,7 +90,17 @@ exports.likeAcomment = (req, res, next) => {
 				break;
 			
 			case 0:
-				Comment.update({likes: comment.likes - 1}, {where: {id : commentId}})
+				Comment.update(
+					{ likes: comment.likes - 1},
+					{ where: { id : commentId }}
+				)
+				// retrait de [userId, commentId] de la table de jointure Like_Comment
+				.then(() => {
+					comment.removeUser(userId);
+					User.findByPk(userId).then(user => {
+						user.removeComment(commentId);
+					})
+				})
 				.then(() => res.status(201).json({ message: 'Like retiré'}));
 				break;
 		}
