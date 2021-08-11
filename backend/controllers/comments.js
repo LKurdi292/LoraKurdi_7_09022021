@@ -60,29 +60,26 @@ exports.deleteComment = (req, res, next) => {
 // Liker ou retirer son like d'un commentaire
 exports.likeAcomment = (req, res, next) => {
 	commentId = req.params.id;
+
 	userId = req.body.userId;
 	likeValue = req.body.like;
 
 	Comment.findByPk( commentId )
 	.then( comment => {
 		switch(likeValue) {
-			case 1:
+			case 1: // le user like le commentaire
 				Comment.update(
 					{ likes: comment.likes + 1 },
 					{ where: {id : commentId} },
-					{ include: [User] }
 				)
-				.on('success', 
-					function(comment) { 
-						User.findByPk(userId)
-						.on('success', 
-							function(user){
-								comment.setUsers([user]);
-							}
-						);
-					}
-				)
-				.then(() => res.status(201).json({ message: 'Commentaire aimé !'}));
+				// maj de la table de jointure [userId, commentId]
+				.then(() => {
+					comment.addUser(userId);
+					User.findByPk(userId).then(() => {
+						user.addComment(commentId);
+					})
+				})
+				.then(() => res.status(201).json({ message: 'Commentaire aimé !'}))
 				break;
 			
 			case 0:
