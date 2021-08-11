@@ -1,48 +1,73 @@
 <template>
 	<header>
-		<figcaption>
+		<div class="container">
 			<a href="#">
-				<img src="./assets/icon-above-font.png" alt="logo de Groupomania">
+				<img src="./assets/icon-above-font.svg" alt="logo de Groupomania">
 			</a>
-		</figcaption>
-		<div class="nav">
-			<router-link to="/signin">Sign In</router-link> | 
-			<router-link to="/login">Log In</router-link>
-			<router-view />
 		</div>
+		
+		<router-view />
 	</header>
 </template>
 
 <style lang="scss">
+body {
+	margin: 0;
+	padding: 0;
+}
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	/* margin-top: 60px; */
+	
 }
 header {
-	display: flex;
-	justify-content: space-around;
-	width: 70%;
-	margin: 0 auto;
-
+	height: 120px;
+	width: 100%;
+	margin: 0;
+	border: 1px black dashed;
+	
+	.container {
+		width: 65%;
+		height: 100%;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-content: center;
+	}
+		
 	img {
-		width: 80px;
-		height: 40px;
+		width: 130px;
+		height: 100%;
+		// border: 1px red dashed;
 	}
 }
-.nav {
-	padding: 30px;
+// .nav {
+// 	width: 130px;
+// 	display: flex;
+// 	justify-content: space-evenly;
+// 	align-items: center;
+// 	border: 1px red dashed;
 
-	a {
-		font-weight: bold;
-		color: #2c3e50;
+// 	a {
+// 		display: flex;
+// 		justify-content: space-evenly;
+// 		align-items: center;
+// 		font-weight: bold;
+// 		color: #2c3e50;
+// 		text-decoration: none;
+// 		// border: 1px black solid;
 
-		&.router-link-exact-active {
-			color: #42b983;
-		}
-	}
-}
+// 		&.router-link-exact-active {
+// 			color: #42b983;
+// 		}
+
+// 		:hover {
+// 			cursor: pointer;
+// 			text-decoration: underline;
+// 		}
+// 	}
+// }
 </style>

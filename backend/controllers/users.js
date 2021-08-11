@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js');
 
 
-// Middlewares d'authentification
 
+// Créer un user
 exports.signup = (req, res, next) => {
 
 	// Crypter l'email
@@ -85,13 +85,7 @@ exports.getMyAccount = (req, res, next) => {
 // Mettre à jour son profil
 exports.updateMyAccount = (req, res, next) => {
 	const connectedId = req.params.id;
-	// if (req.body.imageURL) {
-	// 	const image = req.body.imageURL;
-	// }
-	// if (req.body.bio) {
-	// 	const presentation = req.body.presentation;
-	// }
-
+	
 	User.update(req.body, { 
 		where: { id : connectedId }
 	})
@@ -106,7 +100,6 @@ exports.updateMyAccount = (req, res, next) => {
 	.catch(error => { res.status(500).send({ error, message: "Une erreur est survenu lors de la mise à jour du compte" })
 	});
 };
-
 
 exports.deleteMyAccount = (req, res, next) => {
 	const connectedId = req.params.id;
@@ -130,7 +123,7 @@ exports.deleteMyAccount = (req, res, next) => {
 
 //Afficher la liste des users
 exports.getAllUsers = (req, res, next) => {
-	User.findAll({ attributes: ['firstName', 'lastName'] })
+	User.findAll({ attributes: ['email', 'isAdmin'] })
 	.then (data => {
 		res.send(data);
 	})
@@ -141,12 +134,36 @@ exports.getAllUsers = (req, res, next) => {
 
 
 exports.getUserInfo = (req, res, next) => {
-	
+	// Crypter le mail de la requete
+	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
+	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
+
+	User.findOne({ where: { email: encrypted }, attributes: ['email', 'bio', 'imageURL', 'firstName', 'lastName', 'isAdmin', 'subscriptionDate']})
+	.then(data => {
+		res.status(200).send(data);
+	})
+	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations du compte', email }));
 
 };
 
 exports.deleteUserAccount = (req, res, next) => {
-
+	// Crypter le mail de la requete
+	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
+	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
 	
-
+	User.destroy({
+		where: { email: encrypted }
+	})
+	.then(num => {
+		if (num == 1) {
+			res.send({ message: "Le compte a été supprimé avec succès!" });
+		} else {
+			res.send({ message: "Impossible de supprimer le compte"})
+		}
+	})
+	.catch(error => {
+		res.status(500).send({ error, message: "Un problème est survenu lors de la suppression du compte" })
+	});
 };

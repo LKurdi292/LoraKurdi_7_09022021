@@ -75,6 +75,7 @@ db.User.belongsToMany(db.Comment, {
 	allowNull: false
 });
 
+
 	// Posts et Comments
 // db.Post.hasMany(db.Comment);
 db.Comment.belongsTo(db.Post, {

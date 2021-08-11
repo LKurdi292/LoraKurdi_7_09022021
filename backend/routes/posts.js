@@ -16,12 +16,13 @@ router.get('/', auth, postCtrl.getAllPosts);
 //router.get('/:date', postCtrl.getByDate);
 
 // Créer un nouveau post
-//router.post('/', auth, postCtrl.createPost);
+	// ne fonctionne pas avec auth
+router.post('/', postCtrl.createPost);
 
 // Mettre à jour un post by id
-//router.put('/:id', auth, postCtrl.updatePost);
+router.put('/:id', auth, postCtrl.updatePost);
 
 // Supprimer un post by id
-//router.delete('/:id', auth, postCtrl.deletePost);
+router.delete('/:id', auth, postCtrl.deletePost);
 
 module.exports = router;

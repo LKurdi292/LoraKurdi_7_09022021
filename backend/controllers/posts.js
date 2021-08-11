@@ -27,56 +27,57 @@ exports.getLastPosts = (req, res, next) => {
 // Créer un post
 exports.createPost = (req, res, next) => {
 	//const postObject = JSON.parse(req.body.post);
+	console.log("je suis là 1");
 	
-	// Validate request
+	// Valid request
 	if (!req.body.title) {
-		res.status(400).send({
+		res.status(401).send({
 		  message: "Le post doit avoir un titre!"
 		});
-		return;
-	  }
-	
-	// S'il y a une image
-	if (req.file) {
-		// Créer le post
+		return
+	}
+
+	if (req.body.imageURL) {
 		const post = {
-			// userId depuis middleware token 
+			// userId depuis middleware token?
 			userId : req.body.userId,
 			title : req.body.title,
 			publicationText : req.body.text,
-			publicationDate : req.body.date,
+			publicationDate : Date.now(),
 			likes: 0,
-			imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+			// imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+			imageURL: req.body.imageURL
 		};
-
-		// Sauvegarder dans la base
 		Post.create(post)
 		.then(() => res.status(201).json({ message: 'Post créé !'}))
-		.catch( error => res.status(500).send({ message: error.message || 'Impossible de créer un post'} ));
-
+		.catch( error => res.status(500).send({ error, message: 'Impossible de créer un post'} ));
 	} else {
-		// Créer le post
+		console.log("je suis là 2");
 		const post = {
+			// userId depuis middleware token?
 			userId : req.body.userId,
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),
 			likes: 0
 		};
-
-		// Sauvegarder dans la base
 		Post.create(post)
 		.then(() => res.status(201).json({ message: 'Post créé !'}))
-		.catch( error => res.status(500).send({ message: error.message +  'Impossible de créer un post' } ));
+		.catch( error => res.status(500).send({ error, message: 'Impossible de créer un post'} ));
 	};
 };
 
-//À corriger
+
 // Modifier un post
 exports.updatePost = (req, res, next) => {
 	const id = req.params.id;
 
-	Post.update(req.body, { where: { id: id } })
+	Post.update(
+		{title: req.body.title,
+		publicationText: req.body.text,
+		imageURL: req.body.imageURL},
+		{where: {id: id } }
+	)
 	.then(num => {
 		if (num == 1) {
 			res.send({ message: "Le post a été mis à jour avec succès." });
@@ -85,11 +86,10 @@ exports.updatePost = (req, res, next) => {
 			message: `Impossible de mettre à jour le post.`
 		})
 	}})
-	.catch(err => { res.status(500).send({ message: "Une erreur est survenu lors de la mise à jour du post" })
+	.catch(error => { res.status(500).send({ error, message: "Une erreur est survenu lors de la mise à jour du post" })
 	});
 };
 
-//À corriger
 // Supprimer un post
 exports.deletePost = (req, res, next) => {
 	const id = req.params.id;

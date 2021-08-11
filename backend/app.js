@@ -7,7 +7,7 @@ const db = require('./models/index');
 
 const userRoutes = require('./routes/users');
 const postRoutes = require('./routes/posts');
-//const commentRoutes = require('./routes/comments');
+const commentRoutes = require('./routes/comments');
 
 // Création de l'app
 const app = express();
@@ -40,7 +40,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // Les Routes
 app.use('/api', userRoutes);
 app.use('/api/posts', postRoutes);
-//app.use('/api/comments', commentRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Exportation de l'app
 module.exports = app;

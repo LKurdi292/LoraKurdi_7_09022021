@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<SignInForm @createuser="createUser"/> 
+		<SignUpForm @createuser="createUser"/> 
 		<!-- <LogInForm @login="logUser"/>  -->
 	</div>
 </template>
@@ -8,14 +8,14 @@
 <script>
 // @ is an alias to /src
 // import LogInForm from "@/components/LogInForm.vue";
-import SignInForm from "@/components/SignInForm.vue";
-import userServices from "@/services/userServices.js";
+import SignUpForm from "@/components/SignUpForm.vue";
+import userServices from "@/services/users.js";
 
 
 export default {
 	name: "Auth",
 	components: {
-		SignInForm,
+		SignUpForm,
 		// LogInForm
 	},
 	setup() {
@@ -27,3 +27,8 @@ export default {
 	}
 };
 </script>
+
+
+<style lang="scss" scoped>
+	
+</style>

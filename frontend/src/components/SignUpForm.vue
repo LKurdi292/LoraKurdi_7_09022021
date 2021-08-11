@@ -19,7 +19,7 @@
 			<option v-for="account in accountTypes" :value="account.value" :key="account.id" >{{ account.name }}</option>
 		</select>
 
-		<button :disabled"!isFormValid">Sign in</button>
+		<button :disabled="!isFormValid">Sign in</button>
 	</form>
 </template>
 
@@ -27,13 +27,13 @@
 import { ref, onMounted, computed } from 'vue';
 
 export default {
-	name: SignInForm,
-	emits: [createuser],
+	name: "SignUpForm",
+	emits: ["createuser"],
 	setup(context) {
-		const email = ref(""),
-		const lastName = ref(""),
-		const firstName = ref(""),
-		const password = ref(""),
+		const email = ref("");
+		const lastName = ref("");
+		const firstName = ref("");
+		const password = ref("");
 		const accountTypes = ref([
 			{
 				id: 1,
@@ -45,17 +45,17 @@ export default {
 				name: 'Admin',
 				value: 'admin'
 			}
-		]),
-		const account = ref(""),
-		const firstField = ref(null),
+		]);
+		const account = ref("");
+		const firstField = ref(null);
 
 		function createUser() {
 			const user = {
-				email = email.value,
-				lastName = lastName.value,
-				firstName = firstName.value,
-				password = password.value,
-				account = account.value
+				email : email.value,
+				lastName : lastName.value,
+				firstName : firstName.value,
+				password : password.value,
+				account : account.value
 			}
 			// Envoyer à la vue parent 'auth' l'évènement et le user créé
 			context.emit('createuser', user);

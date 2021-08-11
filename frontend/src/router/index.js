@@ -1,4 +1,4 @@
-import { createRouter } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import MyAccount from "../views/MyAccount.vue";
 import Auth from "../views/Auth.vue";
@@ -11,13 +11,13 @@ const routes = [
     component: Home,
   },
   {
-    path: "signin",
-    name: "Auth",
+    path: "/signup",
+    name: "signup",
     component: Auth,
   },
   {
     path: "/login",
-    name: "Auth",
+    name: "login",
     component: Auth,
   },
   {
@@ -37,8 +37,8 @@ const routes = [
 ];
 
 const router = createRouter({
-//   history: createWebHistory(process.env.BASE_URL),
-  routes,
+	history: createWebHistory(process.env.BASE_URL),
+	routes,
 });
 
 export default router;

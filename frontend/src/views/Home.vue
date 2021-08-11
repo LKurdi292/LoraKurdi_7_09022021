@@ -1,24 +1,28 @@
 <template>
 	<div class="home">
-		<!-- <HelloWorld msg="Progressor (compo API)" />
-		écouter l'évènement createtask créé par l'enfant Form et appeler la fct addTask
-		<Form @createtask="addTask"/> -->
+		<Form @createpost="createPost"/>
 	</div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import tasksService from "@/services/tasks.js";
+import postServices from "@/services/posts.js";
 
 export default {
 	name: "Home",
 	
-	// setup() {
-	// 	function addTask(data) {
-	// 		// console.log("Home.vue | addTask()", data);
-	// 		tasksService.create(data);
-	// 	}
-	// 	return { addTask };
-	// }
+	setup() {
+		function createPost(data) {
+			// console.log("Home.vue | addTask()", data);
+			postServices.create(data);
+		}
+
+
+		function displayPosts(data) {
+			postServices.displayAll(data);
+		}
+
+		return { createPost, displayPosts };
+	}
 };
 </script>
