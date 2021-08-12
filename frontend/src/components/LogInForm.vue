@@ -1,13 +1,11 @@
 <template>
 <!-- eslint-disable  -->
 	<h1>Log In</h1>
-	<form v-on:submit="logInUser">
+	<form v-on:submit.prevent="logInUser">
 		
-		<!-- <label for="email">Email Adress</label><br/> -->
 		<input type="text" v-model="email" placeholder="Enter your email" id="email" ref="firstField"><br/>
 		
-		<!-- <label for="password">Password</label><br/> -->
-		<input type="text" v-model="password" id="password" placeholder="Type in your password"><br/>
+		<input type="text" v-model="password" id="password" placeholder="Enter your password"><br/>
 
 		<button :disabled="!isFormValid">Log in</button>
 	</form>
@@ -18,8 +16,8 @@ import { ref, onMounted, computed } from 'vue';
 
 export default {
 	name: "LogInForm",
-	emits: ["loginuser"],
-	setup(context) {
+	emits: ["loginUser"],
+	setup(props, context) {
 		const email = ref("");
 		const password = ref("");
 		const firstField = ref(null);
@@ -28,9 +26,10 @@ export default {
 			const user = {
 				email : email.value,
 				password : password.value,
-			}
+			};
+
 			// Envoyer à la vue parent 'auth' l'évènement et le user connecté
-			context.emit('loginuser', user);
+			context.emit('loginUser', user);
 		}
 
 		// Focus de la souris sur le 1er champ text au chargement de la page
@@ -74,6 +73,7 @@ export default {
 			height: 35px;
 			margin: 10px auto 20px;
 			padding-left: 2%;
+			outline: none;
 		}
 		button {
 			width: 100px;

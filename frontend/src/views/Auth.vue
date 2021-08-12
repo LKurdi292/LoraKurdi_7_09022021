@@ -1,31 +1,41 @@
 <template>
 	<!-- eslint-disable  -->
 	<body>
-		<div class="logoContainer">
+		<!-- <div class="logoContainer">
 			<img src="../assets/icon-above-font.svg" alt="logo de Groupomania">
-		</div>
+		</div> -->
 
 		<!-- <div class="leftSide">
-				<div class="signFormContainer">
-					<SignUpForm @createuser="createUser"/>
-					<p class="toLogIn">Already have an account? 
-					<router-link to="/login"><a>Log in</a></router-link>
-					</p>
-				</div>
+			<div class="confirmSignUp">
+				Your account have been created. 
+				<router-link to="/login">
+					<a>Log in</a>
+				</router-link>
+			</div>
+
+			<div class="signFormContainer">
+				<SignUpForm @createAccount="createUser"/>
+				<p class="toLogIn">Already have an account? 
+					<router-link to="/login">
+						<a>Log in</a></router-link>
+				</p>
+			</div>
 		</div> -->
 
 		<div class="rightSide">
 			<div class="logFormContainer">
-				<LogInForm @loginuser="logUser"/>
+				<LogInForm @loginUser="logUser"/>
 				<p class="toSignUp">Don't have any account yet? 
-				<router-link to="/signup"><a>Join us</a></router-link>
+					<router-link to="/signup">
+						<a>Join us</a>
+					</router-link>
 				</p>
 			</div>
 		</div>
 
-		<!-- <div class="logoContainer">
+		<div class="logoContainer">
 			<img src="../assets/icon-above-font.svg" alt="logo de Groupomania">
-		</div> -->
+		</div>
 
 	</body>
 </template>
@@ -113,5 +123,4 @@ export default {
 			cursor: pointer;
 		}
 	}
-
 </style>

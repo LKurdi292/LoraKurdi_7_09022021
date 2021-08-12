@@ -1,20 +1,29 @@
 <template>
 <!-- eslint-disable  -->
+	<!-- <div class="confirmSignUp" v-if="accountCreated">
+		Your account have been created. 
+		<router-link to="/login">
+			<a>Log in</a>
+		</router-link>
+	</div> -->
+
 	<h1>Sign Up</h1>
+
 	<form v-on:submit.prevent="createUser">
 		<input type="text" v-model="email" placeholder="Enter your email" id="email" ref="firstField"><br/>
 
-		<input type="text" v-model="lastName" id="lastName"><br/>
-
-		<input type="text" v-model="firstName" id="firstName"><br/>
+		<input type="text" v-model="firstName" id="firstName" placeholder="Enter your first name"><br/>
+		
+		<input type="text" v-model="lastName" id="lastName" placeholder="Enter your last name"><br/>
 
 		<input type="text" v-model="password" id="password" placeholder="Choose a password"><br/>
 
 		<label for="account">Account</label><br/>
+		
 		<select v-model="account" id="account">
-			<option v-for="account in accountTypes" :value="account.value" :key="account.id" >{{ account.name }}</option>
+			<option v-for="account in accountTypes" :value="account.value" :key="account.id">{{ account.name }}</option>
 		</select><br/>
-
+		
 		<button :disabled="!isFormValid">Create account</button>
 	</form>
 	
@@ -24,9 +33,9 @@
 import { ref, onMounted, computed } from 'vue';
 
 export default {
+	emits: ["createAccount"],
 	name: "SignUpForm",
-	emits: ["createuser"],
-	setup(context) {
+	setup(props,  context ) {
 		const email = ref("");
 		const lastName = ref("");
 		const firstName = ref("");
@@ -35,29 +44,32 @@ export default {
 			{
 				id: 1,
 				name: 'Default',
-				value: 'default'
+				value: 0
 			},
 			{
 				id: 2,
 				name: 'Admin',
-				value: 'admin'
+				value: 1
 			}
 		]);
 		const account = ref("");
 		const firstField = ref(null);
+		// let accountCreated = ref(false);
 
-		function createUser() {
+		// function createUser () {
+		function createUser () {
 			const user = {
 				email : email.value,
 				lastName : lastName.value,
 				firstName : firstName.value,
 				password : password.value,
-				account : account.value
-			}
-			// Envoyer à la vue parent 'auth' l'évènement et le user créé
-			context.emit('createuser', user);
+				isAdmin : account.value
+			};
+			// Envoyer à la vue parent 'auth' vènement et le user créé
+			context.emit('createAccount', user);
 			resetForm();
 		}
+
 
 		// Focus de la souris sur le 1er champ text au chargement de la page
 		onMounted( () => {
@@ -83,7 +95,7 @@ export default {
 			}
 		})
 
-		return { email, firstField, lastName, firstName, password, accountTypes, account, createUser, isFormValid };
+		return { email, firstField, lastName, firstName, password, accountTypes, account, isFormValid, createUser };
 
 	},
 };
@@ -108,17 +120,37 @@ export default {
 			height: 35px;
 			margin: 10px auto 20px;
 			padding-left: 2%;
+			outline: none;
 		}
 		button {
-			width: 100px;
+			width: 180px;
 			margin: 30px auto 0;
 			height: auto;
-			padding: 2% 1%;
+			padding: 3.5% 2%;
 			background-color: #fc3914;
 			color: white;
 			border: none;
 			font-weight: bold;
 			font-size: 18px;
+			cursor: pointer;
+			&:hover {
+				opacity: 0.8;
+				
+			}
+		}
+	}
+	.confirmSignUp {
+		width: 400px;
+		padding: 2% 1%;
+		background-color: #42b983;
+		border: 1px solid #d6e9c6;
+		border-radius: 4px;
+		font: white;
+
+		a {
+			text-decoration: underline;
+			color: #fc3914;
+			font-weight: bold;
 			cursor: pointer;
 		}
 	}

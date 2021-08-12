@@ -60,7 +60,8 @@ exports.login = (req, res, next) => {
 					{ id: user.id},
 					process.env.TOKEN,
 					{ expiresIn: '24h' }
-				)
+				), 
+				message: "Utilisateur connecté!"
 			});
 		})
 		.catch(error => res.status(500).send({ error }));
