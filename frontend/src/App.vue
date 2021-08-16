@@ -18,21 +18,16 @@ export default {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: #2c3e50;
-	
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #fce4e2;
-	height: 100vh;
+	// background-color: rgba(252,57,20, 0.5);
+	//#fcf2f1;
 }
-header {
-	height: 140px;
-	width: 100%;
-	margin: 0;
-	background-color: white;
-	// border: 1px black dashed;
-	
-	
-}
+
 </style>

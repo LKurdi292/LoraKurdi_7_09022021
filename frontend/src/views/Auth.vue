@@ -2,7 +2,7 @@
 	<!-- eslint-disable  -->
 	<body>
 		<!-- <div class="logoContainer">
-			<img src="../assets/icon-above-font.svg" alt="logo de Groupomania">
+			<img src="../assets/dev_images/icon-above-font.svg" alt="logo de Groupomania">
 		</div> -->
 
 		<!-- <div class="leftSide">
@@ -34,7 +34,7 @@
 		</div>
 
 		<div class="logoContainer">
-			<img src="../assets/icon-above-font.svg" alt="logo de Groupomania">
+			<img src="../assets/dev_images/icon-above-font.svg" alt="logo de Groupomania">
 		</div>
 
 	</body>
@@ -54,6 +54,7 @@ export default {
 		//SignUpForm
 	},
 	setup() {
+		
 		function createUser(data) {
 			userServices.create(data);
 		}

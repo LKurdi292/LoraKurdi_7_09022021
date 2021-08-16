@@ -7,7 +7,7 @@ const postCtrl = require('../controllers/posts');
 
 
 // Récupérer tous les posts
-router.get('/', auth, postCtrl.getAllPosts);
+router.get('/', postCtrl.getAllPosts);
 
 // Récupérer les 5 derniers posts
 //router.get('/pages/:start/5', auth, postCtrl.getLastPosts);

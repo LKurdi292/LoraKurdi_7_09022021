@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
-import MyAccount from "../views/MyAccount.vue";
+import Account from "../views/Account.vue";
 import Auth from "../views/Auth.vue";
 
 
@@ -22,8 +22,8 @@ const routes = [
   },
   {
     path: "/myaccount/:id",
-    name: "MyAccount",
-    component: MyAccount,
+    name: "Account",
+    component: Account,
   },
 //   {
 //     path: "/about",

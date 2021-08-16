@@ -31,7 +31,7 @@ exports.createPost = (req, res, next) => {
 	
 	// Valid request
 	if (!req.body.title) {
-		res.status(401).send({
+		res.status(400).send({
 		  message: "Le post doit avoir un titre!"
 		});
 		return
@@ -52,7 +52,6 @@ exports.createPost = (req, res, next) => {
 		.then(() => res.status(201).json({ message: 'Post créé !'}))
 		.catch( error => res.status(500).send({ error, message: 'Impossible de créer un post'} ));
 	} else {
-		console.log("je suis là 2");
 		const post = {
 			// userId depuis middleware token?
 			userId : req.body.userId,

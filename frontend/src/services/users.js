@@ -26,15 +26,13 @@ function create(data) {
 
 
 // Connexion d'un utilisateur
-let connectedUser = Number();
-
 function log(data) {
 	const url="http://localhost:3000/api/auth/login";
 
 	fetch(url, {
 		method: "POST",
 		headers: {
-			"Content-type": "application/json", 
+			"Content-type": "application/json",
 		},
 		body: JSON.stringify(data)
 	})
@@ -44,8 +42,8 @@ function log(data) {
 		}
 	})
 	.then(function(res) {
-		connectedUser = res.id;
-		console.log(res.message);
+		console.log(res);
+		return res;
 	})
 	.catch(function(err) {
 		console.log(err);
@@ -58,6 +56,9 @@ function log(data) {
 
 
 
+
+const firstName = "lora";
+
 export default {
-	create, log, connectedUser
+	create, log, firstName
 }
