@@ -1,39 +1,39 @@
+import { toRefs, reactive } from 'vue';
+
 
 //Get All Posts
 function getAll() {
 	const url="http://localhost:3000/api/posts";
 	
-	let allPosts = [];
-
-	fetch(url, {
-		method: "GET",
-		headers: {
-			"Content-type": "application/json", 
-			// "authorization": "BEARER" + userToken,
-		}
-	})
-	.then(function(res) {
-		if (res.ok) {
-			console.log(res.status);
-			return res.json();
-		}
-	})
-	.then(function(posts) {
-		console.log("fetch", posts);
-		allPosts = posts;
-		return posts;
-	})
-	.catch(function(err) {
-		console.log(err);
+	const state = reactive( {
+		response: [],
+		error: null, 
+		fetching: true
 	})
 
-	return allPosts;
+	const fetchPosts = async() => {
+		try {
+			const res = await fetch(url, {
+				method: "GET",
+				headers: {
+					"Content-type": "application/json", 
+					// "authorization": "BEARER" + userToken,
+				}
+			});
+			const json = await res.json();
+			state.response = json;
+
+		} catch (errors) {
+			state.error = errors;
+		} finally {
+			state.fetching = false;
+		}
+	}
+	
+	fetchPosts();
+
+	return { ...toRefs(state)};
 }
-
-// function read() {
-// 	allPosts = getAll();
-// 	return allPosts;
-// }
 
 
 // Create a post
@@ -50,7 +50,6 @@ function create(data) {
 	})
 	.then(function(res) {
 		if (res.ok) {
-			console.log(res.status);
 			return res.json();
 		}
 	})
@@ -63,6 +62,89 @@ function create(data) {
 }
 
 
+//Update a post 
+		// ajout de l'id dans l'url pour être récupéré par req.params.id dans le back
+function update(data, postId) {
+	const url="http://localhost:3000/api/posts";
+
+	fetch(url + postId, {
+		method: "PUT",
+		headers: {
+			"Content-type": "application/json", 
+			// "authorization": "BEARER" + userToken,
+		},
+		body: JSON.stringify(data)
+	})
+	.then(function(res) {
+		if (res.ok) {
+			console.log(res.status);
+			return res.json();
+		}
+	})
+	.then(function(res) {
+		return res.message;
+	})
+	.catch(function(err) {
+		console.log(err);
+	})
+}
+
+// Delete a post
+function deletePost(postId) {
+	const url="http://localhost:3000/api/posts";
+	
+	fetch(url + postId, {
+		method: "DELETE",
+		headers: {
+			"Content-type": "application/json", 
+			// "authorization": "BEARER" + userToken,
+		}
+	})
+	.then(function(res) {
+		if (res.ok) {
+			console.log(res.status);
+			return res.json();
+		}
+	})
+	.then(function(res) {
+		return res.message;
+	})
+	.catch(function(err) {
+		console.log(err);
+	})
+}
+
+//Like or Dislike a Post
+function like(userId, like, postId) {
+	const url="http://localhost:3000/api/posts/like";
+	
+	fetch(url + postId, {
+		method: "PUT",
+		headers: {
+			"Content-type": "application/json", 
+			// "authorization": "BEARER" + userToken,
+		}, 
+		body: {
+			userId: userId,
+			like: like
+		}
+	})
+	.then(function(res) {
+		if (res.ok) {
+			console.log(res.status);
+			return res.json();
+		}
+	})
+	.then(function(res) {
+		return res.message;
+	})
+	.catch(function(err) {
+		console.log(err);
+	})
+}
+
+
+
 export default {
-	getAll, create,
+	getAll, create, update, deletePost, like
 }

@@ -6,7 +6,7 @@
 			<form @submit.prevent="publish">
 				<input type="text" v-model="title" placeholder="Title"/><br />
 			
-				<textarea v-model="content" cols="30" rows="10"></textarea><br />
+				<textarea v-model="content" cols="120" rows="30"></textarea><br />
 				<div class="buttonContainer">
 					<button class="button" :disabled="!isFormValid">Publish</button>
 					<button class="button" @click="cancel" :disabled="!isFormValid">Cancel</button>
@@ -58,8 +58,9 @@ export default {
 <style lang="scss" scoped>
 	.background {
 		position: absolute;
-		height: 500px;
+		height: 400px;
 		z-index: 999;
+		background-color: white;
 		top: 25%;
 		left: 15%;
 		width: 60%;
@@ -67,18 +68,37 @@ export default {
 		display: table;
 		transition: opacity 0.3s ease;
 		border-radius: 10px;
-		box-shadow: 1px 2px 12px rgba(0, 0,0, 0.5);
+		box-shadow: 1px 2px 12px rgba(0, 0,0, 0.6);
 	}
 	
 	.edition {
 		padding: 20px;
-		margin: 10px;
+		margin: auto 10px;
+		height: 90%;
 		border: 1px dashed violet;
-		height: auto;
 		h3 {
 			margin: 0 0 20px 0;
 		}
 	}
+
+	form {
+		width: 100%;
+		font-size: 18px;
+		input {
+			outline: none;
+			height: 25px;
+			margin: 10px 0;
+			width: 300px;
+			padding: 0 0.5%;
+
+		}
+		textarea {
+			outline: none;
+			padding: 1%;
+		}
+		border: 1px red solid;
+	}
+
 	.button {
 		width: 100px;
 		background-color: rgb(230, 57, 20);

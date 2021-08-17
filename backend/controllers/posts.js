@@ -69,7 +69,8 @@ exports.createPost = (req, res, next) => {
 
 // Modifier un post
 exports.updatePost = (req, res, next) => {
-
+	const postId = req.params.id;
+	
 	Post.update(
 		{title: req.body.title,
 		publicationText: req.body.text,

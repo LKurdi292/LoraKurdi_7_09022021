@@ -4,8 +4,6 @@
 function create(data) {
 	const url="http://localhost:3000/api/auth/signup";
 	
-	// console.log("fetch", JSON.stringify(data));
-
 	fetch(url, {
 		method: "POST",
 		headers: {
@@ -48,11 +46,36 @@ function log(data) {
 	.catch(function(err) {
 		console.log(err);
 	})
-
 }
 
+// Voir son compte
+function getAccountInfo(userId) {
+	const url ="http://localhost:3000/api/users/myaccount";
+
+	fetch(url + userId, {
+		method: "GET",
+		headers: {
+			"Content-type": "application/json", 
+			// "authorization": "BEARER" + userToken,
+		}
+	})
+	.then(function(res) {
+		if (res.ok) {
+			console.log(res.status);
+			return res.json();
+		}
+	})
+	.then(function(data) {
+		console.log("fetch", data);
+		return data;
+	})
+	.catch(function(err) {
+		console.log(err);
+	})
+	
 
 
+}
 
 
 
@@ -60,5 +83,5 @@ function log(data) {
 const firstName = "lora";
 
 export default {
-	create, log, firstName
+	create, log, firstName, getAccountInfo
 }

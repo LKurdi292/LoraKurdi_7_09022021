@@ -1,6 +1,5 @@
 <template>
 	<!-- eslint-disable  -->
-
 	<nav-bar></nav-bar>
 	<div class="home">
 		<ModalPostForm @publishPost="createPost" v-if="editMode"/>
@@ -27,15 +26,14 @@
 		</div>
 
 		<!-- Affichage des posts -->
-		<!-- v-show="filteredPosts.length > 0" -->
-		<div class="wallContainer" >
-			<div class="post" v-for="post in filteredPosts" :key="post.id">
+		<div class="wallContainer" v-show="filteredPosts.length > 0">
+			<div class="post" v-for="post in posts.value" :key="post.id">
 				<h4>{{ post.title }}</h4>
 				<p>{{ post.publicationText }}</p>
-				<!-- <div>
+				<div>
 					<button class="button" @click="() => deletePost(post.id)">Supprimer</button>
 					<button class="button" @click="() => toggle(post)">Modifier</button>
-				</div> -->
+				</div>
 			</div>
 		</div> 
 
@@ -57,9 +55,6 @@ export default {
 	components: { ModalPostForm, NavBar },
 	setup() {
 		let firstName = userService.firstName;
-		//const lastName = userService.lastName;
-		//const userId = userService.id;
-		//userToken.value = userService.token;
 		
 		const editMode = ref(false);
 		const submitted = ref(false);
@@ -70,8 +65,20 @@ export default {
 
 		// Récupérer les posts
 		const posts = ref([]);
-		posts.value = postService.getAll();
-	
+		const { response } = postService.getAll();
+		posts.value = response;
+		
+
+		// Affichage des posts et Filtrage sur les titres
+		function filter() {
+			if (letters.value.length === 0) {
+				console.log("Home", response);
+				filteredPosts = response;
+			} else {
+				filteredPosts.value = posts.value.filter( (p) => p.title.toLocaleLowerCase().includes(letters.value.toLocaleLowerCase()));
+			}
+		}
+		filter();
 
 		function createPost(data) {
 			console.log(data);
@@ -79,19 +86,7 @@ export default {
 			submitted.value = true;
 		}
 
-		// Affichage des posts et Filtrage sur les titres
-		function filter() {
-			if (letters.value.length === 0) {
-				// console.log("Home", posts.value.read());
-				console.log("Home", posts.value);
-				filteredPosts.value = posts.value;
-			} else {
-				filteredPosts.value = posts.value.filter( (p) => p.title.toLocaleLowerCase().includes(letters.value.toLocaleLowerCase()));
-			}
-		}
-
-		filter();
-		//Suppression d'une tâche
+		//Suppression d'un post
 		//function deletePost(id) {
 		//	postService.deletePost(id);
 		//	// rafraichir le contenu du tableau pour maj sans rechargement de la page
@@ -186,18 +181,18 @@ div.submissionSuccess {
 }
 
 .wallContainer {
-	width: 60%;
-	// height: ;
+	width: 90%;
 	margin: 40px auto;
-	padding: 2% 10%;
+	padding: 2% 0;
 	border: 1px solid black;
 	
 	.post {
-		height: auto;
-		width: 600px;
-		margin: 10px auto;
+		height: 150px;
+		width: 100%;
+		margin: 20px auto;
+		padding: 8px;
 		background-color: white;
-		box-shadow: 1px 2px rgba(0, 0, 0, 0.4);
+		box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
 	}
 }
 
