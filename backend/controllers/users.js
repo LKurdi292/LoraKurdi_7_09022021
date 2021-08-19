@@ -57,6 +57,11 @@ exports.login = (req, res, next) => {
 			res.status(200).json({
 				id: user.id,
 				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				password: user.password,
+				bio: user.bio,
+				isAdmin: user.isAdmin,
 				token: jwt.sign(
 					{ id: user.id},
 					process.env.TOKEN,
@@ -65,7 +70,7 @@ exports.login = (req, res, next) => {
 				message: "Utilisateur connecté!"
 			});
 		})
-		.catch(error => res.status(500).send({ error }));
+		.catch(error => res.status(500).send({ message: "Password not valid", error }));
 	})
 	.catch(error => res.status(500).send({ error }));
 };

@@ -17,7 +17,7 @@ function getAll() {
 				method: "GET",
 				headers: {
 					"Content-type": "application/json", 
-					// "authorization": "BEARER" + userToken,
+					"Authorization": "BEARER" + localStorage.getItem.token
 				}
 			});
 			const json = await res.json();
@@ -37,14 +37,16 @@ function getAll() {
 
 
 // Create a post
-function create(data) {
+function create(data, userId) {
 	const url="http://localhost:3000/api/posts";
 
+	data = { ...data, userId };
+	
 	fetch(url, {
 		method: "POST",
 		headers: {
-			"Content-type": "application/json", 
-			// "authorization": "BEARER" + userToken,
+			"Content-type": "application/json",
+			"Authorization": "BEARER" + localStorage.getItem.token
 		},
 		body: JSON.stringify(data)
 	})
@@ -71,7 +73,7 @@ function update(data, postId) {
 		method: "PUT",
 		headers: {
 			"Content-type": "application/json", 
-			// "authorization": "BEARER" + userToken,
+			"Authorization": "BEARER" + localStorage.getItem.token
 		},
 		body: JSON.stringify(data)
 	})
@@ -96,8 +98,8 @@ function deletePost(postId) {
 	fetch(url + postId, {
 		method: "DELETE",
 		headers: {
-			"Content-type": "application/json", 
-			// "authorization": "BEARER" + userToken,
+			"Content-type": "application/json",
+			"Authorization": "BEARER" + localStorage.getItem.token
 		}
 	})
 	.then(function(res) {
@@ -121,8 +123,8 @@ function like(userId, like, postId) {
 	fetch(url + postId, {
 		method: "PUT",
 		headers: {
-			"Content-type": "application/json", 
-			// "authorization": "BEARER" + userToken,
+			"Content-type": "application/json",
+			"Authorization": "BEARER" + localStorage.getItem.token
 		}, 
 		body: {
 			userId: userId,

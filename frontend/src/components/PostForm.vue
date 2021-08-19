@@ -22,18 +22,23 @@ export default {
 	name: "ModalPostForm",
 	emits: ["cancel"],
 	setup(props, context) {
-
 		const title = ref("");
 		const content = ref("");
+		const image = ref("");
 
-		function publish() {
-			let post = {
-				title: title.value,
-				text: content.value,
-			}
-			console.log('post', post);
+		const fd = new FormData();
+		fd.append('image', image);
+		fd.append('title', title);
+		fd.append('text', content);
+
+		function publish(fd) {
+			// let post = {
+			// 	title: title.value,
+			// 	text: content.value,
+			// }
+			// console.log('post', post);
 			// Envoyer au parent: Home.vue
-			context.emit('publishPost', post);
+			context.emit('publishPost', fd);
 		}
 
 		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'creer' une tâche

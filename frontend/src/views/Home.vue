@@ -6,7 +6,7 @@
 	
 		<h1>
 			<img src="../assets/dev_images/hello.svg" />
-			Hello {{ firstName }}
+			Hello {{ $store.state.user.firstName }}
 		</h1>
 
 		<h2>Welcome to Groupomania's workplace social network.</h2><br>
@@ -44,8 +44,7 @@
 <script>
 // @ is an alias to /src
 import postService from "@/services/posts.js";
-// import getAll from "@/services/posts";
-import userService from "@/services/users.js";
+// import userService from "@/services/users.js";
 import ModalPostForm from "@/components/PostForm.vue";
 import { ref } from 'vue';
 import NavBar from '../components/NavBar.vue';
@@ -54,14 +53,18 @@ export default {
 	name: "Home",
 	components: { ModalPostForm, NavBar },
 	setup() {
-		let firstName = userService.firstName;
-		
+		// Récupérer les infos utilisateur
+		//const firstName = inject(firstName);
+		//const userId = inject(userId);
+		//const token = inject(token);
+
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const letters = ref("");
 	
 		let postToEdit = ref(null);
 		let filteredPosts = ref([]);
+
 
 		// Récupérer les posts
 		const posts = ref([]);
@@ -72,7 +75,6 @@ export default {
 		// Affichage des posts et Filtrage sur les titres
 		function filter() {
 			if (letters.value.length === 0) {
-				console.log("Home", response);
 				filteredPosts = response;
 			} else {
 				filteredPosts.value = posts.value.filter( (p) => p.title.toLocaleLowerCase().includes(letters.value.toLocaleLowerCase()));
@@ -80,9 +82,10 @@ export default {
 		}
 		filter();
 
+
 		function createPost(data) {
 			console.log(data);
-			postService.create(data);
+			//postService.create(data, userId, token);
 			submitted.value = true;
 		}
 
@@ -110,7 +113,7 @@ export default {
 		//	editMode.value = false;
 		//}
 
-		return { createPost, toggle, firstName, editMode, posts, letters, triggerEdition, filteredPosts, submitted };
+		return { createPost, toggle, editMode, posts, letters, triggerEdition, filteredPosts, submitted };
 	}
 };
 </script>
@@ -190,7 +193,7 @@ div.submissionSuccess {
 		height: 150px;
 		width: 100%;
 		margin: 20px auto;
-		padding: 8px;
+		// padding: 8px;
 		background-color: white;
 		box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
 	}

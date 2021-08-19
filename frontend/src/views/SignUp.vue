@@ -1,69 +1,45 @@
 <template>
-	<!-- eslint-disable  -->
 	<body>
-		<!-- <div class="logoContainer">
-			<img src="../assets/dev_images/icon-above-font.svg" alt="logo de Groupomania">
-		</div> -->
-
-		<!-- <div class="leftSide">
-			<div class="confirmSignUp">
-				Your account have been created. 
-				<router-link to="/login">
-					<a>Log in</a>
-				</router-link>
-			</div>
-
-			<div class="signFormContainer">
-				<SignUpForm @createAccount="createUser"/>
-				<p class="toLogIn">Already have an account? 
-					<router-link to="/login">
-						<a>Log in</a></router-link>
-				</p>
-			</div>
-		</div> -->
-
-		<div class="rightSide">
-			<div class="logFormContainer">
-				<LogInForm @loginUser="logUser"/>
-				<p class="toSignUp">Don't have any account yet? 
-					<router-link to="/signup">
-						<a>Join us</a>
-					</router-link>
-				</p>
-			</div>
-		</div>
-
 		<div class="logoContainer">
 			<img src="../assets/dev_images/icon-above-font.svg" alt="logo de Groupomania">
 		</div>
 
+		<div class="rightSide">
+			<!-- <div class="confirmSignUp">
+				Your account have been created. 
+				<router-link to="/login">
+					Log in
+				</router-link>
+			</div> -->
+
+			<div class="signFormContainer">
+				<SignUpForm @createAccount="createUser"/>
+				<p class="toLogIn">Already have an account? 
+					<router-link to="/login">Log in</router-link>
+				</p>
+			</div>
+		</div>
 	</body>
 </template>
 
 <script>
-// @ is an alias to /src
-import LogInForm from "@/components/LogInForm.vue";
-//import SignUpForm from "@/components/SignUpForm.vue";
+import SignUpForm from "@/components/SignUpForm.vue";
 import userServices from "@/services/users.js";
-
+// import { useStore } from 'vuex';
 
 export default {
 	name: "Auth",
 	components: {
-		LogInForm,
-		//SignUpForm
+		SignUpForm
 	},
 	setup() {
-		
+
 		function createUser(data) {
 			userServices.create(data);
 		}
 
-		function logUser(data) {
-			userServices.log(data);
-		}
-
-		return { createUser, logUser };
+		
+		return { createUser };
 	}
 };
 </script>
@@ -92,14 +68,14 @@ export default {
 		// border: 1px red dashed;
 	}
 	
-	div.rightSide, div.leftSide {
+	div.rightSide {
 		position: relative;
 		width: 65%;
 		background-color: #fce4e2;
 		// border-left: 1px red dashed;
 	}
 
-	.logFormContainer, .signFormContainer {
+	.signFormContainer {
 		height: 400px;
 		width: 500px;
 		margin: 5% auto;
@@ -112,7 +88,7 @@ export default {
 		padding: 2% 0;
 	}
 
-	p.toLogIn, p.toSignUp {
+	p.toLogIn {
 		width: 85%;
 		margin: 20px auto;
 		text-align: left;

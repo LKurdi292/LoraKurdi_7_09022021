@@ -3,11 +3,13 @@
 	<h1>Log In</h1>
 	<form v-on:submit.prevent="logInUser">
 		
-		<input type="text" v-model="email" placeholder="Enter your email" id="email" ref="firstField"><br/>
+		<input type="email" v-model="email" placeholder="Enter your email" id="email" ref="firstField" required><br/>
 		
-		<input type="text" v-model="password" id="password" placeholder="Enter your password"><br/>
+		<input type="text" v-model="password" id="password" placeholder="Enter your password" required><br/>
 
-		<button :disabled="!isFormValid">Log in</button>
+		<button :disabled="!isFormValid">
+			<router-link to="/home"></router-link>Log in
+		</button>
 	</form>
 </template>
 
@@ -27,8 +29,6 @@ export default {
 				email : email.value,
 				password : password.value,
 			};
-
-			// Envoyer à la vue parent 'auth' l'évènement et le user connecté
 			context.emit('loginUser', user);
 		}
 

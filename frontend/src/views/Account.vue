@@ -1,9 +1,12 @@
 <template>
-	<div class="account">
+	<!-- eslint-disable -->
 	<navbar></navbar>
+	<div class="account">
 
-	<h1>Your Profile</h1>
-
+		<h1>Your Profile</h1>
+		<div class="picRoundContainer">
+			<img src="" alt="">
+		</div>
 
 	</div>
 </template>
@@ -11,20 +14,17 @@
 <script>
 import Navbar from "../components/NavBar.vue";
 import userService from "../services/users";
+// import { ref } from 'vue';
 
 export default {
 	components: { Navbar },
 	name: "Account",
 	setup() {
-		const userInfo = userService.getAccountInfo();
-		const firstName = userInfo.firstName;
-		const lastName = userInfo.lastName;
-		const email = userInfo.email;
-		const password = userInfo.password;
-		const subscriptionDate = userInfo.subscriptionDate;
-		const bio = userInfo.bio;
-		const image = userInfo.imageURL;
-		const isAdmin = userInfo.isAdmin;
+		// const id = ref();
+		// id.value = context.root.$route.params.id;
+		const { firstName, lastName, email, password, subscriptionDate, bio, 
+		image, isAdmin } = userService.getAccountInfo();
+
 
 
 		return { firstName, lastName, email, password, subscriptionDate, bio, image, isAdmin}
@@ -34,5 +34,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	
+	.account {
+		width: 65%;
+		margin: 0 auto;
+		padding: 3% 5%;
+	}
 </style>
