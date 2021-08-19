@@ -55,13 +55,15 @@ exports.login = (req, res, next) => {
 			}
 			// comparaison true
 			res.status(200).json({
-				id: user.id,
-				firstName: user.firstName,
-				lastName: user.lastName,
-				email: user.email,
-				password: user.password,
-				bio: user.bio,
-				isAdmin: user.isAdmin,
+				user: {
+					id: user.id,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					email: user.email,
+					password: user.password,
+					bio: user.bio,
+					isAdmin: user.isAdmin
+				},
 				token: jwt.sign(
 					{ id: user.id},
 					process.env.TOKEN,

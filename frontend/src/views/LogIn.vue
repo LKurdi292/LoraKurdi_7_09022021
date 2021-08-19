@@ -17,13 +17,10 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import LogInForm from "@/components/LogInForm.vue";
-import userServices from "@/services/users.js";
-import {useRoute} from 'vue-router';
-// import { useStore } from 'vuex';
-import { ref } from 'vue';
-// import {computed} from 'vue';
+import { useStore } from 'vuex';
+import {useRoute, useRouter} from 'vue-router';
+
 
 export default {
 	name: "Auth",
@@ -31,36 +28,20 @@ export default {
 		LogInForm
 	},
 	setup() {
-		// const store = useStore();
+		const store = useStore();
 		const route = useRoute();
-		console.log(route.params.id);
+		const router = useRouter();
 
-		let vueuserId = ref(null);
-		let vuefirstName = ref('');
-		let vuelastName = ref(''); 
-		let vueemail = ref(''); 
-		let vuepassword = ref(''); 
-		let vuebio = ref('');
-		let vueisAdmin = ref(null);
-		let vuetoken = ref('');
-
+		const goToHomePage = () => {
+			const redirectPath = route.query.redirect || '/home';
+			router.push(redirectPath);
+		}
 
 		function logUser(data) {
-			const { userId, firstName, lastName, email, password, bio, isAdmin, token } = userServices.log(data);
-
-			vueuserId.value = userId;
-			vuefirstName.value = firstName;
-			vuelastName.value = lastName;
-			vueemail.value = email;
-			vuepassword.value = password;
-			vuebio.value = bio;
-			vueisAdmin.value = isAdmin;
-			vuetoken.value = token;
-			console.log('auth vue userInfo', vueuserId, vuefirstName, vuelastName, vueemail, vuepassword, vuebio, vueisAdmin);
-
-			console.log('auth vue token', vuetoken);
-
-			//return { userId, firstName, lastName, email, password, bio, isAdmin, token};
+			const isLogged = store.dispatch('fetchUserForLogIn', data);
+			if (isLogged) {
+				goToHomePage();
+			}
 		}
 		
 

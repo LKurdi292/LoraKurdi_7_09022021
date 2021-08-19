@@ -6,10 +6,9 @@
 		<input type="email" v-model="email" placeholder="Enter your email" id="email" ref="firstField" required><br/>
 		
 		<input type="text" v-model="password" id="password" placeholder="Enter your password" required><br/>
-
-		<button :disabled="!isFormValid">
-			<router-link to="/home"></router-link>Log in
-		</button>
+		
+		<button :disabled="!isFormValid">Log in</button>
+		
 	</form>
 </template>
 

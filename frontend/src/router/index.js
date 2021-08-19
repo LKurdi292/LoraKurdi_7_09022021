@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "../store";
 import Home from "../views/Home.vue";
 import Account from "../views/Account.vue";
 import SignUp from "../views/SignUp.vue";
@@ -9,12 +10,14 @@ const routes = [
 	{
 		path: "/signup",
 		name: "signup",
-		component: SignUp
+		component: SignUp,
+		meta: { auth: false }
 	},
 	{
 		path: "/login",
 		name: "login",
 		component: LogIn,
+		meta: { auth: false }
 	},
 	{
 		path: "/",
@@ -26,28 +29,28 @@ const routes = [
 		path: "/home",
 		name: "Home",
 		component: Home,
-		children: [{ path: 'myaccount/:id', component: Account }]
-	},
-	// {
-	// 	path: "/myaccount/:id",
-	// 	name: "Account",
-	// 	component: Account,
-	// 	props: true
-	// },
-//   {
-//     path: "/about",
-//     name: "About",
-//     // route level code-splitting
-//     // this generates a separate chunk (about.[hash].js) for this route
-//     // which is lazy-loaded when the route is visited.
-//     component: () =>
-//       import(/* webpackChunkName: "about" */ "../views/About.vue"),
-//   },
+		meta: { auth: true },
+		children: [{ path: 'myaccount/:id', component: Account, meta: { auth: true} }]
+	}
 ];
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
+	history: createWebHistory(),
 	routes,
+});
+
+
+// Naviguation guards
+router.beforeEach((to, next) => {
+	// s'il faut être authentifié mais que l'utilisateur n'est pas connecté, le rediriger vers la page login
+	console.log("router before, userLogged: ", store.state.userLogged);
+	if (to.meta.auth && !store.state.userLogged) {
+		next('/login');
+		return
+	} else if (to.meta.auth && store.state.userLogged ) {
+		console.log("router, user should be logged");
+		next();
+	}
 });
 
 export default router;

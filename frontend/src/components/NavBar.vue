@@ -5,7 +5,8 @@
 				<img src="../assets/dev_images/icone-rognee-left.png" alt="logo de Groupomania">
 			</div>
 			<nav>
-				<router-link :to="`/myaccount/${userId}`" class="linkTo">My Profile</router-link>
+				<router-link to='/home' class="linkTo">Home</router-link>
+				<router-link :to="`/myaccount/${userId}`" class="linkTo">My Account</router-link>
 				<router-link to="/login" class="linkTo" @click="logOut">Log out</router-link>
 			</nav>
 		</div>
@@ -70,6 +71,7 @@ nav {
 	text-align: center;
 	// color: black;
 
+
 	.linkTo {
 		color: black;
 		text-decoration: none;
@@ -79,8 +81,8 @@ nav {
 
 
 		&:hover {
-			// text-decoration: underline;
 			color: #fc3914;
+			
 			&:after {
 				content: "";
 				background-color: #fc3914;
@@ -91,6 +93,9 @@ nav {
 				bottom: 0;
 			}
 		}
+	}
+	.router-link-active {
+		color: #fc3914;
 	}
 }
 </style>
