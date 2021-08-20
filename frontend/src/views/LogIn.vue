@@ -33,18 +33,18 @@ export default {
 		const router = useRouter();
 
 		const goToHomePage = () => {
-			const redirectPath = route.query.redirect || '/home';
-			router.push(redirectPath);
+			const redirectHome = route.query.redirect || '/home';
+			router.push(redirectHome);
 		}
 
-		function logUser(data) {
-			const isLogged = store.dispatch('fetchUserForLogIn', data);
+		async function logUser(data) {
+			const isLogged = await store.dispatch('fetchLogIn', data);
 			if (isLogged) {
 				goToHomePage();
 			}
 		}
 		
-
+		
 		return { logUser };
 	}
 };

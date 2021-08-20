@@ -42,9 +42,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import postService from "@/services/posts.js";
-// import userService from "@/services/users.js";
 import ModalPostForm from "@/components/PostForm.vue";
 import { ref } from 'vue';
 import NavBar from '../components/NavBar.vue';
@@ -53,10 +51,6 @@ export default {
 	name: "Home",
 	components: { ModalPostForm, NavBar },
 	setup() {
-		// Récupérer les infos utilisateur
-		//const firstName = inject(firstName);
-		//const userId = inject(userId);
-		//const token = inject(token);
 
 		const editMode = ref(false);
 		const submitted = ref(false);

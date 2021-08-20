@@ -1,25 +1,24 @@
 import { createStore } from 'vuex';
-import {readonly, computed} from 'vue';
-// import { useRoute, useRouter} from 'vue-router';
-// const route = useRoute();
-// const router = useRouter();
+import {computed, isProxy} from 'vue';
+import userService from '@/services/users.js';
+
 
 let state = {
 	userLogged: false,
 	posts: [],
 	lastPosts: [],
-	post: null,
 	user: null,
 	// {
-	// 	id: 0,
-	// 	firstName: '',
-	// 	lastName: '',
-	// 	isAdmin: 0,
-	// 	email: '',
-	// 	password: '',
-	// 	bio: '',
-	// },
+		// 	id: 0,
+		// 	firstName: '',
+		// 	lastName: '',
+		// 	isAdmin: 0,
+		// 	email: '',
+		// 	password: '',
+		// 	bio: '',
+		// },
 	token: '',
+	post: null,
 	comments: []
 };
 
@@ -42,6 +41,8 @@ const mutations = {
 		state.comments = { ...state.comments, comment };
 	},
 	SET_USER_INFO(data) {
+		console.log("commit data: ", data);
+		console.log(isProxy(data));
 		state.user = data;
 	},
 	SET_TOKEN(token) {
@@ -62,46 +63,29 @@ const mutations = {
 // use asynchronous code here and then commit a mutation to change data in the store
 // on dit 'to dispatch actions'
 const actions = {
-	async fetchUserForLogIn ({commit}, data) {
-		const url="http://localhost:3000/api/auth/login";
 	
-		let isLogged = false;
+	async fetchLogIn (context, data) {
+		
+		const response = await userService.logIn(data);
+		let token = state.token;
+		let user = state.user;
 
-		try {
-			let res = await fetch(url, {
-				method: "POST",
-				headers: {
-					"Content-type": "application/json",
-				},
-				body: JSON.stringify(data)
-			});
-			if (res.status === 200){
-				const response = await res.json();
-				console.log("fetch, response: ", response);
+		console.log("sate token before: ", token);
+		console.log("state user before: ", user);
+		//console.log(isProxy(response.data.user));
+	
+		//context.commit("SET_USER_INFO", response.data.user);
+		// context.commit('SET_TOKEN', response.data.token);
+		token = response.data.token;
+		user = response.data.user;
+		state.token = token;
+		state.user = user;
+		console.log("state.token after: ", state.token);
+		console.log("state.user after: ", state.user);
+		context.commit('LOG_USER');
 
-				const userInfo = response.user;
-				commit('SET_USER_INFO', userInfo);
-
-				commit('SET_TOKEN', response.token);
-				commit('LOG_USER');
-
-				console.log(' state userLogged', state.userLogged);
-				console.log(' state token', state.token);
-				console.log(' state user', state.user);
-
-				if (state.userLogged) {
-					//router.push({name: "Home"});
-					isLogged = true;
-				}
-			} else {
-				return "error while fetching";
-			}
-		} catch (error ) {
-			return error;
-		}
-		return isLogged;
+		return state.userLogged;
 	}
-
 };
 
 // get data from the state - but for example, with some filtering. 
@@ -113,7 +97,7 @@ const getters = {
 };
 
 const store = createStore({
-	state: readonly(state),
+	state: state,
 	mutations,
 	actions,
 	getters
