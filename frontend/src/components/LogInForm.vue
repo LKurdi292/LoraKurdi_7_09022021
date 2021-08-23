@@ -5,7 +5,7 @@
 		
 		<input type="email" v-model="email" placeholder="Enter your email" id="email" ref="firstField" required><br/>
 		
-		<input type="text" v-model="password" id="password" placeholder="Enter your password" required><br/>
+		<input v-model="password" id="password" type="password" placeholder="Enter your password" required><br/>
 		
 		<button :disabled="!isFormValid">Log in</button>
 		

@@ -30,7 +30,12 @@ const routes = [
 		name: "Home",
 		component: Home,
 		meta: { auth: true },
-		children: [{ path: 'myaccount/:id', component: Account, meta: { auth: true} }]
+	},
+	{
+		path: "/myaccount/:id",
+		name: "Account",
+		component: Account,
+		meta: { auth: true}
 	}
 ];
 
@@ -48,9 +53,10 @@ const router = createRouter({
 // 		next('/login');
 // 		return
 // 	} else if (to.meta.auth && store.state.userLogged ) {
-// 		console.log("router, user should be logged");
+// 		console.log("router, user is logged");
 // 		next();
 // 	}
+//  next();
 // });
 
 export default router;

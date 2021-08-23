@@ -9,7 +9,7 @@
 			Hello {{ $store.state.user.firstName }}
 		</h1>
 
-		<h2>Welcome to Groupomania's workplace social network.</h2><br>
+		<h2>Welcome to Groupomania's workplace social network.</h2>
 		<h3>Here you can interacte with your co-workers at all times and share your thoughts with the community ! <br/>What's on your mind today?</h3>
 
 
@@ -22,7 +22,7 @@
 		</div>
 
 		<div v-if="submitted" class="submissionSuccess">
-			<h4>You submitted successfully!</h4>
+			<h4>You've submitted successfully!</h4>
 		</div>
 
 		<!-- Affichage des posts -->
@@ -46,12 +46,12 @@ import postService from "@/services/posts.js";
 import ModalPostForm from "@/components/PostForm.vue";
 import { ref } from 'vue';
 import NavBar from '../components/NavBar.vue';
+// import {useStore} from 'vuex';
 
 export default {
 	name: "Home",
 	components: { ModalPostForm, NavBar },
 	setup() {
-
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const letters = ref("");

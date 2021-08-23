@@ -23,7 +23,7 @@ import {useRoute, useRouter} from 'vue-router';
 
 
 export default {
-	name: "Auth",
+	name: "LogIn",
 	components: {
 		LogInForm
 	},

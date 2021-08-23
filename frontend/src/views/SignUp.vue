@@ -28,7 +28,7 @@ import userServices from "@/services/users.js";
 // import { useStore } from 'vuex';
 
 export default {
-	name: "Auth",
+	name: "SignUp",
 	components: {
 		SignUpForm
 	},

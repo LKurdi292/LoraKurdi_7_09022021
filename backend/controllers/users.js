@@ -42,10 +42,11 @@ exports.login = (req, res, next) => {
 	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
 	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
 	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
-	
+
 	// le chercher dans la base de donnée
 	User.findOne({ where: { email: encrypted } })
 	.then(user => {
+		console.log("controller user: ", user);
 		// si oui, vérifier le mdp
 		bcrypt.compare(req.body.password, user.password)
 		.then( valid => {
@@ -59,22 +60,27 @@ exports.login = (req, res, next) => {
 					id: user.id,
 					firstName: user.firstName,
 					lastName: user.lastName,
-					email: user.email,
-					password: user.password,
+					email: req.body.email,
+					password: req.body.password,
 					bio: user.bio,
 					isAdmin: user.isAdmin
 				},
+				subscriptionDate: user.subscriptionDate,
 				token: jwt.sign(
 					{ id: user.id},
 					process.env.TOKEN,
 					{ expiresIn: '24h' }
 				), 
-				message: "Utilisateur connecté!"
+				message: "Vous êtes connecté!"
 			});
 		})
-		.catch(error => res.status(500).send({ message: "Password not valid", error }));
+		.catch(error => {
+			res.status(500).send({ message: "Password not valid", error })
+		});
 	})
-	.catch(error => res.status(500).send({ error }));
+	.catch(error => { 
+		res.status(500).send(console.log(error));
+	});
 };
 
 
@@ -91,37 +97,74 @@ exports.getMyAccount = (req, res, next) => {
 	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations du compte' }));
 };
 
+
+
+
 // Mettre à jour son profil
 exports.updateMyAccount = (req, res, next) => {
 	const connectedId = req.params.id;
-	
-	User.update(req.body, { 
-		where: { id : connectedId }
-	})
-	.then(num => {
-		if (num == 1) {
-			res.send({ message: "Votre compte a été mis à jour avec succès." });
-	} else {
-		res.send({
-			message: `Impossible de mettre à jour le compte.`
+
+	// Crypter le mail de la requete
+	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
+	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
+
+	// Hasher le mdp
+	bcrypt.hash(req.body.password, 10)
+	.then(hash => {
+		User.update({
+			email: encrypted,
+			password: hash,
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			bio: req.body.bio} ,
+			{where :{ id : connectedId }}
+		)
+		.then(() => {
+			User.findByPk(connectedId)
+			.then((user ) => {
+				res.status(200).json({ 
+					message: "Votre compte a été mis à jour avec succès.", 
+					user: {
+						id: user.id,
+						firstName: user.firstName,
+						lastName: user.lastName,
+						email: req.body.email,
+						password: req.body.password,
+						bio: user.bio,
+						isAdmin: user.isAdmin
+					}
+				});
+			})
+			.catch(error => { 
+				res.status(500).send({ 
+					error, 
+					message: "Une erreur est survenu lors de la mise à jour du compte"
+				})
+			})
 		})
-	}})
-	.catch(error => { res.status(500).send({ error, message: "Une erreur est survenu lors de la mise à jour du compte" })
+		.catch(error => { 
+			res.status(500).send({ 
+				error, 
+				message: "Une erreur est survenu lors de la mise à jour du compte"
+			})
+		})
+	})
+	.catch(error => { 
+		res.status(500).send( console.log(error));
 	});
 };
 
+
+// Supprimer son compte
 exports.deleteMyAccount = (req, res, next) => {
 	const connectedId = req.params.id;
 
 	User.destroy({
 		where: { id: connectedId }
 	})
-	.then(num => {
-		if (num == 1) {
-			res.send({ message: "Votre compte a été supprimé avec succès!" });
-		} else {
-			res.send({ message: "Impossible de supprimer le compte"})
-		}
+	.then(() => {
+		res.status(200).send({ message: "Votre compte a été supprimé avec succès!" });
 	})
 	.catch(error => {
 		res.status(500).send({ error, message: "Un problème est survenu lors de la suppression du compte" })

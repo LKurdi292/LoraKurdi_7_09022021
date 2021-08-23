@@ -5,8 +5,8 @@
 				<img src="../assets/dev_images/icone-rognee-left.png" alt="logo de Groupomania">
 			</div>
 			<nav>
-				<router-link to='/home' class="linkTo">Home</router-link>
-				<router-link :to="`/myaccount/${userId}`" class="linkTo">My Account</router-link>
+				<router-link to="/home" class="linkTo">Home</router-link>
+				<router-link :to="{ name: 'Account', params: { id: userId } }" class="linkTo">My Account</router-link>
 				<router-link to="/login" class="linkTo" @click="logOut">Log out</router-link>
 			</nav>
 		</div>
@@ -15,13 +15,15 @@
 
 <script>
 import { useStore } from 'vuex';
+import { computed } from 'vue';
+
 
 export default {
 	name: "navBar",
 
 	setup() {
 		const store = useStore();
-		const userId = store.state.user.id;
+		let userId = computed(()=> store.state.user.id);
 
 		function logOut() {
 			// console.log("je sors");

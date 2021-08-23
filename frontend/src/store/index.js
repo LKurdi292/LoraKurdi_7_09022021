@@ -7,18 +7,10 @@ let state = {
 	userLogged: false,
 	posts: [],
 	lastPosts: [],
-	user: null,
-	// {
-		// 	id: 0,
-		// 	firstName: '',
-		// 	lastName: '',
-		// 	isAdmin: 0,
-		// 	email: '',
-		// 	password: '',
-		// 	bio: '',
-		// },
+	user: {},
+	subscribed: Date,
 	token: '',
-	post: null,
+	post: {},
 	comments: []
 };
 
@@ -63,29 +55,52 @@ const mutations = {
 // use asynchronous code here and then commit a mutation to change data in the store
 // on dit 'to dispatch actions'
 const actions = {
-	
+	// Log in
 	async fetchLogIn (context, data) {
-		
 		const response = await userService.logIn(data);
 		let token = state.token;
 		let user = state.user;
-
-		console.log("sate token before: ", token);
-		console.log("state user before: ", user);
-		//console.log(isProxy(response.data.user));
+		let subscriptionDate = state.subscribed;
 	
 		//context.commit("SET_USER_INFO", response.data.user);
 		// context.commit('SET_TOKEN', response.data.token);
 		token = response.data.token;
 		user = response.data.user;
+		subscriptionDate = response.data.subscriptionDate;
 		state.token = token;
 		state.user = user;
-		console.log("state.token after: ", state.token);
-		console.log("state.user after: ", state.user);
+		state.subscribed = subscriptionDate;
+
+		console.log(state.user);
 		context.commit('LOG_USER');
 
 		return state.userLogged;
+	},
+
+	//GetAccountInfo
+	// Pas besoin de cette route, puisque tout est sauvegardé dans le store
+
+	// Update account
+	async fetchUpdateAccount (context, params) {
+		const data = params.updateData;
+		const id = params.id;
+		const response = await userService.updateAccount(data, id, state.token);
+
+		let user = state.user;
+		user = response.data.user;
+		state.user = user;
+		
+		return response.data.message;
+	},
+
+
+	// Delete Account
+	async fetchDeleteAccount (id) {
+		const response = await userService.fetchDeleteAccount(id, state.token);
+
+		let user = state.user;
 	}
+
 };
 
 // get data from the state - but for example, with some filtering. 
@@ -97,7 +112,7 @@ const getters = {
 };
 
 const store = createStore({
-	state: state,
+	state,
 	mutations,
 	actions,
 	getters
