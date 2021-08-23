@@ -12,7 +12,6 @@ function create(data) {
 	})
 	.then(function(res) {
 		if (res.ok) {
-			//console.log(res.status);
 			return res.json();
 		}
 	})

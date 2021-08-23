@@ -43,12 +43,15 @@ const mutations = {
 	SET_NEW_PROFILE(newAccountInfo) {
 		state.user = newAccountInfo;
 	},
-	CLEAR_STATE() {
+	CLEAR_STORE() {
 		state.userLogged = false,
 		state.posts = [],
 		state.lastPosts = [],
 		state.user = null,
-		state.comments = []
+		state.comments = [],
+		state.token = '',
+		state.post = {},
+		state.subscribed = Date
 	}
 };
 
@@ -95,10 +98,13 @@ const actions = {
 
 
 	// Delete Account
-	async fetchDeleteAccount (id) {
-		const response = await userService.fetchDeleteAccount(id, state.token);
+	async fetchDeleteAccount (context, id) {
+		console.log(id);
+		const response = await userService.deleteAccount(id, state.token);
 
-		let user = state.user;
+		context.commit('CLEAR_STORE');
+
+		return response.data.message;
 	}
 
 };

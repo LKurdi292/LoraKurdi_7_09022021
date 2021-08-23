@@ -70,8 +70,9 @@
 			</div>
 
 			<div class="EndFormButtonsContainer">
-				<button type="submit" @click.prevent="updateProfile">Submit changes</button>
-				<button id="delete">Delete Account</button>
+				<button type="submit" @click.prevent="updateProfile">Submit changes
+				</button>
+				<button id="delete" @click.prevent="showAlert">Delete account</button>
 			</div>
 		</form>
 
@@ -82,8 +83,10 @@
 import Navbar from "../components/NavBar.vue";
 import { useStore } from 'vuex';
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import moment from 'moment';
+import { useSwal } from "../useSwal";
+
 
 export default {
 	components: { Navbar },
@@ -92,11 +95,32 @@ export default {
 		// Données et variables
 		const store = useStore();
 		const route = useRoute();
+		const router = useRouter();
 		let userId = computed(() => store.state.user.id);
 		const subscribed = computed(()=> store.state.subscribed);
 		const formattedDate = moment(subscribed).format('DD/MM/YYYY');
 		let currentUser = computed(() => store.state.user);
 		let currentPassword = computed(() => currentUser.value.password);
+
+		// Alert for deleting account
+		const Swal = useSwal();
+
+		function showAlert() {
+			Swal.fire({
+				title: 'Deleting account',
+				text: 'Are you sure you want to delete your account?',
+				showCancelButton: true,
+				showConfirmButton: true,
+				confirmButtonText: 'Yes, delete',
+				icon: 'question',
+				focusConfirm: false,
+			}). then((result) => {
+				if (result.isConfirmed) {
+					deleteAccount();
+				}
+			})
+		}
+
 
 		const firstField = ref(null);
 		const updateMessage = ref("");
@@ -261,8 +285,17 @@ export default {
 			}, 2500);
 		}
 
-		
-		return { userId, currentUser, formattedDate, currentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm };
+		// Suppression de compte et redirection vers la page signup
+		const redirectSignUp = route.query.redirect || '/signup';
+		async function deleteAccount() {
+			const id = route.params.id;
+			const message = await store.dispatch('fetchDeleteAccount', id);
+			console.log(message);
+			router.push(redirectSignUp);
+		}
+
+
+		return { userId, currentUser, formattedDate, currentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert };
 	}
 }
 </script>
