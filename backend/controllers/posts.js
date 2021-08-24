@@ -8,7 +8,7 @@ const op = db.Sequelize.op;
 // Récupérer tous les posts
 exports.getAllPosts = (req, res, next) => {
 	Post.findAll({ 
-		attributes: { exclude: ['createdAt', 'updatedAt']}
+		attributes: { exclude: ['updatedAt']}
 	})
 	.then(data => res.status(200).send(data))
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));

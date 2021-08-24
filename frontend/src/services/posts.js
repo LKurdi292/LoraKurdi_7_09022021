@@ -1,39 +1,29 @@
-import { toRefs, reactive } from 'vue';
+// Utilisation d'axios
+import axios from 'axios';
 
-
-//Get All Posts
-function getAll() {
-	const url="http://localhost:3000/api/posts";
-	
-	const state = reactive( {
-		response: [],
-		error: null, 
-		fetching: true
-	})
-
-	const fetchPosts = async() => {
-		try {
-			const res = await fetch(url, {
-				method: "GET",
-				headers: {
-					"Content-type": "application/json", 
-					"Authorization": "BEARER" + localStorage.getItem.token
-				}
-			});
-			const json = await res.json();
-			state.response = json;
-
-		} catch (errors) {
-			state.error = errors;
-		} finally {
-			state.fetching = false;
-		}
+// single axios instance
+const apiClient = axios.create({
+	baseURL: 'http://localhost:3000/api',
+	headers: {
+		'Accept': 'application/json',
+		'Content-Type': 'application/json'
 	}
-	
-	fetchPosts();
+});
 
-	return { ...toRefs(state)};
+
+// Afficher les posts
+function getAllPosts(token) {
+	return apiClient.get('/posts',
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
 }
+
+
+
+
+
 
 
 // Create a post
@@ -148,5 +138,5 @@ function like(userId, like, postId) {
 
 
 export default {
-	getAll, create, update, deletePost, like
+	getAllPosts, create, update, deletePost, like
 }

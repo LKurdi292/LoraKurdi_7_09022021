@@ -2,7 +2,7 @@
 	<!-- eslint-disable  -->
 	<nav-bar></nav-bar>
 	<div class="home">
-		<ModalPostForm @publishPost="createPost" v-if="editMode"/>
+		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-if="editMode"/>
 	
 		<h1>
 			<img src="../assets/dev_images/hello.svg" />
@@ -26,14 +26,9 @@
 		</div>
 
 		<!-- Affichage des posts -->
-		<div class="wallContainer" v-show="filteredPosts.length > 0">
-			<div class="post" v-for="post in posts.value" :key="post.id">
-				<h4>{{ post.title }}</h4>
-				<p>{{ post.publicationText }}</p>
-				<div>
-					<button class="button" @click="() => deletePost(post.id)">Supprimer</button>
-					<button class="button" @click="() => toggle(post)">Modifier</button>
-				</div>
+		<div class="wallContainer">
+			<div class="post" v-for="post in posts" :key="post.id">
+				<Post :authorFname="post.userId" :authorLname="post.userId" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId"></Post>
 			</div>
 		</div> 
 
@@ -42,46 +37,40 @@
 </template>
 
 <script>
-import postService from "@/services/posts.js";
 import ModalPostForm from "@/components/PostForm.vue";
-import { ref } from 'vue';
 import NavBar from '../components/NavBar.vue';
-// import {useStore} from 'vuex';
+import Post from '../components/Post.vue';
+import { ref } from 'vue';
+import {useStore} from 'vuex';
 
 export default {
 	name: "Home",
-	components: { ModalPostForm, NavBar },
+	components: { ModalPostForm, NavBar, Post },
 	setup() {
+		// Données et variables
+		const store = useStore();
+
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const letters = ref("");
 	
 		let postToEdit = ref(null);
-		let filteredPosts = ref([]);
-
-
-		// Récupérer les posts
 		const posts = ref([]);
-		const { response } = postService.getAll();
-		posts.value = response;
 		
-
-		// Affichage des posts et Filtrage sur les titres
-		function filter() {
-			if (letters.value.length === 0) {
-				filteredPosts = response;
-			} else {
-				filteredPosts.value = posts.value.filter( (p) => p.title.toLocaleLowerCase().includes(letters.value.toLocaleLowerCase()));
-			}
+		
+		// Récupérer les posts
+		async function retrievePosts() {
+			const result = await store.dispatch('fetchAllPosts');
+			console.log('home after fetch result', result);
+			posts.value = result;
+			console.log('home posts value', posts.value);
+			return posts;
 		}
-		filter();
+
+		retrievePosts();
 
 
-		function createPost(data) {
-			console.log(data);
-			//postService.create(data, userId, token);
-			submitted.value = true;
-		}
+
 
 		//Suppression d'un post
 		//function deletePost(id) {
@@ -103,18 +92,23 @@ export default {
 		}
 
 		// Annuler l'édition
-		//function cancelEdition() {
-		//	editMode.value = false;
-		//}
+		function cancelEdition() {
+			editMode.value = false;
+		}
+		
+		function createPost(data) {
+			console.log(data);
+			submitted.value = true;
+		}
 
-		return { createPost, toggle, editMode, posts, letters, triggerEdition, filteredPosts, submitted };
+		return { createPost, toggle, editMode, posts, letters, triggerEdition, cancelEdition, submitted };
 	}
 };
 </script>
 
 <style lang="scss" scoped>
 .home {
-	width: 65%;
+	width: 75%;
 	margin: 0 auto;
 	z-index: -1000;
 	padding: 3%;
@@ -140,7 +134,6 @@ h3 {
 	justify-content: space-between;
 	align-items: center;
 	font-size: 16px;
-	width: 50%;
 	margin: 80px auto 60px;
 	// border: 1px blue solid;
 
@@ -179,18 +172,9 @@ div.submissionSuccess {
 
 .wallContainer {
 	width: 90%;
-	margin: 40px auto;
+	margin: 10px auto 40px;
 	padding: 2% 0;
-	border: 1px solid black;
-	
-	.post {
-		height: 150px;
-		width: 100%;
-		margin: 20px auto;
-		// padding: 8px;
-		background-color: white;
-		box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
-	}
+	// border: 1px solid black;
 }
 
 </style>

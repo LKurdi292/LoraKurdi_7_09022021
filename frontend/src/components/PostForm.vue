@@ -20,7 +20,7 @@
 import { ref, computed } from 'vue';
 export default {
 	name: "ModalPostForm",
-	emits: ["cancel"],
+	emits: ["cancel", "publishPost"],
 	setup(props, context) {
 		const title = ref("");
 		const content = ref("");
@@ -52,6 +52,9 @@ export default {
 
 		// Annuler l'édition
 		function cancel() {
+			title.value = "";
+			content.value = "";
+			image.value = "";
 			context.emit("cancel");
 		}
 
@@ -101,7 +104,14 @@ export default {
 			outline: none;
 			padding: 1%;
 		}
-		border: 1px red solid;
+		// border: 1px red solid;
+
+		.buttonContainer {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+
 	}
 
 	.button {

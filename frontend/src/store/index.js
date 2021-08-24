@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import {computed, isProxy} from 'vue';
 import userService from '@/services/users.js';
+import postService from '@/services/posts.js'
 
 
 let state = {
@@ -99,13 +100,35 @@ const actions = {
 
 	// Delete Account
 	async fetchDeleteAccount (context, id) {
-		console.log(id);
 		const response = await userService.deleteAccount(id, state.token);
 
 		context.commit('CLEAR_STORE');
 
 		return response.data.message;
+	},
+
+
+	// Get All Posts
+	async fetchAllPosts () {
+		const response = await postService.getAllPosts(state.token);
+		console.log("data in fetch", response.data);
+		
+		// fetch comments of the posts?
+
+		// fetch user id of the posts?
+		let posts = state.posts;
+		posts = response.data;
+		state.posts = posts;
+		console.log('data in store', state.posts);
+		return state.posts;
 	}
+
+
+
+
+
+
+
 
 };
 
