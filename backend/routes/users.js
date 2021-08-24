@@ -12,7 +12,7 @@ router.post('/auth/signup', userCtrl.signup);
 router.post('/auth/login', userCtrl.login);
 
 // Voir son compte
-router.get('/users/myaccount/:id', auth, userCtrl.getMyAccount);
+//router.get('/users/myaccount/:id', auth, userCtrl.getMyAccount);
 
 // Modifier son compte
 router.put('/users/myaccount/:id', auth, userCtrl.updateMyAccount);

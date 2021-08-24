@@ -26,9 +26,7 @@ export default {
 		let userId = computed(()=> store.state.user.id);
 
 		function logOut() {
-			// console.log("je sors");
-			localStorage.clear();
-			store.commit('CLEAR_STATE');
+			store.commit('CLEAR_STORE');
 		}
 
 		return { userId, logOut };
@@ -66,9 +64,9 @@ header {
 }
 
 nav {
-	width: 200px;
+	// width: 200px;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	text-align: center;
 	// color: black;
@@ -79,6 +77,7 @@ nav {
 		text-decoration: none;
 		padding: 1%;
 		position: relative;
+		width: 100px;
 		// border: 1px solid red;
 
 

@@ -5,12 +5,18 @@ const User = db.User;
 const op = db.Sequelize.op;
 
 
-// Récupérer tous les posts
+// Récupérer tous les posts ainsi que le nom, le prénom et l'image de l'auteur
 exports.getAllPosts = (req, res, next) => {
 	Post.findAll({ 
-		attributes: { exclude: ['updatedAt']}
+		attributes: { 
+			exclude: ['updatedAt']
+		},
+		include: [{
+			model: User,
+			attributes: ['firstName', 'lastName', 'imageURL']
+		}]
 	})
-	.then(data => res.status(200).send(data))
+	.then( data => {res.status(200).send(data)})
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
 };
 
@@ -28,19 +34,20 @@ exports.getLastPosts = (req, res, next) => {
 
 // Créer un post
 exports.createPost = (req, res, next) => {
-	
+	console.log("req from post controller: ", req.body);
+
 	// Valid request
 	if (!req.body.title) {
+		console.log('pourquoi je rentre là');
 		res.status(400).send({
-		  message: "Le post doit avoir un titre!"
+		  message: "Post must have a title!"
 		});
 		return
 	}
 
 	if (req.body.imageURL) {
 		const post = {
-			// userId depuis middleware token?
-			userId : req.body.userId,
+			userId : req.body.id,
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),
@@ -53,8 +60,7 @@ exports.createPost = (req, res, next) => {
 		.catch( error => res.status(500).send({ error, message: 'Impossible de créer un post'} ));
 	} else {
 		const post = {
-			// userId depuis middleware token?
-			userId : req.body.userId,
+			userId : req.body.id,
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),

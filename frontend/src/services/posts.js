@@ -21,37 +21,21 @@ function getAllPosts(token) {
 }
 
 
-
-
-
-
-
-// Create a post
-function create(data, userId) {
-	const url="http://localhost:3000/api/posts";
-
-	data = { ...data, userId };
-	
-	fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-type": "application/json",
-			"Authorization": "BEARER" + localStorage.getItem.token
-		},
-		body: JSON.stringify(data)
-	})
-	.then(function(res) {
-		if (res.ok) {
-			return res.json();
-		}
-	})
-	//.then(function() {
-	
-	//})
-	.catch(function(err) {
-		console.log(err);
-	})
+// Créer un post
+function createPost(data, token) {
+	return apiClient.post('/posts', data, 
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
 }
+
+
+
+
+
+
+
 
 
 //Update a post 
@@ -138,5 +122,5 @@ function like(userId, like, postId) {
 
 
 export default {
-	getAllPosts, create, update, deletePost, like
+	getAllPosts, createPost, update, deletePost, like
 }

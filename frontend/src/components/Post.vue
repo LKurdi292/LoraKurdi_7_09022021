@@ -46,7 +46,7 @@ export default {
 		'authorId': Number,
 		'authorFname': String,
 		'authorLname': String,
-		'publicationDate': Date,
+		'publicationDate': String,
 		'postTitle': String,
 		'postContent': String,
 		'nbLikes': Number,

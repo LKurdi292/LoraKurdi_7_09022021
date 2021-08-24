@@ -2,7 +2,7 @@
 	<!-- eslint-disable  -->
 	<nav-bar></nav-bar>
 	<div class="home">
-		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-if="editMode"/>
+		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"/>
 	
 		<h1>
 			<img src="../assets/dev_images/hello.svg" />
@@ -28,11 +28,9 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.userId" :authorLname="post.userId" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId"></Post>
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId"></Post>
 			</div>
-		</div> 
-
-
+		</div>
 	</div>
 </template>
 
@@ -40,7 +38,7 @@
 import ModalPostForm from "@/components/PostForm.vue";
 import NavBar from '../components/NavBar.vue';
 import Post from '../components/Post.vue';
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import {useStore} from 'vuex';
 
 export default {
@@ -49,28 +47,25 @@ export default {
 	setup() {
 		// Données et variables
 		const store = useStore();
+		const posts = computed(() => store.state.posts);
 
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const letters = ref("");
-	
 		let postToEdit = ref(null);
-		const posts = ref([]);
 		
 		
 		// Récupérer les posts
 		async function retrievePosts() {
-			const result = await store.dispatch('fetchAllPosts');
-			console.log('home after fetch result', result);
-			posts.value = result;
-			console.log('home posts value', posts.value);
-			return posts;
+			const response = await store.dispatch('fetchAllPosts');
+			console.log(response);
+			return response;
 		}
 
-		retrievePosts();
-
-
-
+		onMounted ( () => {
+			console.log('mounted !');
+			return retrievePosts();
+		})
 
 		//Suppression d'un post
 		//function deletePost(id) {
@@ -82,6 +77,17 @@ export default {
 
 		function triggerEdition() {
 			editMode.value = true;
+		}
+		
+		// Créer un post
+		async function createPost(postData) {
+			console.log("home vue postData: ", postData);
+			const result = await store.dispatch('fetchCreatePost', postData);
+
+			console.log("home data new post: ", result);
+
+			submitted.value = true;
+			editMode.value = false;
 		}
 
 		// Fonction qui récupère la tâche à éditer
@@ -95,11 +101,7 @@ export default {
 		function cancelEdition() {
 			editMode.value = false;
 		}
-		
-		function createPost(data) {
-			console.log(data);
-			submitted.value = true;
-		}
+
 
 		return { createPost, toggle, editMode, posts, letters, triggerEdition, cancelEdition, submitted };
 	}
@@ -140,7 +142,6 @@ h3 {
 	.filterBox {
 		width: 300px;
 		height: 40px;
-		// margin-right: 50px;
 		outline: none;
 		border: none;
 		border-radius: 3px;

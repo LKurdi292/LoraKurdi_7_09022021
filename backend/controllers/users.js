@@ -86,16 +86,20 @@ exports.login = (req, res, next) => {
 
 // Les middlewares pour tous les users
 
-// Voir son profil
-exports.getMyAccount = (req, res, next) => {
-	const connectedId = req.params.id;
-	
-	User.findByPk(connectedId)
-	.then(data => {
-		res.status(200).send(data);
-	})
-	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations du compte' }));
-};
+// Renvoyer le nom et le prénom d'un utilisateur
+// exports.getUserNames = (req, res, next) => {
+// 	// const connectedId = req.params.id;
+// 	id = req.body.userId
+// 	User.findByPk(id)
+// 	.then(user => {
+// 		res.status(200).json({
+// 			firstName: user.firstName,
+// 			lastName: user.lastName,
+// 			imageURL : user.imageURL
+// 		});
+// 	})
+// 	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations de l\'utilisateur' }));
+// };
 
 
 

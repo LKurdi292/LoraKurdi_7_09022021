@@ -75,14 +75,10 @@ const actions = {
 		state.user = user;
 		state.subscribed = subscriptionDate;
 
-		console.log(state.user);
 		context.commit('LOG_USER');
 
 		return state.userLogged;
 	},
-
-	//GetAccountInfo
-	// Pas besoin de cette route, puisque tout est sauvegardé dans le store
 
 	// Update account
 	async fetchUpdateAccount (context, params) {
@@ -97,7 +93,6 @@ const actions = {
 		return response.data.message;
 	},
 
-
 	// Delete Account
 	async fetchDeleteAccount (context, id) {
 		const response = await userService.deleteAccount(id, state.token);
@@ -107,22 +102,23 @@ const actions = {
 		return response.data.message;
 	},
 
-
 	// Get All Posts
 	async fetchAllPosts () {
 		const response = await postService.getAllPosts(state.token);
-		console.log("data in fetch", response.data);
-		
-		// fetch comments of the posts?
 
-		// fetch user id of the posts?
+		// fetch comments of the posts?
 		let posts = state.posts;
 		posts = response.data;
 		state.posts = posts;
-		console.log('data in store', state.posts);
-		return state.posts;
-	}
 
+		return state.posts;
+	},
+
+	// Create a post
+	async fetchCreatePost (postData) {
+		const response = await postService.createPost(postData,state.token);
+		console.log("fetch in store create a post: ", response.data);
+	}
 
 
 
