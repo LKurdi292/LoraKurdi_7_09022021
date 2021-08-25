@@ -20,10 +20,18 @@ function getAllPosts(token) {
 	);
 }
 
-
 // Créer un post
 function createPost(data, token) {
 	return apiClient.post('/posts', data, 
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
+}
+
+// Supprimer un post
+function deletePost(id, token) {
+	return apiClient.delete('/posts/' + id,
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -38,57 +46,7 @@ function createPost(data, token) {
 
 
 
-//Update a post 
-		// ajout de l'id dans l'url pour être récupéré par req.params.id dans le back
-function update(data, postId) {
-	const url="http://localhost:3000/api/posts";
 
-	fetch(url + postId, {
-		method: "PUT",
-		headers: {
-			"Content-type": "application/json", 
-			"Authorization": "BEARER" + localStorage.getItem.token
-		},
-		body: JSON.stringify(data)
-	})
-	.then(function(res) {
-		if (res.ok) {
-			console.log(res.status);
-			return res.json();
-		}
-	})
-	.then(function(res) {
-		return res.message;
-	})
-	.catch(function(err) {
-		console.log(err);
-	})
-}
-
-// Delete a post
-function deletePost(postId) {
-	const url="http://localhost:3000/api/posts";
-	
-	fetch(url + postId, {
-		method: "DELETE",
-		headers: {
-			"Content-type": "application/json",
-			"Authorization": "BEARER" + localStorage.getItem.token
-		}
-	})
-	.then(function(res) {
-		if (res.ok) {
-			console.log(res.status);
-			return res.json();
-		}
-	})
-	.then(function(res) {
-		return res.message;
-	})
-	.catch(function(err) {
-		console.log(err);
-	})
-}
 
 //Like or Dislike a Post
 function like(userId, like, postId) {
@@ -122,5 +80,5 @@ function like(userId, like, postId) {
 
 
 export default {
-	getAllPosts, createPost, update, deletePost, like
+	getAllPosts, createPost, deletePost, like
 }

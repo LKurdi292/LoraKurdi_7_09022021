@@ -25,10 +25,14 @@
 			<h4>You've submitted successfully!</h4>
 		</div>
 
+		<div v-show="postDeleted" class="deletePostSuccess">
+			<h4>Your post have been deleted</h4>
+		</div>
+
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId"></Post>
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" @deletePost="deletePost"></Post>
 			</div>
 		</div>
 	</div>
@@ -38,7 +42,7 @@
 import ModalPostForm from "@/components/PostForm.vue";
 import NavBar from '../components/NavBar.vue';
 import Post from '../components/Post.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import {useStore} from 'vuex';
 
 export default {
@@ -51,43 +55,41 @@ export default {
 
 		const editMode = ref(false);
 		const submitted = ref(false);
+		const postDeleted = ref(false);
 		const letters = ref("");
 		let postToEdit = ref(null);
 		
 		
-		// Récupérer les posts
+		// Récupérer et afficher les posts
 		async function retrievePosts() {
-			const response = await store.dispatch('fetchAllPosts');
-			console.log(response);
-			return response;
+			await store.dispatch('fetchAllPosts');
 		}
+		retrievePosts();
 
-		onMounted ( () => {
-			console.log('mounted !');
-			return retrievePosts();
-		})
-
-		//Suppression d'un post
-		//function deletePost(id) {
-		//	postService.deletePost(id);
-		//	// rafraichir le contenu du tableau pour maj sans rechargement de la page
-		//	posts.value = postService.getAll();
-		//	filter();
-		//}
-
+		// Afficher le modal
 		function triggerEdition() {
 			editMode.value = true;
 		}
 		
 		// Créer un post
 		async function createPost(postData) {
-			console.log("home vue postData: ", postData);
-			const result = await store.dispatch('fetchCreatePost', postData);
-
-			console.log("home data new post: ", result);
-
-			submitted.value = true;
+			await store.dispatch('fetchCreatePost', postData);
+			// fermer le modal
 			editMode.value = false;
+			// afficher la div verte pendant 2.5s
+			submitted.value = true;
+			setTimeout(()=> {
+				submitted.value = false;
+			}, 2500);
+		}
+
+		//Suppression d'un post
+		async function deletePost(id) {
+			await store.dispatch('fetchDeletePost', id);
+			postDeleted.value = true;
+			setTimeout(()=> {
+				postDeleted.value = false;
+			}, 2500);
 		}
 
 		// Fonction qui récupère la tâche à éditer
@@ -103,7 +105,7 @@ export default {
 		}
 
 
-		return { createPost, toggle, editMode, posts, letters, triggerEdition, cancelEdition, submitted };
+		return { createPost, toggle, editMode, posts, letters, triggerEdition, cancelEdition, submitted, deletePost, postDeleted };
 	}
 };
 </script>
@@ -164,11 +166,17 @@ h3 {
 	}
 }
 
-div.submissionSuccess {
-	width: 60%;
+div.submissionSuccess, div.deletePostSuccess {
 	height: 40px;
 	background-color: #42b983;
 	border: 1px solid #d6e9c6;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+		h4 {
+			margin: 0;
+		}
 }
 
 .wallContainer {
