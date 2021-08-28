@@ -51,6 +51,7 @@ export default {
 		// Envoyer un post
 		function publish() {
 			fillInPostData();
+			console.log('post form postData: ', postData);
 			// Envoyer au parent: Home.vue
 			context.emit('publishPost', postData);
 		}

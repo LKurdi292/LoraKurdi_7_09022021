@@ -11,9 +11,6 @@ router.post('/auth/signup', userCtrl.signup);
 // Se connecter
 router.post('/auth/login', userCtrl.login);
 
-// Voir son compte
-//router.get('/users/myaccount/:id', auth, userCtrl.getMyAccount);
-
 // Modifier son compte
 router.put('/users/myaccount/:id', auth, userCtrl.updateMyAccount);
 
@@ -27,7 +24,7 @@ router.delete('/users/myaccount/:id', auth, userCtrl.deleteMyAccount);
 router.get('/users/allusers', auth, userCtrl.getAllUsers);
 
 // Voir les informations d'un utilisateur
-router.get('/users/all-users/:id', auth, userCtrl.getUserInfo);
+//router.get('/users/all-users/:id', auth, userCtrl.getUserInfo);
 
 // Supprimer le compte d'un utilisateur
 router.delete('/users/all-users/:id', auth, userCtrl.deleteUserAccount);

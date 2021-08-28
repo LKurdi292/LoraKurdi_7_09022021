@@ -7,28 +7,28 @@
 
 			<nav>
 				<div class="linkTo">
-					<router-link to="/home">
+					<router-link to="/home" title="Go to home page">
 						<fas class="icon" icon="home"></fas>
 						Home
 					</router-link>
 				</div>
 
 				<div class="linkTo">
-					<router-link :to="{ name: 'Account', params: { id: userId } }" >
+					<router-link :to="{ name: 'Account', params: { id: $store.state.user.id } }" title="Go to your account page">
 						<fas class="icon" icon="user"></fas>
 						My Account
 					</router-link>
 				</div>
 
 				<div class="linkTo" v-show="isAdmin">
-					<router-link to="/allusers" @click="getUsers">
+					<router-link to="/allusers" @click="getUsers" title="Go to Users' management page">
 						<!-- <fas class="icon" icon="sign-out-alt"></fas> -->
 						Users Management
 					</router-link>
 				</div>
 
 				<div class="linkTo">
-					<router-link to="/login" @click="logOut">
+					<router-link to="/login" @click="logOut" title="Log out">
 						<fas class="icon" icon="sign-out-alt"></fas>
 						Log out
 					</router-link>
@@ -47,12 +47,12 @@ import { computed } from 'vue';
 
 export default {
 	props: {
-		'isAdmin': Boolean
+		"isAdmin": Boolean
 	},
 	name: "navBar",
 	setup() {
 		const store = useStore();
-		let userId = computed(()=> store.state.user.id);
+		let userId = computed(() => store.state.user.id);
 		// let admin = ref(false);
 
 		function logOut() {

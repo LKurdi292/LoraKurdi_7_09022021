@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
 			allowNull: false
 		},
 		publicationText: {
-		  	type: Sequelize.TEXT,
+			type: Sequelize.TEXT,
 		},
 		likes: {
 			type: Sequelize.INTEGER,

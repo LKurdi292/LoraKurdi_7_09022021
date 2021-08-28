@@ -1,6 +1,6 @@
 <template>
 	<!-- eslint-disable -->
-	<navbar></navbar>
+	<navbar :isAdmin="$store.state.user.isAdmin"></navbar>
 	<div class="account">
 
 		<h1>Your Profile</h1>
@@ -14,42 +14,45 @@
 
 		<p id="subscribed">Subscribed on {{ formattedDate }} </p>
 
+
+		<p>Type of account: <strong>{{ account }}</strong></p>
+
 		<div class="confirmProfileChangesContainer" v-show="updateDone">
-			<p>Your profile have been successfully updated</p>
+			<p>Your profile has been successfully updated</p>
 		</div>
 
 		<form>
 			<div class="labelInputContainer">
 				<label for="firstName">First Name</label>
-				<input id='firstName' type="text" ref="firstField" :value="currentUser.firstName" @change="updateFirstName">
+				<input id='firstName' type="text" ref="firstField" :value="currentUser.firstName" @change="updateFirstName" alt="Your first name" title="Your first name">
 			</div>
 			
 			<div class="labelInputContainer">
 				<label for="lastName">Last Name</label>
-				<input id='lastName' type="text" :value="currentUser.lastName" @change="updateLastName">
+				<input id='lastName' type="text" :value="currentUser.lastName" @change="updateLastName" alt="Your last name" title="Your last name">
 			</div>
 
 			<div class="labelInputContainer">
 				<label for="email">Email</label>
-				<input id='email' type="email" :value="currentUser.email" @change="updateEmail">
+				<input id='email' type="email" :value="currentUser.email" @change="updateEmail" alt="Your email" title="Your email">
 			</div>
 
 			<div class="labelInputContainer">
 				<label for="password">Actual Password</label>
-				<input id='password' type="password" :disabled="!changing" :value="$store.state.user.password" @keyup.enter="checkOldPassword">
+				<input id='password' type="password" :disabled="!changing" :value="$store.state.user.password" @keyup.enter="checkOldPassword" alt="Your password" title="Your password">
 				
 				<p v-show="checkingPassword" class="orange">Type your actual password and press enter</p>
 				<p class="red" v-show="wrongPassword">Wrong password, try again</p>
 			</div>
 			
 			<div class="chngPassButtonsContainer">
-				<button type="button" @click="changePassword" v-if="!changing">Change Password</button>
-				<button type="button" @click="cancelChanging" v-else >Cancel</button>
+				<button type="button" @click="changePassword" v-if="!changing" title="Change Password">Change Password</button>
+				<button type="button" @click="cancelChanging" v-else title="Cancel changing password">Cancel</button>
 			</div>
 
 			<div class="labelInputContainer" v-show="displayNewDiv">
 				<label for="newPassword" class="bold orange">New Password</label>
-				<input id='newPassword' type="password" min="8" max="20" @change="testingNewPassword" v-model="newPassword">
+				<input id='newPassword' type="password" min="8" max="20" @change="testingNewPassword" v-model="newPassword" alt="Enter new password" title="Enter new password">
 			
 				<p class="orange" v-show="weakPassword">Your password must be 8 characters long and must contain at least 1 number, 1 capital letter and 1 special character</p>
 			</div>
@@ -57,7 +60,7 @@
 
 			<div class="labelInputContainer" v-show="confirm">
 				<label for="confirm-password" class="bold orange">Confirm new password</label>
-				<input id='confirm-password' type="password" maxlength="20" minlength="8" @change="isIdentical">
+				<input id='confirm-password' type="password" maxlength="20" minlength="8" @change="isIdentical" alt="Confirme new password" title="Confirm new password">
 				
 				<p v-show="!identical" class="red">Doesn't match first entry</p>
 			</div>
@@ -66,13 +69,13 @@
 
 			<div class="labelInputContainer">
 				<label for="bio">Description</label>
-				<textarea id='bio' type="text-area" placeholder="Tell us more about yourself" rows="25" cols="25" :value="currentUser.bio" @change="updateBio"></textarea>
+				<textarea id='bio' type="text-area" placeholder="Tell us more about yourself" rows="25" cols="25" :value="currentUser.bio" @change="updateBio" alt="Enter a description" title="Enter a description"></textarea>
 			</div>
 
 			<div class="EndFormButtonsContainer">
-				<button type="submit" @click.prevent="updateProfile">Submit changes
+				<button type="submit" @click.prevent="updateProfile" alt="Submit changes" title="Submit changes">Submit changes
 				</button>
-				<button id="delete" @click.prevent="showAlert">Delete account</button>
+				<button id="delete" @click.prevent="showAlert" alt="Delete account" title="Delete account">Delete account</button>
 			</div>
 		</form>
 
@@ -98,9 +101,19 @@ export default {
 		const router = useRouter();
 		let userId = computed(() => store.state.user.id);
 		const subscribed = computed(()=> store.state.subscribed);
+		let isAdmin = computed( () => store.state.user.isAdmin);
+		let account = ref("");
 		const formattedDate = moment(subscribed).format('DD/MM/YYYY');
 		let currentUser = computed(() => store.state.user);
 		let currentPassword = computed(() => currentUser.value.password);
+
+		//Display account type
+		if (isAdmin.value) {
+			account.value = 'Admin';
+		} else {
+			account.value = 'Default';
+		}
+
 
 		// Alert for deleting account
 		const Swal = useSwal();
@@ -295,7 +308,7 @@ export default {
 		}
 
 
-		return { userId, currentUser, formattedDate, currentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert };
+		return { userId, currentUser, formattedDate, currentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert, account };
 	}
 }
 </script>
@@ -356,14 +369,14 @@ export default {
 
 		#subscribed {
 			text-align: center;
-			margin-bottom: 60px;
+			margin-bottom: 50px;
 		}
 
 	}
 
 	form {
 		width: 100%;
-		margin-bottom: 100px;
+		margin: 50px 0 100px 0;
 		
 		.labelInputContainer:not(:last-child) {
 			width: 500px;

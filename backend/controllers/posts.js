@@ -1,5 +1,5 @@
 const db = require('../models/index');
-const { post } = require('../routes/users');
+// const { post } = require('../routes/users');
 const Post = db.Post;
 const User = db.User;
 const Comment = db.Comment;
@@ -16,10 +16,12 @@ exports.getAllPosts = (req, res, next) => {
 			exclude: ['updatedAt']
 		},
 		include: [
+				// Impossible d'atteindre la table de jointure LikePost
+			// { all: true, nested: true 
+			// }
 		{
 			model: User,
 			attributes: ['firstName', 'lastName', 'imageURL'],
-			// through: { attributes: ['postId', 'userId']}
 		},
 		{
 			model: Comment,
@@ -31,34 +33,33 @@ exports.getAllPosts = (req, res, next) => {
 		}
 		]
 	})
-	.then( data => {
-		res.status(200).send(data);
+	.then( posts => {
+		LikePost.findAll()
+		// Ajout d'un tableau à chaque post contenant l'id des users qui ont liké ce post
+		.then((likes) => {
+			likes.forEach(like => {
+				let post = posts.findIndex(search => search.id == like.postId);
+				if (post != null) {
+					if(posts[post].dataValues.usersLiked === undefined){
+						posts[post].dataValues.usersLiked = [like.userId];
+					} else {
+						posts[post].dataValues.usersLiked.push(like.userId);
+					}
+				}
+			})
+			res.status(200).send({ posts});
+		})
+		.catch(error => { 
+			res.status(500).send({ error, message: "Impossible d\'ajouter la table des likes aux posts"});
+		})
 	})
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
 };
 
-//async function getAllComments() {
-//	let allComments = await getComments();
-//	return allComments;
-//}
-//
-//const getComments = async() => {
-//	let comments = await Comment.findAll({
-//		order: [['createdAt', 'DESC']],
-//		attributes: { 
-//			exclude: ['updatedAt']
-//		}, 
-//		include: [{
-//			model: User,
-//			attributes: ['firstName', 'lastName']
-//		}]
-//	})
-//	return comments;
-//};
-
 
 // Renvoyer un post après une création, ajout d'un like ou d'un commentaire
 const getPost = async (id) => {
+	console.log('***************** getPost id: ', id);
 	let post = await Post.findOne({
 		where: {id: id},
 		attributes: { 
@@ -80,10 +81,6 @@ const getPost = async (id) => {
 	})
 	return post;
 };
-
-// exports.getByDate = (req, res, next) => {
-// 	const date = req.params.date;
-// }
 
 // Créer un post
 exports.createPost = (req, res, next) => {
@@ -130,50 +127,34 @@ exports.deletePost = (req, res, next) => {
 		where: { id: id }
 	})
 	.then(() => {
-		Post.findAll({ 
+		Post.findAll({
+			order: [['createdAt', 'DESC']],
 			attributes: { 
 				exclude: ['updatedAt']
 			},
-			include: [{
+			include: [
+			{
 				model: User,
 				attributes: ['firstName', 'lastName', 'imageURL']
-			}]
+			},
+			{
+				model: Comment,
+				attributes: ['content', 'likes', 'userId', 'id'],
+				include: [{
+					model: User,
+					attributes: ['firstName', 'lastName']
+				}]
+			}
+		]
 		})
 		.then( posts => {res.status(200).send({ posts, message: "Le post a été supprimé avec succès!" })
 		})
 		.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
-
-		// res.send({ message: "Le post a été supprimé avec succès!" });
 	})
 	.catch((err) => {
 		res.status(500).send({ err, message: "Un problème est survenu lors de la suppression du post" })
 	});
 };
-
-
-// Rechercher dans la table de jointure si le couple user/post existe
-const searchLikePost = async (postId, id) => {
-	console.log("******* controller postId in searchLikePost ", postId);
-
-	let userId = await Post.findByPk(postId, {
-		exclude: [{
-			model: Post,
-		}],
-		include: [{
-			// through: { attributes: ['postId', 'userId']}
-			model: User,
-			include: [LikePost]
-		}]
-	})
-	
-	console.log("******* controller userId in ", userId);
-	// if (present === null) {
-	// 	present = 0;
-	// 	return present;
-	// } else {
-	return userId;
-}
-
 
 
 // Liker ou retirer son like d'un post
@@ -182,94 +163,156 @@ exports.likeApost = (req, res, next) => {
 	const userId = req.body.userId;
 	const likeValue = req.body.like;
 
-	// D'abord vérifier que l'utilisateur n'a pas déjà liké le post par le passé
-	let hasUserLiked = 0;
-	searchLikePost(postId, userId)
-	.then((id) => {
-		hasUserLiked = id;
-	})
-	.catch(error => {
-		console.log("***************error after searchLikePost: ", error);
-	})
-
-	console.log("********* controller hasUserLiked", hasUserLiked);
-
-	if (hasUserLiked === userId) {
-		res.status(400).send({
-			message: "You have already liked this Post!"
-		});
-		return
-	}
+	// LikePost.findOne({
+	// 	where: {postId: postId, userId: userId}
+	// })
+	// .then(() => {
+	// 	if (likeValue === 1) {
+	// 		res.status(500).send({message: "User already liked this post but likeValue = 1, NOT ok"});
+	// 		return;
+	// 	}
+	// })
+	// .catch((error) => {
+	// 	res.status(500).send({error, message: "userId and PostId not found in LikePost table. User has not liked this post."});
+	// 	return
+	// })
 
 	Post.findByPk( postId )
 	.then( post => {
 		switch(likeValue) {
+
 			case 1: // le user like le post
-				Post.update(
-					{ likes: post.likes + 1 },
-					{ where: {id : postId} },
-				)
-				// ajout de [userId, postId] dans la table de jointure Like_Post
-				.then(() => {
-					post.addUser(userId);
-					User.findByPk(userId).then( user => {
-						user.addPost(postId);
-					})
-					.then ( () => {
-						Post.findAll({ 
+
+				// Ajouter le couple postId userId de la table de jointure
+				LikePost.create({postId, userId})
+				.then( () => {
+
+					// Mettre à jour le post
+					post.update(
+						{ likes: post.likes + 1 },
+						{ where: {id : postId} },
+					)
+					.then (() => {
+						Post.findAll({
+							order: [['createdAt', 'DESC']],
 							attributes: { 
 								exclude: ['updatedAt']
 							},
-							include: [{
+							include: [
+							{
 								model: User,
 								attributes: ['firstName', 'lastName', 'imageURL']
-							}]
+							},
+							{
+								model: Comment,
+								attributes: ['content', 'likes', 'userId', 'id'],
+								include: [{
+									model: User,
+									attributes: ['firstName', 'lastName']
+								}]
+							}
+							]
 						})
 						.then( posts => { 
-							res.status(200).send(posts)
+							// Ajout de la table des likes au renvoi des posts
+							LikePost.findAll()
+							.then((likes) => {
+								likes.forEach(like => {
+									let post = posts.findIndex(search => search.id == like.postId);
+									if (post != null) {
+										if(posts[post].dataValues.usersLiked ===undefined){
+											posts[post].dataValues.usersLiked = [like.userId];
+										} else {
+											posts[post].dataValues.usersLiked.push(like.userId);
+										}
+									}
+								})
+								res.status(201).send(posts);
+							})
+							.catch(error => { 
+								res.status(500).send({ error, message: "Impossibled'ajouter la table des likes aux posts"});
+							})
 						})
-						.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+						.catch( error => res.status(500).send({ error,  message:"Impossible d'afficher les posts, like case 1" }));
 					})
 				})
+				.catch(error => {
+					res.status(500).send({error, message: "Impossible d'ajouter le couple userId, postId à la table de jointure LikePost"});
+				})
+
 				break;
-			
+
 			case 0: // le user reclique pour retirer son like
-				Post.update(
-					{ likes: post.likes - 1},
-					{ where: { id : postId }}
-				)
-				// retrait de [userId, postId] de la table de jointure Like_Post
+
+				// Supprimer le couple postId userId de la table de jointure
+				LikePost.destroy({
+					where: { postId: postId, userId: userId}
+				})
 				.then(() => {
-					post.removeUser(userId);
-					User.findByPk(userId).then(user => {
-						user.removePost(postId);
-					})
-					.then ( () => {
-						Post.findAll({ 
+
+					// Mise à jour du post
+					post.update(
+						{ likes: post.likes - 1},
+						{ where: { id : postId }}
+					)
+					.then (() => {
+						Post.findAll({
+							order: [['createdAt', 'DESC']],
 							attributes: { 
 								exclude: ['updatedAt']
 							},
-							include: [{
+							include: [
+							{
 								model: User,
 								attributes: ['firstName', 'lastName', 'imageURL']
-							}]
+							},
+							{
+								model: Comment,
+								attributes: ['content', 'likes', 'userId', 'id'],
+								include: [{
+									model: User,
+									attributes: ['firstName', 'lastName']
+								}]
+							}
+							]
 						})
-						.then( posts => { 
-							res.status(200).send(posts)
+						.then( posts => {
+							// Ajout de la table des likes au renvoi des posts
+							LikePost.findAll()
+							.then((likes) => {
+								likes.forEach(like => {
+									let post = posts.findIndex(search => search.id == like.postId);
+									if (post != null) {
+										if(posts[post].dataValues.usersLiked === undefined){
+											posts[post].dataValues.usersLiked = [like.userId];
+										} else {
+											posts[post].dataValues.usersLiked.push(like.userId);
+										}
+									}
+								})
+								res.status(201).send(posts);
+							})
+							.catch(error => { 
+								res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
+							})
 						})
-						.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+						.catch( error => res.status(500).send({ error,  message:"Impossible de récupérer les posts, like case 0" }));
 					})
+				})
+				.catch(error => {
+					res.status(500).send({error, message: "Impossible de supprimer le couple postId, userId de la table de jointure LikePost"});
 				})
 				break;
 		}
 	})
 	.then(() => res.status(201))
-	.catch( error => res.status(500).send({ error, message: 'Impossible d\'aimer ce post'} ));
+	.catch( error => res.status(500).send({ error, message: "Impossible de mettre à jour le post"} ));
 };
 
 async function sendPostToDB(post) {
 	try {
 		let result = await Post.create(post);
+		console.log('************ result of post creation: ', result);
 		let newpost = await getPost(result.dataValues.id);
 		return newpost;
 	} catch (error) {

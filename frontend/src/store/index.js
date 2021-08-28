@@ -13,9 +13,6 @@ let state = {
 	token: '',
 	lastPosts: [],
 	allUsers: [],
-	//post: {},
-	//comments: [],
-	//postsWithComments: []
 };
 
 // methods which change the data that's in the state (synchronous codeonly)
@@ -25,7 +22,6 @@ const mutations = {
 		state.userLogged = true;
 	},
 	SET_USER_INFO(state, data) {
-		console.log('store user data: ', data);
 		state.user = data;
 	},
 	SET_TOKEN(state, token) {
@@ -37,9 +33,16 @@ const mutations = {
 	SET_POSTS(state, posts) {
 		state.posts = posts;
 	},
-	// SET_COMMENTS(state, comments) {
-	// 	state.comments = comments;
-	// },
+	ADD_USERSLIKED_TO_POST(state){
+		const usersLiked = [];
+		state.posts.forEach(post => {
+			if (!post.usersLiked) {
+				const index = state.posts.indexOf(post);
+				post = { ...post, usersLiked};
+				state.posts.splice(index, 1, post);
+			}
+		});
+	},
 	ADD_NEW_POST(state, post) {
 		state.posts = { post, ...state.posts };
 	},
@@ -55,19 +58,6 @@ const mutations = {
 	SET_ALL_USERS(state, allUsers) {
 		state.allUsers = allUsers;
 	},
-	// UPDATE_LAST_POSTS(state, post) {
-	// 	state.lastPosts = { post, ...state.lastPosts };
-	// },
-	// ADD_NEW_COMMENT(state, comment) {
-	// 	state.comments = { comment, ...state.comments };
-	// },
-	// SET_POSTS_WITH_COMMENTS(state) {
-		
-	// 	state.comments.forEach(element => {
-	// 		console.log(element);
-	// 		console.log('ici', element.title);
-	// 	});
-	// },
 	CLEAR_STORE(state) {
 		state.userLogged = false,
 		state.posts = [],
@@ -90,7 +80,6 @@ const actions = {
 		context.commit('SET_TOKEN', response.data.token);
 		context.commit('SET_SUBSCRIPTION_DATE', response.data.subscriptionDate);
 		context.commit('LOG_USER');
-
 		return state.userLogged;
 	},
 
@@ -114,13 +103,17 @@ const actions = {
 	// Get All Posts
 	async fetchAllPosts (context) {
 		const response = await postService.getAllPosts(state.token);
-		context.commit('SET_POSTS', response.data);
+		console.log('fetch allposts: ', response.data.posts);
+
+		context.commit('SET_POSTS', response.data.posts);
+		context.commit('ADD_USERSLIKED_TO_POST');
 	},
 	
 	// Create a post
 	async fetchCreatePost (context, postData) {
 		const response = await postService.createPost(postData, state.token);
 		context.commit('ADD_NEW_POST', response.data);
+		context.commit('ADD_USERSLIKED_TO_POST');
 	}, 
 
 	// Delete a post
@@ -128,6 +121,7 @@ const actions = {
 		const token = context.getters.getToken;
 		const response = await postService.deletePost(id, token);
 		context.commit('DELETE_POST', response.data.posts);
+		context.commit('ADD_USERSLIKED_TO_POST');
 	},
 
 	// Like a post
@@ -135,25 +129,14 @@ const actions = {
 		const token = context.getters.getToken;
 		const response = await postService.likePost(toSend, token);
 		context.commit('LIKE_POST', response.data);
+		context.commit('ADD_USERSLIKED_TO_POST');
 	},
 
 	// Create a comment
 	async fetchCreateComment(context, commentData) {
 		const created = await commentService.createComment(commentData, state.token);
-		// const response = 
-		// console.log('fetch new comment: ' , response.data);
-		// context.commit('ADD_NEW_COMMENT', response.data);
 		return created;
 	},
-
-	// Get Comments
-	// async fetchGetComments(context) {
-	// 	const response = await commentService.getComments(state.token);
-	// 	console.log('fetch all comments: ', response.data);
-	// 	context.commit('SET_COMMENTS', response.data);
-	// 	// context.commit('SET_POSTS_WITH_COMMENTS');
-	// }
-
 
 	// Delete a comment
 

@@ -21,6 +21,7 @@ function getAllPosts(token) {
 
 // Créer un post
 function createPost(data, token) {
+	console.log('post services data new post: ', data);
 	return apiClient.post('/posts', data, 
 		{ headers: {
 			"Authorization": "BEARER " + token

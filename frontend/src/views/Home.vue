@@ -1,6 +1,6 @@
 <template>
 	<!-- eslint-disable  -->
-	<nav-bar :isAdmin="`$store.state.user.isAdmin`"></nav-bar>
+	<nav-bar :isAdmin="$store.state.user.isAdmin"></nav-bar>
 	<div class="home">
 		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"/>
 	
@@ -17,7 +17,7 @@
 			<!-- Recherche par filtre -->
 			<input class="filterBox" type="text" placeholder="Filter posts by title" v-model="letters" @keyup="filter" />
 
-			<button v-on:click="triggerEdition">Write a post</button>
+			<button v-on:click="triggerEdition" title="Write a post">Write a post</button>
 
 		</div>
 
@@ -33,7 +33,8 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :nbComments="post.Comments.length" :comments="post.Comments" @deletePost="deletePost" @likeApost="likePost" @commentApost="commentPost">
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost">
+					<!-- @deletePost="deletePost" -->
 				</Post>
 			</div>
 		</div>
@@ -87,14 +88,23 @@ export default {
 			editMode.value = false;
 		}
 
-		//Suppression d'un post
-		async function deletePost(id) {
-			await store.dispatch('fetchDeletePost', id);
-			postDeleted.value = true;
-			setTimeout(()=> {
-				postDeleted.value = false;
-			}, 2500);
-		}
+		// Avoir l'index d'un post dans l'array posts
+		//function getIndex(id) {
+		//	return posts.value.indexOf(id);
+		//}
+
+
+		//Suppression d'un post - async
+		//function deletePost(id) {
+
+		//	let index = getIndex(id);
+		//	console.log('home index of deleted post: ', index);
+			//await store.dispatch('fetchDeletePost', id);
+			// postDeleted.value = true;
+			// setTimeout(()=> {
+			// 	postDeleted.value = false;
+			// }, 2500);
+		//}
 
 		// Aimer un post
 		async function likePost(data) {
@@ -114,7 +124,7 @@ export default {
 		
 
 
-		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, deletePost, postDeleted, likePost, commentPost };
+		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost };
 	}
 };
 </script>

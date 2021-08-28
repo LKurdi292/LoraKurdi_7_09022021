@@ -85,24 +85,6 @@ exports.login = (req, res, next) => {
 
 // Les middlewares pour tous les users
 
-// Renvoyer le nom et le prénom d'un utilisateur
-// exports.getUserNames = (req, res, next) => {
-// 	// const connectedId = req.params.id;
-// 	id = req.body.userId
-// 	User.findByPk(id)
-// 	.then(user => {
-// 		res.status(200).json({
-// 			firstName: user.firstName,
-// 			lastName: user.lastName,
-// 			imageURL : user.imageURL
-// 		});
-// 	})
-// 	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations de l\'utilisateur' }));
-// };
-
-
-
-
 // Mettre à jour son profil
 exports.updateMyAccount = (req, res, next) => {
 	const connectedId = req.params.id;
@@ -202,19 +184,19 @@ exports.getAllUsers = (req, res, next) => {
 };
 
 
-exports.getUserInfo = (req, res, next) => {
-	// Crypter le mail de la requete
-	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
-	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
-	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
-
-	User.findOne({ where: { email: encrypted }, attributes: ['email', 'bio', 'imageURL', 'firstName', 'lastName', 'isAdmin', 'subscriptionDate']})
-	.then(data => {
-		res.status(200).send(data);
-	})
-	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les informations du compte', email }));
-
-};
+//exports.getUserInfo = (req, res, next) => {
+//	// Crypter le mail de la requete
+//	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
+//	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
+//	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
+//
+//	User.findOne({ where: { email: encrypted }, attributes: ['email', 'bio', 'imageURL', //'firstName', 'lastName', 'isAdmin', 'subscriptionDate']})
+//	.then(data => {
+//		res.status(200).send(data);
+//	})
+//	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les //informations du compte', email }));
+//
+//};
 
 exports.deleteUserAccount = (req, res, next) => {
 	// Crypter le mail de la requete

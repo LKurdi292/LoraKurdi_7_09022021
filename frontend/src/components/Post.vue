@@ -13,7 +13,7 @@
 			</div>
 
 			<div class="rightSideHeader" v-show="authorEQuser">
-				<button class="button" @click="showAlert">Delete</button>
+				<!-- <button class="button" @click="showAlert">Delete</button> -->
 			</div>
 		</div>
 
@@ -25,20 +25,20 @@
 		<div class="postNumbers">
 			<p :class="{orange: hasLiked}"> 
 				<fas class="icon" icon="thumbs-up"></fas>
-				{{ nbLikes}}
+				{{ usersLiked.length }}
 			</p>
-			<p>{{ nbComments || NoComment }} comments</p>
+			<p>{{ comments.length }} comments</p>
 		</div>
 
 		<div class=postActionsContainer>
 			<div class="likeContainer">
-				<a @click.prevent="likePost">
+				<a @click.prevent="likePost" title="Like or dislike the post">
 					<fas class="icon-action" icon="thumbs-up"></fas>
 					<p>Like</p>
 				</a>
 			</div>
 			<div class="commentContainer">
-				<a @click.prevent="triggerWritingComment">
+				<a @click.prevent="triggerWritingComment" title="Comment or close input">
 					<fas class="icon-action" icon="comment"></fas>
 					<p>Add a comment</p>
 				</a>
@@ -53,8 +53,7 @@
 			<fas class="iconSendComment" icon="chevron-circle-right" @click.prevent="commentPost" ></fas>
 		</div>
 
-		<!--  -->
-		<div v-show="hasComments" v-for="comment in comments" :key="comment.id">
+		<div v-show="comments.length > 0" v-for="comment in comments" :key="comment.id">
 			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes">
 			</Comment>
 		</div>
@@ -67,7 +66,7 @@ import moment from 'moment';
 import Comment from '../components/Comment.vue';
 import { useStore } from 'vuex';
 import { ref } from 'vue';
-import { useSwal } from "../useSwal";
+// import { useSwal } from "../useSwal";
 
 
 export default {
@@ -82,29 +81,20 @@ export default {
 		'postTitle': String,
 		'postContent': String,
 		'nbLikes': Number,
-		'nbComments': Number,
 		'comments': Array,
+		'usersLiked': Array,
 	},
-	emits: ['deletePost', 'likeApost', 'commentApost'],
+	// 'deletePost',
+	emits: ['likeApost', 'commentApost'],
 	setup(props, context) {
 		// Données et variables
 		const store = useStore();
 		const formattedPublicationDate = moment(props.publicationDate).format('DD/MM/YYYY');
 		let authorEQuser = ref(false);
-		const NoComment = 0;
 		let like = ref(0);
-		let hasLiked = ref(false);
-		let hasComments = ref(false);
+		let hasLiked = ref();
 		let writingComment = ref(false);
 		let commentText = ref("");
-
-
-		// Affichage de 0 si aucun commentaire pour le post
-		if (props.nbComments === null ) {
-			return NoComment;
-		} else {
-			hasComments.value = true;
-		}
 
 		// Affichage du bouton Supprimer un post
 		if (props.authorId === store.state.user.id) {
@@ -112,46 +102,55 @@ export default {
 		}
 
 		// Alert pour la suppression d'un post
-		const Swal = useSwal();
+		// const Swal = useSwal();
 
-		function showAlert() {
-			Swal.fire({
-				title: 'Deleting Post',
-				text: 'Are you sure you want to delete this post?',
-				showCancelButton: true,
-				showConfirmButton: true,
-				confirmButtonText: 'Yes, delete',
-				icon: 'question',
-				focusConfirm: false,
-			}). then((result) => {
-				if (result.isConfirmed) {
-					del();
-				}
-			})
-		}
+		//function showAlert() {
+		//	Swal.fire({
+		//		title: 'Deleting Post',
+		//		text: 'Are you sure you want to delete this post?',
+		//		showCancelButton: true,
+		//		showConfirmButton: true,
+		//		confirmButtonText: 'Yes, delete',
+		//		icon: 'question',
+		//		focusConfirm: false,
+		//	}). then((result) => {
+		//		if (result.isConfirmed) {
+		//			del();
+		//		}
+		//	})
+		//}
 
 		// Suppression d'un post
-		function del() {
-			const id = props.postId
-			context.emit('deletePost', id);
+		//function del() {
+		//	const id = props.postId
+		//	context.emit('deletePost', id);
+		//}
+
+		// Si a déjà aimé le post quand on arrive sur la page
+		if ( props.usersLiked.includes(store.state.user.id)) {
+			hasLiked.value = true;
+		} else {
+			hasLiked.value = false;
 		}
+
 
 		// Aimer un post
 		function likePost () {
 			const postId = props.postId;
 			
-			if (like.value === 0) {
-				like.value = 1;
-				hasLiked.value = true;
-			} else {
+			if (hasLiked.value) {
 				like.value = 0;
 				hasLiked.value = false;
+			} else {
+				like.value = 1;
+				hasLiked.value = true;
 			}
 
 			const data = {
 				postId,
 				like: like.value
 			}
+			console.log('data like: ', data);
 			context.emit('likeApost', data);
 		}
 
@@ -181,7 +180,7 @@ export default {
 		
 
 
-		return { formattedPublicationDate, authorEQuser, NoComment, showAlert, likePost, hasLiked, hasComments, triggerWritingComment, writingComment, commentPost, commentText };
+		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText };
 
 	}
 }
