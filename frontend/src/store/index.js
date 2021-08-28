@@ -12,6 +12,7 @@ let state = {
 	subscribed: Date,
 	token: '',
 	lastPosts: [],
+	allUsers: [],
 	//post: {},
 	//comments: [],
 	//postsWithComments: []
@@ -24,6 +25,7 @@ const mutations = {
 		state.userLogged = true;
 	},
 	SET_USER_INFO(state, data) {
+		console.log('store user data: ', data);
 		state.user = data;
 	},
 	SET_TOKEN(state, token) {
@@ -47,9 +49,15 @@ const mutations = {
 	LIKE_POST(state, posts) {
 		state.posts = posts;
 	},
-	UPDATE_LAST_POSTS(state, post) {
-		state.lastPosts = { post, ...state.lastPosts };
+	LIKE_COMMENT(state, posts) {
+		state.posts = posts;
 	},
+	SET_ALL_USERS(state, allUsers) {
+		state.allUsers = allUsers;
+	},
+	// UPDATE_LAST_POSTS(state, post) {
+	// 	state.lastPosts = { post, ...state.lastPosts };
+	// },
 	// ADD_NEW_COMMENT(state, comment) {
 	// 	state.comments = { comment, ...state.comments };
 	// },
@@ -149,6 +157,14 @@ const actions = {
 
 	// Delete a comment
 
+	//Like a comment
+
+	//Get all users for admin
+	async fetchAllUsers() {
+		console.log('before fetch all users: ', state.user.id, state.token);
+		const response = await userService.getUsers(state.user.id, state.token);
+		console.log('fetch all users: ', response);
+	}
 
 };
 

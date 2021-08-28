@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Account from "../views/Account.vue";
 import SignUp from "../views/SignUp.vue";
 import LogIn from "../views/LogIn.vue";
+import UsersManagement from "../views/UsersManagement.vue";
 
 
 const routes = [
@@ -35,6 +36,12 @@ const routes = [
 		path: "/myaccount/:id",
 		name: "Account",
 		component: Account,
+		meta: { auth: true}
+	},
+	{
+		path: "/allusers",
+		name: UsersManagement,
+		component: UsersManagement,
 		meta: { auth: true}
 	}
 ];

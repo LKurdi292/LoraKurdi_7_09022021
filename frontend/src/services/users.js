@@ -59,41 +59,22 @@ function deleteAccount(id, token) {
 }
 
 
+// Voir la liste des utilisateurs (route admin)
+function getUsers(id, token) {
+	console.log('user services: ', id, token);
+	return apiClient.get('users/allusers', id,
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
+}
 
 
 
+// Supprimer un utlisateur (route admin)
 
 
-
-
-// Voir son compte
-//function getAccountInfo(userId) {
-//	const url ="http://localhost:3000/api/users/myaccount/";
-//
-//	// console.log("getAccountInfo", userId);
-//
-//	fetch(url + userId, {
-//		method: "GET",
-//		headers: {
-//			"Content-type": "application/json", 
-//			"Authorization": "BEARER " + //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.//eyJpZCI6NSwiaWF0IjoxNjI5MjQxODEzLCJleHAiOjE2MjkzMjgyMT//N9.cUqaRtdhU9q9FSrziWgsY5gjOvr6Eaam4xFH2_Q0wcI",
-//		}
-//	})
-//	.then(function(res) {
-//		if (res.ok) {
-//			console.log(res.status);
-//			return res.json();
-//		}
-//	})
-//	.then(function(data) {
-//		console.log("fetch", data);
-//		return data;
-//	})
-//	.catch(function(err) {
-//		console.log(err);
-//	})
-//}
 
 export default {
-	create, logIn, updateAccount, deleteAccount
+	create, logIn, updateAccount, deleteAccount, getUsers
 }

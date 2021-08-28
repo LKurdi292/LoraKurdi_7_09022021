@@ -24,7 +24,7 @@ router.delete('/users/myaccount/:id', auth, userCtrl.deleteMyAccount);
 
 // Les routes 'admin' only
 // Voir la liste des utilisateurs/membres
-router.get('/users/all-users', auth, userCtrl.getAllUsers);
+router.get('/users/allusers', auth, userCtrl.getAllUsers);
 
 // Voir les informations d'un utilisateur
 router.get('/users/all-users/:id', auth, userCtrl.getUserInfo);

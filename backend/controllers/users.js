@@ -46,7 +46,6 @@ exports.login = (req, res, next) => {
 	// le chercher dans la base de donnée
 	User.findOne({ where: { email: encrypted } })
 	.then(user => {
-		console.log("controller user: ", user);
 		// si oui, vérifier le mdp
 		bcrypt.compare(req.body.password, user.password)
 		.then( valid => {
@@ -179,13 +178,27 @@ exports.deleteMyAccount = (req, res, next) => {
 
 //Afficher la liste des users
 exports.getAllUsers = (req, res, next) => {
-	User.findAll({ attributes: ['email', 'isAdmin'] })
-	.then (data => {
-		res.send(data);
+	const connectedId = req.body.id;
+	console.log('************** admin id', connectedId);
+
+	User.findByPk(connectedId)
+	.then((user) => {
+		if (user.isAdmin) {
+			User.findAll({ 
+				order: [['lastName', 'ASC']],
+				attributes: ['firstName', 'lastName', 'subscriptionDate', 'bio','email', 'isAdmin']
+			 })
+			.then (data => {
+				res.status(200).send(data);
+			})
+			.catch(error => {
+				res.status(500).send({ error, message: 'Impossible d\'afficher la liste des utilisateurs' })
+			});
+		}
 	})
 	.catch(error => {
-		res.status(500).send({ error, message: 'Impossible d\'afficher la liste des utilisateurs' })
-	});
+		res.status(401).send({ error, message: 'You don\'t have an administration account' });
+	})
 };
 
 

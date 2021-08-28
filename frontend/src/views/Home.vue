@@ -1,6 +1,6 @@
 <template>
 	<!-- eslint-disable  -->
-	<nav-bar></nav-bar>
+	<nav-bar :isAdmin="`$store.state.user.isAdmin`"></nav-bar>
 	<div class="home">
 		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"/>
 	
@@ -21,6 +21,7 @@
 
 		</div>
 
+		<!-- Affichage dynamique après création ou suppression d'un post -->
 		<div v-if="submitted" class="submissionSuccess">
 			<h4>You've submitted successfully!</h4>
 		</div>
@@ -53,7 +54,6 @@ export default {
 		// Données et variables
 		const store = useStore();
 		const posts = computed(() => store.state.posts);
-		// const homeComments = computed(()=> store.state.comments);
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const postDeleted = ref(false);
