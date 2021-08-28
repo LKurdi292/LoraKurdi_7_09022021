@@ -4,11 +4,31 @@
 			<div class="logoContainer">
 				<img src="../assets/dev_images/icone-rognee-left.png" alt="logo de Groupomania">
 			</div>
+
 			<nav>
-				<router-link to="/home" class="linkTo">Home</router-link>
-				<router-link :to="{ name: 'Account', params: { id: userId } }" class="linkTo">My Account</router-link>
-				<router-link to="/login" class="linkTo" @click="logOut">Log out</router-link>
+				<div class="linkTo">
+					<router-link to="/home">
+						<fas class="icon" icon="home"></fas>
+						Home
+					</router-link>
+				</div>
+
+				<div class="linkTo">
+					<router-link :to="{ name: 'Account', params: { id: userId } }" >
+						<fas class="icon" icon="user"></fas>
+						My Account
+					</router-link>
+				</div>
+
+				<div class="linkTo">
+					<router-link to="/login" @click="logOut">
+						<fas class="icon" icon="sign-out-alt"></fas>
+						Log out
+					</router-link>
+				</div>
+
 			</nav>
+
 		</div>
 	</header>
 </template>
@@ -64,39 +84,39 @@ header {
 }
 
 nav {
-	// width: 200px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	text-align: center;
-	// color: black;
 
 
 	.linkTo {
 		color: black;
-		text-decoration: none;
-		padding: 1%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-left: 15px;
 		position: relative;
-		width: 100px;
 		// border: 1px solid red;
 
+		a {
+			text-decoration: none;
+			color: black;
+			margin-left: 5px;
 
-		&:hover {
-			color: #fc3914;
-			
-			&:after {
-				content: "";
-				background-color: #fc3914;
-				width: 100%;
-				height: 2px;
-				position: absolute;
-				left: 0;
-				bottom: 0;
+			&:hover {
+				color: #fc3914;
 			}
 		}
-	}
-	.router-link-active {
-		color: #fc3914;
+		
+		&:hover {
+			color: #fc3914;
+		}
+
+		.router-link-active {
+			color: #fc3914;
+		}
+
 	}
 }
 </style>

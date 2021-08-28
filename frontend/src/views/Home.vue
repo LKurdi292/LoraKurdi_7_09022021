@@ -32,7 +32,8 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" @deletePost="deletePost"></Post>
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :nbComments="post.Comments.length" :comments="post.Comments" @deletePost="deletePost" @likeApost="likePost" @commentApost="commentPost">
+				</Post>
 			</div>
 		</div>
 	</div>
@@ -52,13 +53,11 @@ export default {
 		// Données et variables
 		const store = useStore();
 		const posts = computed(() => store.state.posts);
-
+		// const homeComments = computed(()=> store.state.comments);
 		const editMode = ref(false);
 		const submitted = ref(false);
 		const postDeleted = ref(false);
 		const letters = ref("");
-		let postToEdit = ref(null);
-		
 		
 		// Récupérer et afficher les posts
 		async function retrievePosts() {
@@ -83,6 +82,11 @@ export default {
 			}, 2500);
 		}
 
+		// Annuler l'édition
+		function cancelEdition() {
+			editMode.value = false;
+		}
+
 		//Suppression d'un post
 		async function deletePost(id) {
 			await store.dispatch('fetchDeletePost', id);
@@ -92,20 +96,25 @@ export default {
 			}, 2500);
 		}
 
-		// Fonction qui récupère la tâche à éditer
-		function toggle(post) {
-			postToEdit.value = post;
-			// Variable booleenne qui permet d'afficher le modal
-			editMode.value = true;
+		// Aimer un post
+		async function likePost(data) {
+			const userId = store.state.user.id;
+			const toSend = { ...data, userId};
+			await store.dispatch('fetchLikePost', toSend);
 		}
 
-		// Annuler l'édition
-		function cancelEdition() {
-			editMode.value = false;
+		// Commenter un post
+		async function commentPost(commentData) {
+			let created = await store.dispatch('fetchCreateComment', commentData);
+			if (created) {
+				await store.dispatch('fetchAllPosts');
+			}
 		}
+	
+		
 
 
-		return { createPost, toggle, editMode, posts, letters, triggerEdition, cancelEdition, submitted, deletePost, postDeleted };
+		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, deletePost, postDeleted, likePost, commentPost };
 	}
 };
 </script>

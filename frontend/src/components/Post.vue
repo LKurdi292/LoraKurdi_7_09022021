@@ -15,7 +15,6 @@
 			<div class="rightSideHeader" v-show="authorEQuser">
 				<button class="button" @click="showAlert">Delete</button>
 			</div>
-
 		</div>
 
 		<div class="postContent">
@@ -23,11 +22,41 @@
 			<p class="postContent_content">{{ postContent }}</p>
 		</div>
 
-		<div class=postActionsContainer>
-			<p>blaval</p>
-			<!-- Like component -->
-			| 
+		<div class="postNumbers">
+			<p :class="{orange: hasLiked}"> 
+				<fas class="icon" icon="thumbs-up"></fas>
+				{{ nbLikes}}
+			</p>
 			<p>{{ nbComments || NoComment }} comments</p>
+		</div>
+
+		<div class=postActionsContainer>
+			<div class="likeContainer">
+				<a @click.prevent="likePost">
+					<fas class="icon-action" icon="thumbs-up"></fas>
+					<p>Like</p>
+				</a>
+			</div>
+			<div class="commentContainer">
+				<a @click.prevent="triggerWritingComment">
+					<fas class="icon-action" icon="comment"></fas>
+					<p>Add a comment</p>
+				</a>
+			</div>
+		</div>
+
+		<div v-show="writingComment" class="commentInputContainer">
+			<div class="userPicContainer">
+
+			</div>
+			<input type="text" placeholder="Write a comment..." v-model="commentText">
+			<fas class="iconSendComment" icon="chevron-circle-right" @click.prevent="commentPost" ></fas>
+		</div>
+
+		<!--  -->
+		<div v-show="hasComments" v-for="comment in comments" :key="comment.id">
+			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes">
+			</Comment>
 		</div>
 
 	</div>
@@ -35,12 +64,14 @@
 
 <script>
 import moment from 'moment';
+import Comment from '../components/Comment.vue';
 import { useStore } from 'vuex';
 import { ref } from 'vue';
 import { useSwal } from "../useSwal";
 
 
 export default {
+	components: { Comment },
 	name: 'Post',
 	props: {
 		'postId': Number,
@@ -52,18 +83,27 @@ export default {
 		'postContent': String,
 		'nbLikes': Number,
 		'nbComments': Number,
+		'comments': Array,
 	},
-	emits: ['deletePost'],
+	emits: ['deletePost', 'likeApost', 'commentApost'],
 	setup(props, context) {
 		// Données et variables
 		const store = useStore();
 		const formattedPublicationDate = moment(props.publicationDate).format('DD/MM/YYYY');
 		let authorEQuser = ref(false);
 		const NoComment = 0;
+		let like = ref(0);
+		let hasLiked = ref(false);
+		let hasComments = ref(false);
+		let writingComment = ref(false);
+		let commentText = ref("");
 
-		// Affichage de 0 si aucun commentaire sous le post
+
+		// Affichage de 0 si aucun commentaire pour le post
 		if (props.nbComments === null ) {
 			return NoComment;
+		} else {
+			hasComments.value = true;
 		}
 
 		// Affichage du bouton Supprimer un post
@@ -96,7 +136,52 @@ export default {
 			context.emit('deletePost', id);
 		}
 
-		return { formattedPublicationDate, authorEQuser, NoComment, showAlert};
+		// Aimer un post
+		function likePost () {
+			const postId = props.postId;
+			
+			if (like.value === 0) {
+				like.value = 1;
+				hasLiked.value = true;
+			} else {
+				like.value = 0;
+				hasLiked.value = false;
+			}
+
+			const data = {
+				postId,
+				like: like.value
+			}
+			context.emit('likeApost', data);
+		}
+
+		// Afficher sous le post l'input pour écrire un commentaire
+		function triggerWritingComment() {
+			if (writingComment.value === false ) {
+				writingComment.value = true;
+			} else {
+				writingComment.value = false;
+			}
+		}
+
+
+		// Écrire un commentaire
+		function commentPost() {
+			const postId = props.postId;
+			const commentData = {
+				postId: postId,
+				content: commentText.value,
+				userId : store.state.user.id
+			}
+			context.emit('commentApost', commentData);
+			writingComment.value = false;
+		}
+
+
+		
+
+
+		return { formattedPublicationDate, authorEQuser, NoComment, showAlert, likePost, hasLiked, hasComments, triggerWritingComment, writingComment, commentPost, commentText };
 
 	}
 }
@@ -165,7 +250,7 @@ export default {
 		}
 	}
 
-	.postActionsContainer {
+	.postActionsContainer, .postNumbers {
 		padding-top: 10px;
 		width: 100%;
 		margin: 0 auto;
@@ -174,6 +259,79 @@ export default {
 		text-align: center;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
+
+		.likeContainer a, .commentContainer a {
+			display: flex;
+			align-items: center;
+			margin: 0 20px;
+			
+			p {
+				display: inline-block;
+				margin: 0;
+			}
+			.icon-action {
+				margin-right: 5px;
+			}
+			
+			&:hover {
+				color: rgb(230, 57, 20);
+				cursor: pointer;
+			}
+		}
 	}
+	.postNumbers {
+		justify-content: space-between;
+		p {
+			margin: 0 10px;
+			.icon {
+				margin-right: 8px;
+			}
+		}
+	}
+	.orange {
+		color: rgb(230, 57, 20);
+	}
+
+	.commentInputContainer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 40px;
+		// border: 1px solid green;
+
+		.userPicContainer {
+			width: 35px;
+			height: 35px;
+			margin: 0;
+			border-radius: 50%;
+			border: 1px red dashed;
+		}
+
+		input {
+			width: 85%;
+			height: 35px;
+			margin-left: 5px;
+			background-color: rgba(21, 158, 122, 0.32);
+			font-size: 13px;
+			border-radius: 20px;
+			border: none;
+			outline: none;
+			padding-left: 10px;
+
+			&:focus {
+				color: rgb(230, 57, 20);
+				box-shadow: 1px 1px 5px black;
+				// border: black 1px solid;
+			}
+		}
+
+		.iconSendComment {
+			width: 35px;
+			height: 25px;
+			cursor: pointer;
+			color: rgb(230, 57, 20);
+		}
+	}
+
 </style>

@@ -4,5 +4,12 @@ import router from "./router";
 import store from "./store";
 import Swal from "./useSwal";
 
+// Font-Awesome icons
+import { library } from '@fortawesome/fontawesome-svg-core';
 
-createApp(App).use(router).use(store).use(Swal).mount('#app');
+import { faTrash, faHome, faSignOutAlt, faPen, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+library.add(faTrash, faHome, faSignOutAlt, faPen, faThumbsUp, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight);
+
+createApp(App).use(router).use(store).use(Swal).component('fas', FontAwesomeIcon).mount('#app');

@@ -10,7 +10,6 @@ const postCtrl = require('../controllers/posts');
 router.get('/', postCtrl.getAllPosts);
 
 // Créer un nouveau post
-// ne fonctionne pas avec auth
 router.post('/', auth, postCtrl.createPost);
 
 // Supprimer un post by id
@@ -18,7 +17,7 @@ router.delete('/:id', auth, postCtrl.deletePost);
 
 // Liker un post
 // ne fonctionne pas avec auth
-router.put('/like/:id', postCtrl.likeApost);
+router.put('/like', postCtrl.likeApost);
 
 // Récupérer les 5 derniers posts
 //router.get('/pages/:start/5', auth, postCtrl.getLastPosts);

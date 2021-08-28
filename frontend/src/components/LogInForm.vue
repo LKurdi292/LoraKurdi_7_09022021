@@ -3,9 +3,11 @@
 	<h1>Log In</h1>
 	<form v-on:submit.prevent="logInUser">
 		
-		<input type="email" v-model="email" placeholder="Enter your email" id="email" ref="firstField" required><br/>
+		<!-- <fas class="envelope" icon="envelope"></fas> -->
+		<input type="email" v-model="email" placeholder="Enter your email" id="email" ref="firstField" required>
 		
 		<input v-model="password" id="password" type="password" placeholder="Enter your password" required><br/>
+		<!-- <fas class="eye" icon="eye"></fas> -->
 		
 		<button :disabled="!isFormValid">Log in</button>
 		
@@ -66,6 +68,13 @@ export default {
 		margin: 10px auto;
 		text-align: left;
 		// border: 1px solid black;
+
+		.envelope {
+			margin-right: 10px;
+		}
+		.eye {
+			margin-left: 10px;
+		}
 
 		input {
 			width: 250px;

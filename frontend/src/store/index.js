@@ -1,18 +1,20 @@
 import { createStore } from 'vuex';
 import {computed} from 'vue';
 import userService from '@/services/users.js';
-import postService from '@/services/posts.js'
+import postService from '@/services/posts.js';
+import commentService from '@/services/comments.js';
 
 
 let state = {
 	userLogged: false,
 	posts: [],
-	lastPosts: [],
 	user: {},
 	subscribed: Date,
 	token: '',
-	post: {},
-	comments: []
+	lastPosts: [],
+	//post: {},
+	//comments: [],
+	//postsWithComments: []
 };
 
 // methods which change the data that's in the state (synchronous codeonly)
@@ -33,18 +35,31 @@ const mutations = {
 	SET_POSTS(state, posts) {
 		state.posts = posts;
 	},
+	// SET_COMMENTS(state, comments) {
+	// 	state.comments = comments;
+	// },
 	ADD_NEW_POST(state, post) {
 		state.posts = { post, ...state.posts };
 	},
 	DELETE_POST(state, posts) {
 		state.posts = posts;
 	},
+	LIKE_POST(state, posts) {
+		state.posts = posts;
+	},
 	UPDATE_LAST_POSTS(state, post) {
 		state.lastPosts = { post, ...state.lastPosts };
 	},
-	ADD_COMMENT(state, comment) {
-		state.comments = { ...state.comments, comment };
-	},
+	// ADD_NEW_COMMENT(state, comment) {
+	// 	state.comments = { comment, ...state.comments };
+	// },
+	// SET_POSTS_WITH_COMMENTS(state) {
+		
+	// 	state.comments.forEach(element => {
+	// 		console.log(element);
+	// 		console.log('ici', element.title);
+	// 	});
+	// },
 	CLEAR_STORE(state) {
 		state.userLogged = false,
 		state.posts = [],
@@ -92,8 +107,6 @@ const actions = {
 	async fetchAllPosts (context) {
 		const response = await postService.getAllPosts(state.token);
 		context.commit('SET_POSTS', response.data);
-
-		// fetch comments of the posts?
 	},
 	
 	// Create a post
@@ -107,12 +120,34 @@ const actions = {
 		const token = context.getters.getToken;
 		const response = await postService.deletePost(id, token);
 		context.commit('DELETE_POST', response.data.posts);
-	}
+	},
+
+	// Like a post
+	async fetchLikePost(context, toSend) {
+		const token = context.getters.getToken;
+		const response = await postService.likePost(toSend, token);
+		context.commit('LIKE_POST', response.data);
+	},
+
+	// Create a comment
+	async fetchCreateComment(context, commentData) {
+		const created = await commentService.createComment(commentData, state.token);
+		// const response = 
+		// console.log('fetch new comment: ' , response.data);
+		// context.commit('ADD_NEW_COMMENT', response.data);
+		return created;
+	},
+
+	// Get Comments
+	// async fetchGetComments(context) {
+	// 	const response = await commentService.getComments(state.token);
+	// 	console.log('fetch all comments: ', response.data);
+	// 	context.commit('SET_COMMENTS', response.data);
+	// 	// context.commit('SET_POSTS_WITH_COMMENTS');
+	// }
 
 
-
-
-
+	// Delete a comment
 
 
 };
@@ -124,6 +159,9 @@ const getters = {
 	},
 	getToken: (state) => {
 		return state.token;
+	}, 
+	getUserId: (state) => {
+		return state.user.id;
 	}
 
 };

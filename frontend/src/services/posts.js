@@ -10,7 +10,6 @@ const apiClient = axios.create({
 	}
 });
 
-
 // Afficher les posts
 function getAllPosts(token) {
 	return apiClient.get('/posts',
@@ -38,47 +37,16 @@ function deletePost(id, token) {
 	);
 }
 
-
-
-
-
-
-
-
-
-
-
-//Like or Dislike a Post
-function like(userId, like, postId) {
-	const url="http://localhost:3000/api/posts/like";
-	
-	fetch(url + postId, {
-		method: "PUT",
-		headers: {
-			"Content-type": "application/json",
-			"Authorization": "BEARER" + localStorage.getItem.token
-		}, 
-		body: {
-			userId: userId,
-			like: like
-		}
-	})
-	.then(function(res) {
-		if (res.ok) {
-			console.log(res.status);
-			return res.json();
-		}
-	})
-	.then(function(res) {
-		return res.message;
-	})
-	.catch(function(err) {
-		console.log(err);
-	})
+// Aimer un post
+function likePost(toSend, token) {
+	return apiClient.put('/posts/like', toSend,
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
 }
 
 
-
 export default {
-	getAllPosts, createPost, deletePost, like
+	getAllPosts, createPost, deletePost, likePost
 }

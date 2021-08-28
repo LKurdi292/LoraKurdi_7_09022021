@@ -2,14 +2,14 @@
 	<div class="background">
 			<h3>Write or Edit a Post</h3>
 
-			<form @submit.prevent="publish">
+			<form>
 				<input type="text" v-model="title" placeholder="Title"/><br />
 			
 				<textarea v-model="content">
 				</textarea>
 				<div class="buttonContainer">
-					<button class="button" :disabled="!isFormValid">Publish</button>
-					<button class="button" @click="cancel" :disabled="!isFormValid">Cancel</button>
+					<button @submit.prevent="publish" class="button" :disabled="!isFormValid">Publish</button>
+					<button type="button" class="button" @click.prevent="cancel">Cancel</button>
 				</div>
 			</form>
 	</div>
@@ -50,14 +50,12 @@ export default {
 
 		// Envoyer un post
 		function publish() {
-			console.log('postForm isFormValid', isFormValid.value);
 			fillInPostData();
-			console.log('post form component: ', postData);
 			// Envoyer au parent: Home.vue
 			context.emit('publishPost', postData);
 		}
 
-		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'creer' une tâche
+		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'Publish'
 		const isFormValid = computed(() => {
 			if (title.value !== "" && content.value !== "") {
 				return true;

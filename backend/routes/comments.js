@@ -5,7 +5,11 @@ const commCtrl = require('../controllers/comments');
 
 
 // Écrire un commentaire
+	// ne fonctionne pas avec auth
 router.post('/', commCtrl.addComment);
+
+// Récupérer les commentaires
+//router.get('/', auth, commCtrl.getComments);
 
 // Éditer un commentaire
 router.put('/:id', auth, commCtrl.modifyComment);

@@ -2,28 +2,63 @@ const db = require('../models/index');
 const { post } = require('../routes/users');
 const Post = db.Post;
 const User = db.User;
-const op = db.Sequelize.op;
+const Comment = db.Comment;
+const LikePost = db.Like_Post;
+// const op = db.Sequelize.op;
 
 
-// Récupérer tous les posts ainsi que le nom, le prénom et l'image de l'auteur
+// Récupérer tous les posts ainsi que le nom, le prénom et l'image de l'auteur, et les commentaires associés, et le nom, prénom et image de l'auteur.
 exports.getAllPosts = (req, res, next) => {
+
 	Post.findAll({ 
+		order: [['createdAt', 'DESC']],
 		attributes: { 
 			exclude: ['updatedAt']
 		},
-		include: [{
+		include: [
+		{
 			model: User,
-			attributes: ['firstName', 'lastName', 'imageURL']
-		}]
+			attributes: ['firstName', 'lastName', 'imageURL'],
+			// through: { attributes: ['postId', 'userId']}
+		},
+		{
+			model: Comment,
+			attributes: ['content', 'likes', 'userId', 'id'],
+			include: [{
+				model: User,
+				attributes: ['firstName', 'lastName']
+			}]
+		}
+		]
 	})
-	.then( data => {res.status(200).send(data)})
+	.then( data => {
+		res.status(200).send(data);
+	})
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
 };
 
+//async function getAllComments() {
+//	let allComments = await getComments();
+//	return allComments;
+//}
+//
+//const getComments = async() => {
+//	let comments = await Comment.findAll({
+//		order: [['createdAt', 'DESC']],
+//		attributes: { 
+//			exclude: ['updatedAt']
+//		}, 
+//		include: [{
+//			model: User,
+//			attributes: ['firstName', 'lastName']
+//		}]
+//	})
+//	return comments;
+//};
 
-// Afficher les 5 derniers posts
+
+// Renvoyer un post après une création, ajout d'un like ou d'un commentaire
 const getPost = async (id) => {
-	console.log('get post ', id);
 	let post = await Post.findOne({
 		where: {id: id},
 		attributes: { 
@@ -32,7 +67,16 @@ const getPost = async (id) => {
 		include: [{
 			model: User,
 			attributes: ['firstName', 'lastName', 'imageURL']
-		}]
+		},
+		{
+			model: Comment,
+			attributes: ['content', 'likes', 'userId', 'id'],
+			include: [{
+				model: User,
+				attributes: ['firstName', 'lastName', 'imageURL']
+			}]
+		}
+	]
 	})
 	return post;
 };
@@ -107,12 +151,55 @@ exports.deletePost = (req, res, next) => {
 };
 
 
+// Rechercher dans la table de jointure si le couple user/post existe
+const searchLikePost = async (postId, id) => {
+	console.log("******* controller postId in searchLikePost ", postId);
+
+	let userId = await Post.findByPk(postId, {
+		exclude: [{
+			model: Post,
+		}],
+		include: [{
+			// through: { attributes: ['postId', 'userId']}
+			model: User,
+			include: [LikePost]
+		}]
+	})
+	
+	console.log("******* controller userId in ", userId);
+	// if (present === null) {
+	// 	present = 0;
+	// 	return present;
+	// } else {
+	return userId;
+}
+
+
+
 // Liker ou retirer son like d'un post
 exports.likeApost = (req, res, next) => {
-	const postId = req.params.id;
+	const postId = req.body.postId;
+	const userId = req.body.userId;
+	const likeValue = req.body.like;
 
-	userId = req.body.userId;
-	likeValue = req.body.like;
+	// D'abord vérifier que l'utilisateur n'a pas déjà liké le post par le passé
+	let hasUserLiked = 0;
+	searchLikePost(postId, userId)
+	.then((id) => {
+		hasUserLiked = id;
+	})
+	.catch(error => {
+		console.log("***************error after searchLikePost: ", error);
+	})
+
+	console.log("********* controller hasUserLiked", hasUserLiked);
+
+	if (hasUserLiked === userId) {
+		res.status(400).send({
+			message: "You have already liked this Post!"
+		});
+		return
+	}
 
 	Post.findByPk( postId )
 	.then( post => {
@@ -128,11 +215,25 @@ exports.likeApost = (req, res, next) => {
 					User.findByPk(userId).then( user => {
 						user.addPost(postId);
 					})
+					.then ( () => {
+						Post.findAll({ 
+							attributes: { 
+								exclude: ['updatedAt']
+							},
+							include: [{
+								model: User,
+								attributes: ['firstName', 'lastName', 'imageURL']
+							}]
+						})
+						.then( posts => { 
+							res.status(200).send(posts)
+						})
+						.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+					})
 				})
-				.then(() => res.status(201).json({ message: 'Post aimé !'}))
 				break;
 			
-			case 0:
+			case 0: // le user reclique pour retirer son like
 				Post.update(
 					{ likes: post.likes - 1},
 					{ where: { id : postId }}
@@ -143,8 +244,22 @@ exports.likeApost = (req, res, next) => {
 					User.findByPk(userId).then(user => {
 						user.removePost(postId);
 					})
+					.then ( () => {
+						Post.findAll({ 
+							attributes: { 
+								exclude: ['updatedAt']
+							},
+							include: [{
+								model: User,
+								attributes: ['firstName', 'lastName', 'imageURL']
+							}]
+						})
+						.then( posts => { 
+							res.status(200).send(posts)
+						})
+						.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+					})
 				})
-				.then(() => res.status(201).json({ message: 'Like retiré'}));
 				break;
 		}
 	})

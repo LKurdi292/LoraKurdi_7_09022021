@@ -5,6 +5,7 @@ const User = db.User;
 
 //Écrire un commentaire
 exports.addComment = (req, res, next) => {
+	let created = false;
 	const comment = {
 		userId: req.body.userId,
 		postId:	req.body.postId,
@@ -13,10 +14,60 @@ exports.addComment = (req, res, next) => {
 	};
 
 	Comment.create(comment)
-	.then(() => res.status(201).json({ message: 'Commentaire posté !'}))
+	.then(() => { 
+		created = true;
+		res.status(201).send(created);
+	})
 	.catch( error => res.status(500).send({ error, message: 'Impossible de créer un commentaire'} ));
-
 };
+
+
+// Renvoyer un commentaire après une création ou ajout d'un like
+//const getComment = async (id) => {
+//	let comment = await Comment.findByPk(id, {
+//		attributes: { 
+//			exclude: ['updatedAt']
+//		},
+//		include: [{
+//			model: User,
+//			attributes: ['firstName', 'lastName', 'imageURL']
+//		}]
+//	})
+//	return comment;
+//};
+
+// async function sendCommentToFront(comment) {
+// 	try {
+// 		let result = await Comment.create(post);
+// 		let newComment = await getComment(result.dataValues.id);
+// 		return newComment;
+// 	} catch (error) {
+// 		console.log(error);
+// 	}
+// }
+
+// Récupérer des commentaires
+// exports.getComments = (req, res, next) => {
+// 	Comment.findAll({
+// 		order: [['postId', 'DESC']],
+// 		attributes: { 
+// 			exclude: ['updatedAt']
+// 		}, 
+// 		include: [{
+// 			model: User,
+// 			attributes: ['firstName', 'lastName', 'imageURL']
+// 		}]
+// 	})
+// 	.then( data => {res.status(200).send(data)})
+// 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les commentaires' }));
+// };
+
+
+
+
+
+
+
 
 // Editer un commentaire
 exports.modifyComment = (req, res, next) => {
