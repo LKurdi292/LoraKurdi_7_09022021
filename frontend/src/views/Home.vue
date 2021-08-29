@@ -33,7 +33,7 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment">
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment" @likeAcomment="likeComment">
 				</Post>
 			</div>
 		</div>
@@ -128,9 +128,13 @@ export default {
 			await store.dispatch('fetchDeleteComment', id);
 		}
 		
+		//Aimer un commentaire
+		async function likeComment(data) {
+			await store.dispatch('fetchLikeComment', data);
+		}
 
 
-		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost, postToDelete, deleteComment };
+		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost, postToDelete, deleteComment, likeComment };
 	}
 };
 </script>

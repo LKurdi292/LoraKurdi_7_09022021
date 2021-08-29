@@ -13,6 +13,6 @@ router.delete('/:id', auth, commCtrl.deleteComment);
 
 //Liker un commentaire
 	// ne fonctionne pas avec auth
-router.put('/like/:id', commCtrl.likeAcomment);
+router.put('/like/:id', commCtrl.likeComment);
 
 module.exports = router;

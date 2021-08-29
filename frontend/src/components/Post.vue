@@ -54,7 +54,7 @@
 		</div>
 
 		<div v-show="comments.length > 0" v-for="comment in comments" :key="comment.id">
-			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes" @deleteComment="delComment">
+			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes" @deleteComment="delComment" @likeComment="likeTheComment">
 			</Comment>
 		</div>
 
@@ -84,7 +84,7 @@ export default {
 		'comments': Array,
 		'usersLiked': Array,
 	},
-	emits: ['likeApost', 'deletePost', 'commentApost', 'deleteAcomment'],
+	emits: ['likeApost', 'deletePost', 'commentApost', 'deleteAcomment', 'likeAcomment'],
 	setup(props, context) {
 		// Données et variables
 		const store = useStore();
@@ -180,13 +180,17 @@ export default {
 		}
 
 		// Supprimer un commentaire
-		async function delComment(id) {
+		function delComment(id) {
 			context.emit('deleteAcomment', id);
 		}
 		
+		// Aimer un commentaire
+		function likeTheComment(data) {
+			context.emit('likeAcomment', data);
+		}
 
 
-		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert, delComment, firstField };
+		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert, delComment, firstField, likeTheComment };
 
 	}
 }
@@ -196,7 +200,7 @@ export default {
 
 	.postContainer {
 		margin-bottom: 25px;
-		padding: 0 15px 10px;
+		padding: 0 25px 10px;
 		border-radius: 5px;
 		box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 		// border: orangered 1px solid;
@@ -325,7 +329,6 @@ export default {
 			padding-left: 10px;
 
 			&:focus {
-				color: rgb(230, 57, 20);
 				box-shadow: 1px 1px 5px black;
 				// border: black 1px solid;
 			}

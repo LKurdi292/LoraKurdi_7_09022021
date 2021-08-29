@@ -15,9 +15,16 @@
 			</div>
 
 			<p class="commentContent__text">{{ commentText }}</p>
+			
+			<!-- Affichage des likes commentaires -->
+			<div class="likeContainer">
+				<a :class="{orange: hasLiked}" @click.prevent="likeAcomment" title="Like or dislike">
+					<fas class="icon-action" icon="thumbs-up"></fas>
+				</a>
+				<p>0</p>
+				<!-- <p>{{ usersLiked.length }}</p> -->
+			</div>
 		</div>
-
-		<!-- Affichage des likes? -->
 
 	</div>
 </template>
@@ -35,14 +42,15 @@ export default {
 		'authorLname': String,
 		'commentText': String,
 		'nbLikes': Number,
+		'usersLiked': Array
 	},
-	emits: ['deleteComment'],
+	emits: ['deleteComment', 'likeComment'],
 	setup(props, context) {
 		// Données et variables
 		const store = useStore();
 		let authorEQuser = ref(false);
-		//let like = ref(0);
-		//let hasLiked = ref(false);
+		let like = ref(0);
+		let hasLiked = ref(false);
 		
 		// Affichage du bouton Supprimer un commentaire
 		if (props.authorId === store.state.user.id) {
@@ -55,7 +63,35 @@ export default {
 			context.emit('deleteComment', id);
 		}
 
-		return { authorEQuser, deleteAcomment };
+		// Si user a déjà aimé le commentaire quand arrive sur la page
+		// if ( props.usersLiked.includes(store.state.user.id)) {
+		// 	hasLiked.value = true;
+		// } else {
+		// 	hasLiked.value = false;
+		// }
+
+		// Aimer un commentaire
+		function likeAcomment() {
+			const id = props.commentId;
+
+			if (hasLiked.value) {
+				like.value = 0;
+				hasLiked.value = false;
+			} else {
+				like.value = 1;
+				hasLiked.value = true;
+			}
+
+			const data = {
+				id,
+				userId: store.state.user.id,
+				like: like.value
+			}
+
+			context.emit('likeComment', data);
+		}
+
+		return { authorEQuser, deleteAcomment, likeAcomment };
 
 
 	},
@@ -68,7 +104,7 @@ export default {
 		display: flex;
 		justify-content: flex-start;
 		align-items: flex-start;
-		margin: 15px auto;
+		margin: 25px auto;
 
 
 		.userPicContainer {
@@ -82,16 +118,19 @@ export default {
 
 	.commentContent {
 		margin-left: 10px;
-		width: 100%;
-		padding: 2%;
+		width: 90%;
+		padding: 10px 15px;
+		min-height: 50px;
 		border-radius: 25px;
 		background-color: rgba(218, 204, 204, 0.6);
+		position: relative;
 
 		&__header {
 			display: flex;
 			justify-content: space-between;
 			align-items: flex-start;
 			margin-bottom: 10px;
+			position: relative;
 
 			p {
 				margin: 0;
@@ -104,6 +143,11 @@ export default {
 				justify-content: center;
 				align-items: center;
 
+				.fa-trash {
+					width: 20px;
+					position: absolute;
+				}
+
 				:hover {
 					cursor: pointer;
 				}
@@ -113,6 +157,33 @@ export default {
 		&__text {
 			margin: 0;
 			height: auto;
+			display: flex;
+			flex-wrap: wrap;
 		}
+	}
+
+	.likeContainer {
+		position: absolute;
+		bottom: -5px;
+		right: -0.5%;
+		display: flex;
+		align-items: center;
+
+		&:hover {
+			color: rgb(230, 57, 20);
+		}
+		
+		a {
+			cursor: pointer;
+
+		}
+
+		p {
+			margin: 0 0 0 3px;
+		}
+	}
+
+	.orange {
+		color: rgb(230, 57, 20);
 	}
 </style>

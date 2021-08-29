@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // single axios instance
 const apiClient = axios.create({
-	baseURL: 'http://localhost:3000/api',
+	baseURL: 'http://localhost:3000/api/comments',
 	headers: {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json'
@@ -13,7 +13,7 @@ const apiClient = axios.create({
 
 // Créer un commentaire
 function createComment(data, token) {
-	return apiClient.post('/comments', data, 
+	return apiClient.post('/', data, 
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -22,7 +22,16 @@ function createComment(data, token) {
 
 //Supprimer un commentaire
 function deleteComment(id, token) {
-	return apiClient.delete('/comments/' + id, 
+	return apiClient.delete('/' + id, 
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
+}
+
+//Aimer un commentaire
+function likeComment(id, body, token) {
+	return apiClient.put('/like/' + id, body,
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -30,7 +39,6 @@ function deleteComment(id, token) {
 }
 
 
-
 export default { 
-	createComment, deleteComment
+	createComment, deleteComment, likeComment
 };

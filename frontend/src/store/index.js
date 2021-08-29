@@ -152,6 +152,16 @@ const actions = {
 	},
 
 	//Like a comment
+	async fetchLikeComment(context, data) {
+		const id = data.id;
+		const body = {
+			userId: data.userId,
+			like: data.like
+		};
+		const response = await commentService.likeComment(id, body, state.token);
+		console.log(response.data);
+		return true;
+	},
 
 	//Get all users for admin
 	async fetchAllUsers(context, id) {
@@ -167,7 +177,6 @@ const actions = {
 		context.commit('SET_ALL_USERS', response.data);
 		return true;
 	}
-
 };
 
 // get data from the state - but for example, with some filtering. 

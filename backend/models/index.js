@@ -21,6 +21,7 @@ db.Post = require('./Posts.model')(sequelize, Sequelize);
 db.User = require('./Users.model')(sequelize, Sequelize);
 db.Comment = require('./Comments.model')(sequelize, Sequelize);
 db.Like_Post = sequelize.define('Like_Post', {}, { timestamps: false});
+db.Like_Comment = sequelize.define('Like_Comment', {}, { timestamps: false});
 
 
 // Les relations entre les tables
@@ -62,15 +63,15 @@ db.Comment.belongsTo(db.User, {
 	onUpdate: 'NO ACTION',
 });
 db.Comment.belongsToMany(db.User, {
-	through: 'Like_Comment',
-	foreignKey: 'commentId',
+	through: db.Like_Comment,
+	foreignKey: 'userId',
 	onDelete: 'CASCADE', 
 	onUpdate: 'NO ACTION',
 	allowNull: false
 });
 db.User.belongsToMany(db.Comment, {
-	through: 'Like_Comment',
-	foreignKey: 'userId',
+	through: db.Like_Comment,
+	foreignKey: 'commentId',
 	onDelete: 'CASCADE',
 	onUpdate: 'NO ACTION',
 	allowNull: false
