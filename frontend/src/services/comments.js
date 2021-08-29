@@ -20,20 +20,9 @@ function createComment(data, token) {
 	);
 }
 
-
-// Afficher les commentaires
-//function getComments(token) {
-//	return apiClient.get('/comments',
-//		{ headers: {
-//			"Authorization": "BEARER " + token
-//		}}
-//	);
-//}
-
-
-// Afficher les commentaires
-function get5NextComments(token) {
-	return apiClient.get('/comments', 
+//Supprimer un commentaire
+function deleteComment(id, token) {
+	return apiClient.delete('/comments/' + id, 
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -41,6 +30,7 @@ function get5NextComments(token) {
 }
 
 
+
 export default { 
-	createComment, get5NextComments
+	createComment, deleteComment
 };

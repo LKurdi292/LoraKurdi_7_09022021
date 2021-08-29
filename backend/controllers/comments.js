@@ -1,6 +1,9 @@
 const db = require('../models/index');
 const Comment = db.Comment;
 const User = db.User;
+const Post = db.Post;
+const LikePost = db.Like_Post;
+
 
 
 //Écrire un commentaire
@@ -22,80 +25,6 @@ exports.addComment = (req, res, next) => {
 };
 
 
-// Renvoyer un commentaire après une création ou ajout d'un like
-//const getComment = async (id) => {
-//	let comment = await Comment.findByPk(id, {
-//		attributes: { 
-//			exclude: ['updatedAt']
-//		},
-//		include: [{
-//			model: User,
-//			attributes: ['firstName', 'lastName', 'imageURL']
-//		}]
-//	})
-//	return comment;
-//};
-
-// async function sendCommentToFront(comment) {
-// 	try {
-// 		let result = await Comment.create(post);
-// 		let newComment = await getComment(result.dataValues.id);
-// 		return newComment;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// Récupérer des commentaires
-// exports.getComments = (req, res, next) => {
-// 	Comment.findAll({
-// 		order: [['postId', 'DESC']],
-// 		attributes: { 
-// 			exclude: ['updatedAt']
-// 		}, 
-// 		include: [{
-// 			model: User,
-// 			attributes: ['firstName', 'lastName', 'imageURL']
-// 		}]
-// 	})
-// 	.then( data => {res.status(200).send(data)})
-// 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les commentaires' }));
-// };
-
-
-
-
-
-
-
-
-// Editer un commentaire
-exports.modifyComment = (req, res, next) => {
-	commentId = req.params.id;
-
-	Comment.update(
-		{content: req.body.content},
-		{where: {id: commentId } }
-	)
-	.then(num => {
-		if (num == 1) {
-			res.send({ message: "Le commentaire a été mis à jour avec succès." });
-	} else {
-		res.send({
-			message: `Impossible de mettre à jour le commentaire.`
-		})
-	}})
-	.catch(error => { res.status(500).send({ error, message: "Une erreur est survenu lors de la mise à jour du commentaire" })
-	});
-};
-
-// Avoir le nombre de likes d'un commentaire
-//exports.getLikes = (req, res, next) => {}
-
-
-
-
-
 //Supprimer un commentaire
 exports.deleteComment = (req, res, next) => {
 	commentId = req.params.id;
@@ -103,15 +32,54 @@ exports.deleteComment = (req, res, next) => {
 	Comment.destroy({
 		where: { id: commentId }
 	})
-	.then(num => {
-		if (num == 1) {
-			res.send({ message: "Le commentaire a été supprimé avec succès!" });
-		} else {
-			res.send({ message: "Impossible de supprimer le commentaire"})
-		}
+	.then(() => {
+		Post.findAll({ 
+			order: [['createdAt', 'DESC']],
+			attributes: { 
+				exclude: ['updatedAt']
+			},
+			include: [
+					// Impossible d'atteindre la table de jointure ePost
+				// { all: true, nested: true 
+				// }
+			{
+				model: User,
+				attributes: ['firstName', 'lastName', 'imageURL'],
+			},
+			{
+				model: Comment,
+				attributes: ['content', 'likes', 'userId', 'id'],
+				include: [{
+					model: User,
+					attributes: ['firstName', 'lastName']
+				}]
+			}
+			]
+		})
+		.then( posts => {
+			LikePost.findAll()
+			// Ajout d'un tableau à chaque post contenant l'id des rs qui ont liké ce post
+			.then((likes) => {
+				likes.forEach(like => {
+					let post = posts.findIndex(search => search.id == like.postId);
+					if (post != null) {
+						if(posts[post].dataValues.usersLiked === undefined){
+							posts[post].dataValues.usersLiked = [like.userId];
+						} else {
+							posts[post].dataValues.usersLiked.push([like.userId]);
+						}
+					}
+				})
+				res.status(200).send(posts);
+			})
+			.catch(error => { 
+				res.status(500).send({ error, message: "Impossible jouter la table des likes aux posts"});
+			})
+		})
+		.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
 	})
-	.catch(err => {
-		res.status(500).send({ message: "Un problème est survenu lors de la suppression du commentaire" })
+	.catch(error => {
+		res.status(500).send({error, message: "Un problème est survenu lors de la suppression du commentaire" })
 	});
 };
 

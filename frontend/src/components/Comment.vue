@@ -10,7 +10,7 @@
 				<p>{{ authorFname }} {{ authorLname }}</p>
 
 				<div class="rightSideHeader" v-show="authorEQuser || $store.state.user.isAdmin">
-					<fas icon="trash" @click="deleteAcomment" alt="Delete"></fas>
+					<fas icon="trash" @click="deleteAcomment" title="Delete"></fas>
 				</div>
 			</div>
 
@@ -36,7 +36,8 @@ export default {
 		'commentText': String,
 		'nbLikes': Number,
 	},
-	setup(props) {
+	emits: ['deleteComment'],
+	setup(props, context) {
 		// Données et variables
 		const store = useStore();
 		let authorEQuser = ref(false);
@@ -48,8 +49,13 @@ export default {
 			authorEQuser.value = true;
 		}
 
+		// Supprimer un commentaire
+		function deleteAcomment() {
+			const id = props.commentId;
+			context.emit('deleteComment', id);
+		}
 
-		return { authorEQuser };
+		return { authorEQuser, deleteAcomment };
 
 
 	},
@@ -61,8 +67,7 @@ export default {
 	.commentContainer {
 		display: flex;
 		justify-content: flex-start;
-		align-items: center;
-		// width: 95%;
+		align-items: flex-start;
 		margin: 15px auto;
 
 
@@ -78,7 +83,7 @@ export default {
 	.commentContent {
 		margin-left: 10px;
 		width: 100%;
-		padding: 1% 0.5%;
+		padding: 2%;
 		border-radius: 25px;
 		background-color: rgba(218, 204, 204, 0.6);
 
@@ -89,6 +94,7 @@ export default {
 			margin-bottom: 10px;
 
 			p {
+				margin: 0;
 				font-size: 12px;
 				font-weight: bold;
 			}
@@ -97,13 +103,16 @@ export default {
 				display: flex;
 				justify-content: center;
 				align-items: center;
+
+				:hover {
+					cursor: pointer;
+				}
 			}
 		}
 
 		&__text {
 			margin: 0;
 			height: auto;
-			padding: 1%;
 		}
 	}
 </style>

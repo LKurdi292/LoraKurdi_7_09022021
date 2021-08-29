@@ -51,7 +51,7 @@ exports.getAllPosts = (req, res, next) => {
 			res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
 		})
 	})
-	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+	.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
 };
 
 

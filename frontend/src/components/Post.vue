@@ -49,12 +49,12 @@
 			<div class="userPicContainer">
 
 			</div>
-			<input type="text" placeholder="Write a comment..." v-model="commentText">
+			<input ref="firstField" type="text" placeholder="Write a comment..." v-model="commentText">
 			<fas class="iconSendComment" icon="chevron-circle-right" @click.prevent="commentPost" ></fas>
 		</div>
 
 		<div v-show="comments.length > 0" v-for="comment in comments" :key="comment.id">
-			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes">
+			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes" @deleteComment="delComment">
 			</Comment>
 		</div>
 
@@ -65,7 +65,7 @@
 import moment from 'moment';
 import Comment from '../components/Comment.vue';
 import { useStore } from 'vuex';
-import { ref } from 'vue';
+import { ref, onUpdated } from 'vue';
 import { useSwal } from "../useSwal";
 
 
@@ -84,7 +84,7 @@ export default {
 		'comments': Array,
 		'usersLiked': Array,
 	},
-	emits: ['likeApost', 'deletePost', 'commentApost'],
+	emits: ['likeApost', 'deletePost', 'commentApost', 'deleteAcomment'],
 	setup(props, context) {
 		// Données et variables
 		const store = useStore();
@@ -94,6 +94,13 @@ export default {
 		let hasLiked = ref();
 		let writingComment = ref(false);
 		let commentText = ref("");
+		const firstField = ref(null);
+
+		// Focus de la souris sur le 1er champ texte
+		onUpdated( () => {
+			firstField.value.focus();
+		});
+
 
 		// Affichage du bouton Supprimer un post
 		if (props.authorId === store.state.user.id) {
@@ -132,7 +139,6 @@ export default {
 			hasLiked.value = false;
 		}
 
-
 		// Aimer un post
 		function likePost () {
 			const postId = props.postId;
@@ -161,7 +167,6 @@ export default {
 			}
 		}
 
-
 		// Écrire un commentaire
 		function commentPost() {
 			const postId = props.postId;
@@ -174,11 +179,14 @@ export default {
 			writingComment.value = false;
 		}
 
-
+		// Supprimer un commentaire
+		async function delComment(id) {
+			context.emit('deleteAcomment', id);
+		}
 		
 
 
-		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert };
+		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert, delComment, firstField };
 
 	}
 }

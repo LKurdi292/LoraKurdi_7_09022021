@@ -114,7 +114,7 @@ const actions = {
 			context.commit('ADD_NEW_POST', response.data);
 			return true;
 		}
-	}, 
+	},
 
 	// Delete a post
 	async fetchDeletePost(context, id) {
@@ -142,6 +142,14 @@ const actions = {
 	},
 
 	// Delete a comment
+	async fetchDeleteComment(context, id){
+		const response = await commentService.deleteComment(id, state.token);
+		if (response.status === 200 ) {
+			context.commit('SET_POSTS', response.data);
+			context.commit('ADD_USERSLIKED_TO_POST');
+			return true;
+		}
+	},
 
 	//Like a comment
 
@@ -151,7 +159,7 @@ const actions = {
 		context.commit('SET_ALL_USERS', response.data);
 	},
 
-	// Delete user's account for admin
+	// Delete user account for admin
 	async fetchDeleteUser(context, params) {
 		const id = params.id;
 		const adminId = params.adminId;
