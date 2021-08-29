@@ -41,7 +41,7 @@ function logIn(data) {
 
 // Modifier son compte
 function updateAccount(data, id, token) {
-	return apiClient.put('users/myaccount/'+ id, data, 
+	return apiClient.put('users/myaccount/'+ id, data,
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -61,8 +61,17 @@ function deleteAccount(id, token) {
 
 // Voir la liste des utilisateurs (route admin)
 function getUsers(id, token) {
-	console.log('user services: ', id, token);
-	return apiClient.get('users/allusers', id,
+	return apiClient.get('/users/allusers/' + id,
+		{ headers: {
+			"Authorization": "BEARER " + token
+		}}
+	);
+}
+
+// Supprimer un utlisateur (route admin)
+function deleteUser(id, adminId, token) {
+	console.log("user service adminId: ", adminId);
+	return apiClient.delete('/users/allusers/' + id +'/' + adminId, 
 		{ headers: {
 			"Authorization": "BEARER " + token
 		}}
@@ -70,11 +79,6 @@ function getUsers(id, token) {
 }
 
 
-
-// Supprimer un utlisateur (route admin)
-
-
-
 export default {
-	create, logIn, updateAccount, deleteAccount, getUsers
+	create, logIn, updateAccount, deleteAccount, getUsers, deleteUser
 }

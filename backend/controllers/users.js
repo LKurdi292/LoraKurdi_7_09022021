@@ -1,7 +1,6 @@
 //Importations
 const db = require('../models/index');
 const User = db.User;
-const op = db.Sequelize.op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js');
@@ -160,61 +159,67 @@ exports.deleteMyAccount = (req, res, next) => {
 
 //Afficher la liste des users
 exports.getAllUsers = (req, res, next) => {
-	const connectedId = req.body.id;
-	console.log('************** admin id', connectedId);
+	const connectedId = req.params.id;
 
 	User.findByPk(connectedId)
 	.then((user) => {
 		if (user.isAdmin) {
 			User.findAll({ 
 				order: [['lastName', 'ASC']],
-				attributes: ['firstName', 'lastName', 'subscriptionDate', 'bio','email', 'isAdmin']
+				attributes: ['firstName', 'lastName', 'isAdmin', 'id']
 			 })
 			.then (data => {
 				res.status(200).send(data);
 			})
 			.catch(error => {
-				res.status(500).send({ error, message: 'Impossible d\'afficher la liste des utilisateurs' })
+				res.status(500).send({ error, message: "Impossible d'afficher la liste des utilisateurs" })
 			});
+		} else {
+			res.status(401).send({message: "You don't have an administration account" })
 		}
 	})
 	.catch(error => {
-		res.status(401).send({ error, message: 'You don\'t have an administration account' });
+		res.status(401).send({ error, message: "Can't find user is database" });
 	})
 };
 
-
-//exports.getUserInfo = (req, res, next) => {
-//	// Crypter le mail de la requete
-//	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
-//	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
-//	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
-//
-//	User.findOne({ where: { email: encrypted }, attributes: ['email', 'bio', 'imageURL', //'firstName', 'lastName', 'isAdmin', 'subscriptionDate']})
-//	.then(data => {
-//		res.status(200).send(data);
-//	})
-//	.catch(error => res.status(500).send({ error, message: 'Impossible d\'afficher les //informations du compte', email }));
-//
-//};
-
+// Supprimer un utilisateur
 exports.deleteUserAccount = (req, res, next) => {
-	// Crypter le mail de la requete
-	const key = cryptoJS.enc.Hex.parse(process.env.CryptojsKEY);
-	const iv = cryptoJS.enc.Hex.parse("101112131415161718191a1b1c1d1e1f");
-	const encrypted = cryptoJS.AES.encrypt(req.body.email, key, { iv: iv }).toString();
-	
-	User.destroy({
-		where: { email: encrypted }
-	})
-	.then(num => {
-		if (num == 1) {
-			res.send({ message: "Le compte a été supprimé avec succès!" });
+
+	console.log("**************body: ", req.body);
+	const userIdToDestroy = req.params.id;
+	const adminId = req.params.adminId;
+
+	console.log("**************adminId: ", adminId);
+	console.log("**************userId to destroy: ", userIdToDestroy);
+
+
+	User.findByPk(adminId)
+	.then((user) => {
+		if (user.isAdmin) {
+			User.destroy({
+				where: { id: userIdToDestroy }
+			})
+			.then(() => {
+				User.findAll({ 
+					order: [['lastName', 'ASC']],
+					attributes: ['firstName', 'lastName', 'isAdmin', 'id']
+				 })
+				.then (data => {
+					res.status(200).send(data);
+				})
+				.catch(error => {
+					res.status(500).send({ error, message: "Unable to reach users list" });
+				});
+			})
+			.catch(error => {
+				res.status(500).send({ error, message: "Unable to delete account"});
+			})
 		} else {
-			res.send({ message: "Impossible de supprimer le compte"})
+			res.status(401).send({message: "You are not allowed to delete other users' accounts " });
 		}
 	})
 	.catch(error => {
-		res.status(500).send({ error, message: "Un problème est survenu lors de la suppression du compte" })
-	});
+		res.status(401).send({ error, message: "Can't find admin user is database" });
+	})
 };

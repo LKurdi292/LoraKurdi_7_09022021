@@ -150,7 +150,6 @@ export default {
 				postId,
 				like: like.value
 			}
-			console.log('data like: ', data);
 			context.emit('likeApost', data);
 		}
 

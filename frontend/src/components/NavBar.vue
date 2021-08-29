@@ -21,8 +21,7 @@
 				</div>
 
 				<div class="linkTo" v-show="isAdmin">
-					<router-link to="/allusers" @click="getUsers" title="Go to Users' management page">
-						<!-- <fas class="icon" icon="sign-out-alt"></fas> -->
+					<router-link to="/allusers"  title="Go to Users' management page">
 						Users Management
 					</router-link>
 				</div>
@@ -42,7 +41,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+// import { computed } from 'vue';
 
 
 export default {
@@ -52,7 +51,7 @@ export default {
 	name: "navBar",
 	setup() {
 		const store = useStore();
-		let userId = computed(() => store.state.user.id);
+		// let userId = computed(() => store.state.user.id);
 		// let admin = ref(false);
 
 		function logOut() {
@@ -64,7 +63,7 @@ export default {
 		// 	admin.value = true;
 		// }
 
-		return { userId, logOut};
+		return { logOut};
 	}
 }
 </script>

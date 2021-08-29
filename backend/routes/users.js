@@ -21,12 +21,11 @@ router.delete('/users/myaccount/:id', auth, userCtrl.deleteMyAccount);
 
 // Les routes 'admin' only
 // Voir la liste des utilisateurs/membres
-router.get('/users/allusers', auth, userCtrl.getAllUsers);
-
-// Voir les informations d'un utilisateur
-//router.get('/users/all-users/:id', auth, userCtrl.getUserInfo);
+	// ne fonctionne pas avec auth
+router.get('/users/allusers/:id', userCtrl.getAllUsers);
 
 // Supprimer le compte d'un utilisateur
-router.delete('/users/all-users/:id', auth, userCtrl.deleteUserAccount);
+	// ne fonctionne pas avec auth
+router.delete('/users/allusers/:id/:adminId', userCtrl.deleteUserAccount);
 
 module.exports = router;

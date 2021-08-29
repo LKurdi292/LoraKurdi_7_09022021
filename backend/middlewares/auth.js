@@ -8,6 +8,8 @@ module.exports = (req, res, next) => {
 		
 		// if (req.body.userId && req.body.userId !== userId) {
 		if (req.body.userId !== userId) {
+			console.log('auth', req.body.userId);
+			console.log('auth', userId);
 			throw 'User Id non valable !';
 		} else {
 			// si tout est ok, on peut passer la requête au prochain middleware

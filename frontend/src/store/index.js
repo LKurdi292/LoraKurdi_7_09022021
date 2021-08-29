@@ -143,10 +143,18 @@ const actions = {
 	//Like a comment
 
 	//Get all users for admin
-	async fetchAllUsers() {
-		console.log('before fetch all users: ', state.user.id, state.token);
-		const response = await userService.getUsers(state.user.id, state.token);
-		console.log('fetch all users: ', response);
+	async fetchAllUsers(context, id) {
+		const response = await userService.getUsers(id, state.token);
+		context.commit('SET_ALL_USERS', response.data);
+	},
+
+	// Delete user's account for admin
+	async fetchDeleteUser(context, params) {
+		const id = params.id;
+		const adminId = params.adminId;
+		const response = await userService.deleteUser(id, adminId, state.token);
+		context.commit('SET_ALL_USERS', response.data);
+		return true;
 	}
 
 };

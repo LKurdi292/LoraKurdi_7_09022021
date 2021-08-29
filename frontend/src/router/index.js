@@ -36,13 +36,13 @@ const routes = [
 		path: "/myaccount/:id",
 		name: "Account",
 		component: Account,
-		// meta: { auth: true}
+		meta: { auth: true}
 	},
 	{
 		path: "/allusers",
-		name: UsersManagement,
+		name: "usersManagement",
 		component: UsersManagement,
-		meta: { auth: true}
+		// meta: { auth: true}
 	}
 ];
 

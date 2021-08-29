@@ -2,7 +2,7 @@
 	<!-- eslint-disable  -->
 	<nav-bar :isAdmin="$store.state.user.isAdmin"></nav-bar>
 	<div class="home">
-		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"/>
+		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"></ModalPostForm>
 	
 		<h1>
 			<img src="../assets/dev_images/hello.svg" />
@@ -71,6 +71,8 @@ export default {
 			editMode.value = true;
 		}
 		
+
+
 		// Créer un post
 		async function createPost(postData) {
 			await store.dispatch('fetchCreatePost', postData);

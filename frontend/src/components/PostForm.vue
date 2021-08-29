@@ -1,6 +1,6 @@
 <template>
 	<div class="background">
-			<h3>Write or Edit a Post</h3>
+			<h3>Write a post</h3>
 
 			<form>
 				<input type="text" v-model="title" placeholder="Title"/><br />
@@ -8,8 +8,8 @@
 				<textarea v-model="content">
 				</textarea>
 				<div class="buttonContainer">
-					<button @submit.prevent="publish" class="button" :disabled="!isFormValid">Publish</button>
-					<button type="button" class="button" @click.prevent="cancel">Cancel</button>
+					<button @submit.prevent="publish" class="button" :disabled="!isFormValid" title="Publish post">Publish</button>
+					<button type="button" class="button" @click.prevent="annuler" title="Cancel">Cancel</button>
 				</div>
 			</form>
 	</div>
@@ -20,9 +20,9 @@ import { ref, computed } from 'vue';
 import {useStore} from 'vuex';
 
 export default {
-	name: "ModalPostForm",
-	emits: ["cancel", "publishPost"],
-	setup(props, context) {
+	name: 'ModalPostForm',
+	emits: ['publishPost', 'cancel'],
+	setup(context) {
 		// Données et variables
 		const store = useStore();
 
@@ -45,7 +45,9 @@ export default {
 			postData.title = title.value;
 			postData.text = content.value;
 			postData.imageURL = image.value;
-			postData.id = store.state.user.id
+			postData.id = store.state.user.id;
+
+			console.log('fillInPostData: ', postData);
 		}
 
 		// Envoyer un post
@@ -66,14 +68,14 @@ export default {
 		});
 
 		// Annuler l'édition
-		function cancel() {
+		function annuler() {
 			title.value = "";
 			content.value = "";
 			image.value = "";
-			context.emit("cancel");
+			context.emit('cancel');
 		}
 
-		return {title, content, publish, cancel, isFormValid };
+		return {title, content, publish, annuler, isFormValid };
 	},
 };
 </script>

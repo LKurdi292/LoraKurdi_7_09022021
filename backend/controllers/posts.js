@@ -163,20 +163,6 @@ exports.likeApost = (req, res, next) => {
 	const userId = req.body.userId;
 	const likeValue = req.body.like;
 
-	// LikePost.findOne({
-	// 	where: {postId: postId, userId: userId}
-	// })
-	// .then(() => {
-	// 	if (likeValue === 1) {
-	// 		res.status(500).send({message: "User already liked this post but likeValue = 1, NOT ok"});
-	// 		return;
-	// 	}
-	// })
-	// .catch((error) => {
-	// 	res.status(500).send({error, message: "userId and PostId not found in LikePost table. User has not liked this post."});
-	// 	return
-	// })
-
 	Post.findByPk( postId )
 	.then( post => {
 		switch(likeValue) {
