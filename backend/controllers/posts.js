@@ -48,7 +48,7 @@ exports.getAllPosts = (req, res, next) => {
 			res.status(200).send({ posts});
 		})
 		.catch(error => { 
-			res.status(500).send({ error, message: "Impossible d\'ajouter la table des likes aux posts"});
+			res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
 		})
 	})
 	.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
@@ -57,7 +57,6 @@ exports.getAllPosts = (req, res, next) => {
 
 // Renvoyer un post après une création, ajout d'un like ou d'un commentaire
 const getPost = async (id) => {
-	console.log('***************** getPost id: ', id);
 	let post = await Post.findOne({
 		where: {id: id},
 		attributes: { 
@@ -119,7 +118,6 @@ exports.createPost = (req, res, next) => {
 // Supprimer un post et renvoyer l'ensemble des posts
 exports.deletePost = (req, res, next) => {
 	const id = req.params.id;
-	// Vérification du user?
 
 	Post.destroy({
 		where: { id: id }
@@ -143,9 +141,27 @@ exports.deletePost = (req, res, next) => {
 					attributes: ['firstName', 'lastName']
 				}]
 			}
-		]
+			]
 		})
-		.then( posts => {res.status(200).send({ posts, message: "Le post a été supprimé avec succès!" })
+		.then( posts => {
+			LikePost.findAll()
+			// Ajout d'un tableau à chaque post contenant l'id des users qui ont liké ce post
+			.then((likes) => {
+				likes.forEach(like => {
+					let post = posts.findIndex(search => search.id == like.postId);
+					if (post != null) {
+						if(posts[post].dataValues.usersLiked === undefined){
+							posts[post].dataValues.usersLiked = [like.userId];
+						} else {
+							posts[post].dataValues.usersLiked.push(like.userId);
+						}
+					}
+				})
+				res.status(200).send(posts);
+			})
+			.catch(error => { 
+				res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
+			})
 		})
 		.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
 	})
@@ -296,7 +312,6 @@ exports.likeApost = (req, res, next) => {
 async function sendPostToDB(post) {
 	try {
 		let result = await Post.create(post);
-		console.log('************ result of post creation: ', result);
 		let newpost = await getPost(result.dataValues.id);
 		return newpost;
 	} catch (error) {

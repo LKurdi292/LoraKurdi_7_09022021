@@ -3,7 +3,7 @@
 			<h3>Write a post</h3>
 
 			<form>
-				<input type="text" v-model="title" placeholder="Title"/><br />
+				<input ref="firstField" type="text" v-model="title" placeholder="Title"/><br />
 			
 				<textarea v-model="content">
 				</textarea>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onUpdated } from 'vue';
 import {useStore} from 'vuex';
 
 export default {
@@ -25,6 +25,7 @@ export default {
 	setup(props, { emit }) {
 		// Données et variables
 		const store = useStore();
+		const firstField = ref(null);
 
 		const title = ref("");
 		const content = ref("");
@@ -34,6 +35,11 @@ export default {
 		// fd.append('image', image);
 		// fd.append('title', title);
 		// fd.append('text', content);
+
+		// Focus de la souris sur le 1er champ texte
+		onUpdated( () => {
+			firstField.value.focus();
+		});
 
 		const postData = {
 			title : '',
@@ -46,15 +52,21 @@ export default {
 			postData.text = content.value;
 			// postData.imageURL = image.value;
 			postData.id = store.state.user.id;
-
 			return postData;
+		}
+			
+		// Vider le formulaire après submit
+		function resetForm() {
+			title.value = "";
+			content.value = "";
+			firstField.value.focus();
 		}
 
 		// Envoyer un post
 		function publish() {
 			const postData = fillInPostData();
-			// Envoyer au parent: Home.vue
 			emit('publishPost', postData);
+			resetForm();
 		}
 
 		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'Publish'
@@ -74,7 +86,7 @@ export default {
 			emit('cancel');
 		}
 
-		return {title, content, publish, annuler, isFormValid };
+		return {title, content, publish, annuler, isFormValid, firstField };
 	},
 };
 </script>

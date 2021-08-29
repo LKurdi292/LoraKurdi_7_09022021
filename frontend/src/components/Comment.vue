@@ -9,7 +9,7 @@
 			<div class="commentContent__header">
 				<p>{{ authorFname }} {{ authorLname }}</p>
 
-				<div class="rightSideHeader" v-show="authorEQuser">
+				<div class="rightSideHeader" v-show="authorEQuser || $store.state.user.isAdmin">
 					<fas icon="trash" @click="deleteAcomment" alt="Delete"></fas>
 				</div>
 			</div>

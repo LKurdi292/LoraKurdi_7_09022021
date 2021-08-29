@@ -33,8 +33,7 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost">
-					<!-- @deletePost="deletePost" -->
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete">
 				</Post>
 			</div>
 		</div>
@@ -70,8 +69,6 @@ export default {
 		function triggerEdition() {
 			editMode.value = true;
 		}
-		
-
 
 		// Créer un post
 		async function createPost(postData) {
@@ -97,23 +94,19 @@ export default {
 			editMode.value = false;
 		}
 
-		// Avoir l'index d'un post dans l'array posts
-		//function getIndex(id) {
-		//	return posts.value.indexOf(id);
-		//}
+		//Suppression d'un post
+		async function postToDelete(id) {
+			const deletion = await store.dispatch('fetchDeletePost', id);
+			
+			if (deletion) {
+				// retrievePosts();
+				postDeleted.value = true;
 
-
-		//Suppression d'un post - async
-		//function deletePost(id) {
-
-		//	let index = getIndex(id);
-		//	console.log('home index of deleted post: ', index);
-			//await store.dispatch('fetchDeletePost', id);
-			// postDeleted.value = true;
-			// setTimeout(()=> {
-			// 	postDeleted.value = false;
-			// }, 2500);
-		//}
+				setTimeout(()=> {
+					postDeleted.value = false;
+				}, 2500);
+			}
+		}
 
 		// Aimer un post
 		async function likePost(data) {
@@ -133,7 +126,7 @@ export default {
 		
 
 
-		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost };
+		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost, postToDelete };
 	}
 };
 </script>

@@ -120,8 +120,11 @@ const actions = {
 	async fetchDeletePost(context, id) {
 		const token = context.getters.getToken;
 		const response = await postService.deletePost(id, token);
-		context.commit('DELETE_POST', response.data.posts);
-		context.commit('ADD_USERSLIKED_TO_POST');
+		if (response.data) {
+			context.commit('DELETE_POST', response.data);
+			context.commit('ADD_USERSLIKED_TO_POST');
+			return true;
+		}
 	},
 
 	// Like a post
