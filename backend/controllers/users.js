@@ -186,13 +186,8 @@ exports.getAllUsers = (req, res, next) => {
 // Supprimer un utilisateur
 exports.deleteUserAccount = (req, res, next) => {
 
-	console.log("**************body: ", req.body);
 	const userIdToDestroy = req.params.id;
 	const adminId = req.params.adminId;
-
-	console.log("**************adminId: ", adminId);
-	console.log("**************userId to destroy: ", userIdToDestroy);
-
 
 	User.findByPk(adminId)
 	.then((user) => {

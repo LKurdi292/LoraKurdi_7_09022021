@@ -1,10 +1,8 @@
 const db = require('../models/index');
-// const { post } = require('../routes/users');
 const Post = db.Post;
 const User = db.User;
 const Comment = db.Comment;
 const LikePost = db.Like_Post;
-// const op = db.Sequelize.op;
 
 
 // Récupérer tous les posts ainsi que le nom, le prénom et l'image de l'auteur, et les commentaires associés, et le nom, prénom et image de l'auteur.
@@ -149,7 +147,7 @@ exports.deletePost = (req, res, next) => {
 		})
 		.then( posts => {res.status(200).send({ posts, message: "Le post a été supprimé avec succès!" })
 		})
-		.catch( error => res.status(500).send({ error,  message: 'Impossible d\'afficher les posts' }));
+		.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
 	})
 	.catch((err) => {
 		res.status(500).send({ err, message: "Un problème est survenu lors de la suppression du post" })

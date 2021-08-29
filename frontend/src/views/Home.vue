@@ -75,14 +75,21 @@ export default {
 
 		// Créer un post
 		async function createPost(postData) {
-			await store.dispatch('fetchCreatePost', postData);
-			// fermer le modal
-			editMode.value = false;
-			// afficher la div verte pendant 2.5s
-			submitted.value = true;
-			setTimeout(()=> {
-				submitted.value = false;
-			}, 2500);
+			const postAdded = await store.dispatch('fetchCreatePost', postData);
+
+			if (postAdded) {
+				// fermer le modal
+				editMode.value = false;
+
+				// afficher la div verte pendant 2.5s
+				submitted.value = true;
+
+				setTimeout(()=> {
+					submitted.value = false;
+				}, 2500);
+
+				retrievePosts();
+			}
 		}
 
 		// Annuler l'édition

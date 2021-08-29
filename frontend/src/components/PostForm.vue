@@ -8,7 +8,7 @@
 				<textarea v-model="content">
 				</textarea>
 				<div class="buttonContainer">
-					<button @submit.prevent="publish" class="button" :disabled="!isFormValid" title="Publish post">Publish</button>
+					<button type="button" @click.prevent="publish" class="button" :disabled="!isFormValid" title="Publish post">Publish</button>
 					<button type="button" class="button" @click.prevent="annuler" title="Cancel">Cancel</button>
 				</div>
 			</form>
@@ -22,13 +22,13 @@ import {useStore} from 'vuex';
 export default {
 	name: 'ModalPostForm',
 	emits: ['publishPost', 'cancel'],
-	setup(context) {
+	setup(props, { emit }) {
 		// Données et variables
 		const store = useStore();
 
 		const title = ref("");
 		const content = ref("");
-		const image = ref("");
+		// const image = ref("");
 
 		// const fd = new FormData();
 		// fd.append('image', image);
@@ -38,24 +38,23 @@ export default {
 		const postData = {
 			title : '',
 			text: '',
-			imageURL: ''
+			// imageURL: ''
 		};
 
 		function fillInPostData() {
 			postData.title = title.value;
 			postData.text = content.value;
-			postData.imageURL = image.value;
+			// postData.imageURL = image.value;
 			postData.id = store.state.user.id;
 
-			console.log('fillInPostData: ', postData);
+			return postData;
 		}
 
 		// Envoyer un post
 		function publish() {
-			fillInPostData();
-			console.log('post form postData: ', postData);
+			const postData = fillInPostData();
 			// Envoyer au parent: Home.vue
-			context.emit('publishPost', postData);
+			emit('publishPost', postData);
 		}
 
 		//Validation des champs: calculer la valeur isFormValid pour enable le bouton 'Publish'
@@ -71,8 +70,8 @@ export default {
 		function annuler() {
 			title.value = "";
 			content.value = "";
-			image.value = "";
-			context.emit('cancel');
+			// image.value = "";
+			emit('cancel');
 		}
 
 		return {title, content, publish, annuler, isFormValid };

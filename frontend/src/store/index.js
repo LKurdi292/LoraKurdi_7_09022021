@@ -11,8 +11,7 @@ let state = {
 	user: {},
 	subscribed: Date,
 	token: '',
-	lastPosts: [],
-	allUsers: [],
+	allUsers: []
 };
 
 // methods which change the data that's in the state (synchronous codeonly)
@@ -35,7 +34,8 @@ const mutations = {
 	},
 	ADD_USERSLIKED_TO_POST(state){
 		const usersLiked = [];
-		state.posts.forEach(post => {
+		const posts = state.posts;
+		posts.forEach(post => {
 			if (!post.usersLiked) {
 				const index = state.posts.indexOf(post);
 				post = { ...post, usersLiked};
@@ -44,6 +44,8 @@ const mutations = {
 		});
 	},
 	ADD_NEW_POST(state, post) {
+		const usersLiked = [];
+		post = { ...post, usersLiked};
 		state.posts = { post, ...state.posts };
 	},
 	DELETE_POST(state, posts) {
@@ -61,12 +63,10 @@ const mutations = {
 	CLEAR_STORE(state) {
 		state.userLogged = false,
 		state.posts = [],
-		state.lastPosts = [],
-		state.user = null,
-		state.comments = [],
+		state.user = {},
+		state.subscribed = Date,
 		state.token = '',
-		state.post = {},
-		state.subscribed = Date
+		state.allUsers = []
 	}
 };
 
@@ -103,8 +103,6 @@ const actions = {
 	// Get All Posts
 	async fetchAllPosts (context) {
 		const response = await postService.getAllPosts(state.token);
-		console.log('fetch allposts: ', response.data.posts);
-
 		context.commit('SET_POSTS', response.data.posts);
 		context.commit('ADD_USERSLIKED_TO_POST');
 	},
@@ -112,8 +110,10 @@ const actions = {
 	// Create a post
 	async fetchCreatePost (context, postData) {
 		const response = await postService.createPost(postData, state.token);
-		context.commit('ADD_NEW_POST', response.data);
-		context.commit('ADD_USERSLIKED_TO_POST');
+		if (response.data) {
+			context.commit('ADD_NEW_POST', response.data);
+			return true;
+		}
 	}, 
 
 	// Delete a post
