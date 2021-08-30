@@ -116,8 +116,8 @@ const actions = {
 	// Create a post
 	async fetchCreatePost (context, postData) {
 		const response = await postService.createPost(postData, state.token);
-		if (response.status === 200) {
-			context.commit('ADD_NEW_POST', response.data);
+		if (response.status == 201) {
+			context.commit('ADD_NEW_POST', response.data.newPost);
 			return true;
 		}
 	},
@@ -126,8 +126,8 @@ const actions = {
 	async fetchDeletePost(context, id) {
 		const token = context.getters.getToken;
 		const response = await postService.deletePost(id, token);
-		if (response.status === 200) {
-			context.commit('DELETE_POST', response.data);
+		if (response.status == 200) {
+			context.commit('DELETE_POST', response.data.posts);
 			context.commit('ADD_USERSLIKED_TO_POST');
 			return true;
 		}
@@ -137,8 +137,8 @@ const actions = {
 	async fetchLikePost(context, toSend) {
 		const token = context.getters.getToken;
 		const response = await postService.likePost(toSend, token);
-		if(response.status === 200) {
-			context.commit('LIKE_POST', response.data);
+		if(response.status == 201) {
+			context.commit('LIKE_POST', response.data.posts);
 			context.commit('ADD_USERSLIKED_TO_POST');
 		}
 	},
@@ -152,7 +152,7 @@ const actions = {
 	// Delete a comment
 	async fetchDeleteComment(context, id){
 		const response = await commentService.deleteComment(id, state.token);
-		if (response.status === 200 ) {
+		if (response.status == 200 ) {
 			context.commit('SET_POSTS', response.data);
 			context.commit('ADD_USERSLIKED_TO_POST');
 			return true;
@@ -167,7 +167,6 @@ const actions = {
 			like: data.like
 		};
 		const response = await commentService.likeComment(id, body, state.token);
-		console.log(response.data);
 
 		if (response.status === 200) {
 			context.commit('SET_POSTS', response.data);

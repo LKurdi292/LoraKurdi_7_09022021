@@ -45,7 +45,8 @@ exports.getAllPosts = (req, res, next) => {
 					}
 				}
 			})
-			res.status(200).send({ posts});
+			console.log("********** fetch posts: ", posts);
+			res.status(200).send({posts});
 		})
 		.catch(error => { 
 			res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
@@ -110,7 +111,7 @@ exports.createPost = (req, res, next) => {
 			publicationDate : Date.now(),
 			likes: 0
 		};
-		sendPostToDB(post).then(newPost => res.status(201).json(newPost));
+		sendPostToDB(post).then(newPost => res.status(201).json({newPost}));
 	};
 };
 
@@ -220,17 +221,18 @@ exports.likeApost = (req, res, next) => {
 								likes.forEach(like => {
 									let post = posts.findIndex(search => search.id == like.postId);
 									if (post != null) {
-										if(posts[post].dataValues.usersLiked ===undefined){
+										if(posts[post].dataValues.usersLiked === undefined){
 											posts[post].dataValues.usersLiked = [like.userId];
 										} else {
 											posts[post].dataValues.usersLiked.push(like.userId);
 										}
 									}
 								})
-								res.status(201).send(posts);
+								console.log("********** like a post: ", posts);
+								res.status(201).send({posts});
 							})
 							.catch(error => { 
-								res.status(500).send({ error, message: "Impossibled'ajouter la table des likes aux posts"});
+								res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});
 							})
 						})
 						.catch( error => res.status(500).send({ error,  message:"Impossible d'afficher les posts, like case 1" }));
@@ -290,7 +292,8 @@ exports.likeApost = (req, res, next) => {
 										}
 									}
 								})
-								res.status(201).send(posts);
+								console.log("********** dislike a post: ", posts);
+								res.status(201).send({posts});
 							})
 							.catch(error => { 
 								res.status(500).send({ error, message: "Impossible d'ajouter la table des likes aux posts"});

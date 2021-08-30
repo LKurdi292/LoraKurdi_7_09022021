@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { ref, computed, onUpdated } from 'vue';
+import { ref, computed } from 'vue';
 import {useStore} from 'vuex';
 
 export default {
@@ -35,11 +35,6 @@ export default {
 		// fd.append('image', image);
 		// fd.append('title', title);
 		// fd.append('text', content);
-
-		// Focus de la souris sur le 1er champ texte
-		onUpdated( () => {
-			firstField.value.focus();
-		});
 
 		const postData = {
 			title : '',
