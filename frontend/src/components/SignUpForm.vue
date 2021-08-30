@@ -1,12 +1,5 @@
 <template>
 <!-- eslint-disable  -->
-	<!-- <div class="confirmSignUp" v-if="accountCreated">
-		Your account have been created. 
-		<router-link to="/login">
-			<a>Log in</a>
-		</router-link>
-	</div> -->
-
 	<h1>Sign Up</h1>
 
 	<form v-on:submit.prevent="createUser">
@@ -54,9 +47,8 @@ export default {
 		]);
 		const account = ref("");
 		const firstField = ref(null);
-		// let accountCreated = ref(false);
 
-		// function createUser () {
+
 		function createUser () {
 			const user = {
 				email : email.value,
@@ -65,7 +57,7 @@ export default {
 				password : password.value,
 				isAdmin : account.value
 			};
-			// Envoyer à la vue parent 'auth' vènement et le user créé
+			// Envoyer à la vue parent 'SignUp' que le user est créé
 			context.emit('createAccount', user);
 			resetForm();
 		}
@@ -110,10 +102,13 @@ export default {
 	}
 	form {
 		width: 85%;
-		max-height: 65%;
 		margin: 10px auto;
 		text-align: left;
 		// border: 1px solid black;
+
+		label {
+			font-size: 16px;
+		}
 
 		input, select {
 			width: 250px;

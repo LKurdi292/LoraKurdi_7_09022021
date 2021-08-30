@@ -12,7 +12,7 @@ function create(data) {
 	})
 	.then(function(res) {
 		if (res.ok) {
-			return res.json();
+			return res.status(201).json();
 		}
 	})
 	.catch(function(err) {

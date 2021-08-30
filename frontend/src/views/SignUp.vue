@@ -5,12 +5,12 @@
 		</div>
 
 		<div class="rightSide">
-			<!-- <div class="confirmSignUp">
-				Your account have been created. 
+			<div class="confirmSignUp" v-show="created">
+				<p>Your account has been created.</p>
 				<router-link to="/login">
 					Log in
 				</router-link>
-			</div> -->
+			</div>
 
 			<div class="signFormContainer">
 				<SignUpForm @createAccount="createUser"/>
@@ -25,6 +25,7 @@
 <script>
 import SignUpForm from "@/components/SignUpForm.vue";
 import userServices from "@/services/users.js";
+import {ref} from 'vue';
 // import { useStore } from 'vuex';
 
 export default {
@@ -33,13 +34,17 @@ export default {
 		SignUpForm
 	},
 	setup() {
+		// Données et variables
+		let created = ref(false);
+
 
 		function createUser(data) {
 			userServices.create(data);
+			created.value = true;
 		}
 
 		
-		return { createUser };
+		return { createUser, created };
 	}
 };
 </script>
@@ -72,25 +77,55 @@ export default {
 		position: relative;
 		width: 65%;
 		background-color: #fce4e2;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		// border-left: 1px red dashed;
 	}
 
+	.confirmSignUp {
+		height: 40px;
+		background-color: #42b983;
+		border: 1px solid #d6e9c6;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-style: italic;
+		width: 70%;
+		margin: 60px auto 50px;
+
+		p {
+			display: inline-block;
+			font-size: 18px;
+			margin: 0 15px 0;
+		}
+
+		a {
+			font-style: normal;
+			color: rgb(230, 57, 20);
+
+			&:hover {
+				font-weight: bold;
+				cursor: pointer;
+				text-decoration: none;
+			}
+		}
+	}
+
 	.signFormContainer {
-		height: 400px;
+		height: 600px;
 		width: 500px;
 		margin: 5% auto;
 		background-color: white;
-		position: absolute;
-		top: 25%;
-		left: 25%;
-		border: white;
 		border-radius: 25px;
 		padding: 2% 0;
+		box-shadow: 1px 1px 4px  rgba(0, 0, 0, 0.4);
 	}
 
 	p.toLogIn {
 		width: 85%;
-		margin: 20px auto;
+		margin: 40px auto 0;
 		text-align: left;
 
 		a {
