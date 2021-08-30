@@ -199,10 +199,11 @@ export default {
 <style lang="scss" scoped>
 
 	.postContainer {
-		margin-bottom: 25px;
+		margin-bottom: 40px;
 		padding: 0 25px 10px;
 		border-radius: 5px;
 		box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
+		background-color: white;
 		// border: orangered 1px solid;
 	}
 

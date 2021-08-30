@@ -1,6 +1,6 @@
 <template>
 	<!-- eslint-disable  -->
-	<nav-bar :isAdmin="$store.state.user.isAdmin"></nav-bar>
+	<nav-bar :isAdmin="$store.state.user.isAdmin" @logOut="logOutUser"></nav-bar>
 	<div class="home">
 		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"></ModalPostForm>
 	
@@ -9,7 +9,7 @@
 			Hello {{ $store.state.user.firstName }}
 		</h1>
 
-		<h2>Welcome to Groupomania's workplace social network.</h2>
+		<h2>Welcome to Groupomania's online social network.</h2>
 		<h3>Here you can interacte with your co-workers at all times and share your thoughts with the community ! <br/>What's on your mind today?</h3>
 
 
@@ -46,12 +46,16 @@ import NavBar from '../components/NavBar.vue';
 import Post from '../components/Post.vue';
 import { computed, ref } from 'vue';
 import {useStore} from 'vuex';
+import {useRoute, useRouter} from 'vue-router';
+
 
 export default {
 	name: "Home",
 	components: { ModalPostForm, NavBar, Post },
 	setup() {
 		// Données et variables
+		const route = useRoute();
+		const router = useRouter();
 		const store = useStore();
 		const posts = computed(() => store.state.posts);
 		const editMode = ref(false);
@@ -99,7 +103,6 @@ export default {
 			const deletion = await store.dispatch('fetchDeletePost', id);
 			
 			if (deletion) {
-				// retrievePosts();
 				postDeleted.value = true;
 
 				setTimeout(()=> {
@@ -133,8 +136,21 @@ export default {
 			await store.dispatch('fetchLikeComment', data);
 		}
 
+		// Log Out
+		const goToLogOutPage = () => {
+			const redirectLogOut = route.query.redirect || '/logout';
+			router.push(redirectLogOut);
+		}
 
-		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost, postToDelete, deleteComment, likeComment };
+		function logOutUser() {
+			store.commit('CLEAR_STORE');
+			if (!store.state.userLogged) {
+				goToLogOutPage();
+			}
+		}
+
+
+		return { createPost, editMode, posts, letters, triggerEdition, cancelEdition, submitted, postDeleted, likePost, commentPost, postToDelete, deleteComment, likeComment, logOutUser };
 	}
 };
 </script>
@@ -145,10 +161,10 @@ export default {
 	margin: 0 auto;
 	z-index: -1000;
 	padding: 3%;
+	background-color: rgb(247, 217, 203);
 }
 h1 {
-	display: flex;
-	align-items: center;
+	text-align: center;
 	margin: 0 auto 50px;
 
 	img {
@@ -159,7 +175,9 @@ h1 {
 
 h3 {
 	letter-spacing: 1px;
-	line-height: 30px;
+	// font-size: 18px;
+	font-weight: normal;
+	line-height: 40px;
 }
 
 .userActionsContainer {
@@ -167,10 +185,12 @@ h3 {
 	justify-content: space-between;
 	align-items: center;
 	font-size: 16px;
+	width: 90%;
 	margin: 80px auto 60px;
 	// border: 1px blue solid;
 
 	.filterBox {
+		font-size: 16px;
 		width: 300px;
 		height: 40px;
 		outline: none;
@@ -182,10 +202,9 @@ h3 {
 
 	button {
 		width: 200px;
-		font-size: 16px;
+		font-size: 18px;
 		padding: 12px;
 		background-color: rgb(230, 57, 20);
-		// fc3914;
 		color: white;
 		border: none;
 		font-weight: bold;
@@ -209,7 +228,7 @@ div.submissionSuccess, div.deletePostSuccess {
 }
 
 .wallContainer {
-	width: 90%;
+	width: 70%;
 	margin: 10px auto 40px;
 	padding: 2% 0;
 	// border: 1px solid black;

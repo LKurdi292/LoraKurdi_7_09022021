@@ -21,13 +21,14 @@
 				</div>
 
 				<div class="linkTo" v-show="isAdmin">
-					<router-link to="/allusers"  title="Go to Users' management page">
+					<router-link to="/allusers"  title="Manage users">
+						<fas class="icon" icon="users-cog"></fas>
 						Users Management
 					</router-link>
 				</div>
 
 				<div class="linkTo">
-					<router-link to="/login" @click="logOut" title="Log out">
+					<router-link to="/logout" @click="logOutUser" title="Log out">
 						<fas class="icon" icon="sign-out-alt"></fas>
 						Log out
 					</router-link>
@@ -40,30 +41,21 @@
 </template>
 
 <script>
-import { useStore } from 'vuex';
-// import { computed } from 'vue';
-
 
 export default {
 	props: {
 		"isAdmin": Boolean
 	},
 	name: "navBar",
-	setup() {
-		const store = useStore();
-		// let userId = computed(() => store.state.user.id);
-		// let admin = ref(false);
-
-		function logOut() {
-			store.commit('CLEAR_STORE');
+	emits: ['logOut'],
+	setup(context) {
+		
+		function logOutUser() {
+			context.emit('logOut');
 		}
+		
+		return { logOutUser};
 
-		// if (props.isAdmin === 1) {
-		// 	console.log('isAdmin: ', props.isAdmin);
-		// 	admin.value = true;
-		// }
-
-		return { logOut};
 	}
 }
 </script>

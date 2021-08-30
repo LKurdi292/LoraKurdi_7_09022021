@@ -100,24 +100,24 @@ exports.likeComment = (req, res, next) => {
 					{ where: {id : commentId} },
 				)
 				.then(() => {
-					// ajout de [userId, commentId] dans la table de jointure LikeComment
-					LikeComment.create({commentId, userId})
-					.then(()=> {
-						// Ajout d'un tableau à chaque commentaore contenant l'id des users qui ont liké ce commentaire
-						LikeComment.findAll()
-						.then((likes) => {
-							likes.forEach(like => {
-								let comment = comments.findIndex(search => search.id == like.commentId);
-								if (comment != null) {
-									if(comments[comment].dataValues.usersLiked === undefined){
-										comments[comment].dataValues.usersLiked = [like.userId];
-									} else {
-										comments[comment].dataValues.usersLiked.push(like.userId);
-									}
-								}
-							})
-						})
-						.then(() => {
+					// // ajout de [userId, commentId] dans la table de jointure LikeComment
+					// LikeComment.create({commentId, userId})
+					// .then(()=> {
+					// 	// Ajout d'un tableau à chaque commentaore contenant l'id des users qui ont liké ce commentaire
+					// 	LikeComment.findAll()
+					// 	.then((likes) => {
+					// 		likes.forEach(like => {
+					// 			let comment = comments.findIndex(search => search.id == like.commentId);
+					// 			if (comment != null) {
+					// 				if(comments[comment].dataValues.usersLiked === undefined){
+					// 					comments[comment].dataValues.usersLiked = [like.userId];
+					// 				} else {
+					// 					comments[comment].dataValues.usersLiked.push(like.userId);
+					// 				}
+					// 			}
+					// 		})
+					// 	})
+					// 	.then(() => {
 							Post.findAll({ 
 								order: [['createdAt', 'DESC']],
 								attributes: { 
@@ -164,11 +164,11 @@ exports.likeComment = (req, res, next) => {
 								})
 							})
 							.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
-						})
-						.catch((error) => {
-							res.status(500).send({error, message: "Impossible d'ajouter le couple commentId userId à la table de jointure"});
-						})
-					})
+						// })
+						// .catch((error) => {
+						// 	res.status(500).send({error, message: "Impossible d'ajouter le couple commentId userId à la table de jointure"});
+						// })
+					// })
 				})
 				.catch((error) => {
 					res.status(500).send({error, message: "Impossible de mettre à jour le commentaire"});
@@ -182,25 +182,25 @@ exports.likeComment = (req, res, next) => {
 				)
 				// retrait de [userId, commentId] de la table de jointure LikeComment
 				.then(() => {
-					LikeComment.destroy({
-						where: { commentId: commentId, userId: userId}
-					})
-					.then(() => {
-						// Ajout d'un tableau à chaque commentaire contenant l'id des users qui ont liké ce commentaire
-						LikeComment.findAll()
-						.then((likes) => {
-							likes.forEach(like => {
-								let comment = comments.findIndex(search => search.id == like.commentId);
-								if (comment != null) {
-									if(comments[comment].dataValues.usersLiked === undefined){
-										comments[comment].dataValues.usersLiked = [like.userId];
-									} else {
-										comments[comment].dataValues.usersLiked.push(like.userId);
-									}
-								}
-							})
-						})
-						.then(() => {
+					// LikeComment.destroy({
+					// 	where: { commentId: commentId, userId: userId}
+					// })
+					// .then(() => {
+					// 	// Ajout d'un tableau à chaque commentaire contenant l'id des users qui ont liké ce commentaire
+					// 	LikeComment.findAll()
+					// 	.then((likes) => {
+					// 		likes.forEach(like => {
+					// 			let comment = comments.findIndex(search => search.id == like.commentId);
+					// 			if (comment != null) {
+					// 				if(comments[comment].dataValues.usersLiked === undefined){
+					// 					comments[comment].dataValues.usersLiked = [like.userId];
+					// 				} else {
+					// 					comments[comment].dataValues.usersLiked.push(like.userId);
+					// 				}
+					// 			}
+					// 		})
+					// 	})
+					// 	.then(() => {
 							Post.findAll({ 
 								order: [['createdAt', 'DESC']],
 								attributes: { 
@@ -247,11 +247,11 @@ exports.likeComment = (req, res, next) => {
 								})
 							})
 							.catch( error => res.status(500).send({ error,  message: "Impossible d'afficher les posts" }));
-						})
-					})
-					.catch((error) => {
-						res.status(500).send({error, message: "Impossible de retirer le couple commentId userId de la table de jointure"});
-					})
+					// 	})
+					// })
+					// .catch((error) => {
+					// 	res.status(500).send({error, message: "Impossible de retirer le couple commentId userId de la table de jointure"});
+					// })
 				})
 				.catch((error) => {
 					res.status(500).send({error, message: "Impossible de mettre à jour le commentaire"});

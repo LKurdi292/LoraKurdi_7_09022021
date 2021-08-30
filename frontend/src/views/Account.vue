@@ -68,8 +68,8 @@
 
 
 			<div class="labelInputContainer">
-				<label for="bio">Description</label>
-				<textarea id='bio' type="text-area" placeholder="Tell us more about yourself" rows="25" cols="25" :value="currentUser.bio" @change="updateBio" alt="Enter a description" title="Enter a description"></textarea>
+				<label for="bio">Tell us more about yourself</label>
+				<textarea id='bio' type="text-area" rows="25" cols="25" :value="currentUser.bio" @change="updateBio" alt="Enter a description" title="Enter a description"></textarea>
 			</div>
 
 			<div class="EndFormButtonsContainer">
@@ -317,12 +317,11 @@ export default {
 	.account {
 		width: 70%;
 		margin: 0 auto;
-		padding: 3%;
+		padding: 3% 3% 8% 3%;
 		text-decoration: none;
-		border: black 1px solid;
 
 		h1 {
-			margin: 50px 0;
+			margin: 0 0 50px 0;
 			font-weight: lighter;
 		}
 
@@ -376,8 +375,10 @@ export default {
 
 	form {
 		width: 100%;
-		margin: 50px 0 100px 0;
-		
+		margin: 40px 0 0 0;
+		background-color: rgb(247, 217, 203);
+		padding-top: 40px;
+	
 		.labelInputContainer:not(:last-child) {
 			width: 500px;
 			margin: 0 auto 30px;
@@ -393,12 +394,14 @@ export default {
 				padding-left: 1%;
 				font-size: 16px;
 				border: none;
+				background-color: white;
 				box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
-				// border-radius: 1%;
 			}
 			textarea {
 				outline: none;
+				border: none;
 				padding-left: 1%;
+				box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 			}
 		}
 
@@ -409,17 +412,15 @@ export default {
 			display: flex;
 			justify-content: space-evenly;
 			align-items: center;
-			// border: 1px solid red;
 		}
 
 		.EndFormButtonsContainer {
-			width: 100%;
-			height: 110px;
-			margin: 25px 0 0;
+			width: 50%;
+			height: 210px;
+			margin: 25px auto 0;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			// border: 1px solid red;
 		}
 		
 		button {
@@ -439,10 +440,9 @@ export default {
 			}
 		}
 		#delete {
+			color: black;
 			border-radius: 0;
-			border: black 2px solid;
 			background-color: red;
-			// color: black;
 		}
 
 		.red {

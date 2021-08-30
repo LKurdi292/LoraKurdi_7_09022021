@@ -5,6 +5,7 @@ import Account from "../views/Account.vue";
 import SignUp from "../views/SignUp.vue";
 import LogIn from "../views/LogIn.vue";
 import UsersManagement from "../views/UsersManagement.vue";
+import LogOut from "../views/Logout.vue";
 
 
 const routes = [
@@ -42,7 +43,13 @@ const routes = [
 		path: "/allusers",
 		name: "usersManagement",
 		component: UsersManagement,
-		// meta: { auth: true}
+		meta: { auth: true}
+	},
+	{
+		path: "/logout",
+		name: "logout",
+		component: LogOut,
+		meta: { auth: true}
 	}
 ];
 

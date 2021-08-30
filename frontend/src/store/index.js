@@ -61,12 +61,12 @@ const mutations = {
 		state.allUsers = allUsers;
 	},
 	CLEAR_STORE(state) {
-		state.userLogged = false,
 		state.posts = [],
 		state.user = {},
 		state.subscribed = Date,
 		state.token = '',
-		state.allUsers = []
+		state.allUsers = [],
+		state.userLogged = false
 	}
 };
 
@@ -89,28 +89,34 @@ const actions = {
 		const id = params.id;
 		const response = await userService.updateAccount(data, id, state.token);
 
-		context.commit("SET_USER_INFO", response.data.user);
-		return response.data.message;
+		if (response.status === 200) {
+			context.commit("SET_USER_INFO", response.data.user);
+			return response.data.message;
+		}
 	},
 
 	// Delete Account
 	async fetchDeleteAccount (context, id) {
 		const response = await userService.deleteAccount(id, state.token);
-		context.commit('CLEAR_STORE');
-		return response.data.message;
+		if (response.status === 200) {
+			context.commit('CLEAR_STORE');
+			return response.data.message;
+		}
 	},
 
 	// Get All Posts
 	async fetchAllPosts (context) {
 		const response = await postService.getAllPosts(state.token);
-		context.commit('SET_POSTS', response.data.posts);
-		context.commit('ADD_USERSLIKED_TO_POST');
+		if (response.status === 200) {
+			context.commit('SET_POSTS', response.data.posts);
+			context.commit('ADD_USERSLIKED_TO_POST');
+		}
 	},
 	
 	// Create a post
 	async fetchCreatePost (context, postData) {
 		const response = await postService.createPost(postData, state.token);
-		if (response.data) {
+		if (response.status === 200) {
 			context.commit('ADD_NEW_POST', response.data);
 			return true;
 		}
@@ -120,7 +126,7 @@ const actions = {
 	async fetchDeletePost(context, id) {
 		const token = context.getters.getToken;
 		const response = await postService.deletePost(id, token);
-		if (response.data) {
+		if (response.status === 200) {
 			context.commit('DELETE_POST', response.data);
 			context.commit('ADD_USERSLIKED_TO_POST');
 			return true;
@@ -131,8 +137,10 @@ const actions = {
 	async fetchLikePost(context, toSend) {
 		const token = context.getters.getToken;
 		const response = await postService.likePost(toSend, token);
-		context.commit('LIKE_POST', response.data);
-		context.commit('ADD_USERSLIKED_TO_POST');
+		if(response.status === 200) {
+			context.commit('LIKE_POST', response.data);
+			context.commit('ADD_USERSLIKED_TO_POST');
+		}
 	},
 
 	// Create a comment
@@ -160,7 +168,12 @@ const actions = {
 		};
 		const response = await commentService.likeComment(id, body, state.token);
 		console.log(response.data);
-		return true;
+
+		if (response.status === 200) {
+			context.commit('SET_POSTS', response.data);
+			context.commit('ADD_USERSLIKED_TO_POST');
+			return true;
+		}
 	},
 
 	//Get all users for admin

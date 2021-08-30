@@ -9,7 +9,7 @@
 	</div>
 
 	<div class="usersList">
-		<div class="usersList__user" v-for="user in users" :key="user.id" @click.prevent="showAlert(user.id)">
+		<div class="usersList__user" v-for="user in users" :key="user.id" @click.prevent="showAlert(user.id)" title="Delete user?">
 			<p>{{ user.lastName }}, {{ user.firstName }}</p>
 			<p>Is Admin: <strong>{{ user.isAdmin }}</strong></p>
 		</div>

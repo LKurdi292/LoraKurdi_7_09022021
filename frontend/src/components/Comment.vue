@@ -17,11 +17,11 @@
 			<p class="commentContent__text">{{ commentText }}</p>
 			
 			<!-- Affichage des likes commentaires -->
-			<div class="likeContainer">
-				<a :class="{orange: hasLiked}" @click.prevent="likeAcomment" title="Like or dislike">
+			<div class="likeContainer" :class="{orange: hasLiked}">
+				<a @click.prevent="likeAcomment" title="Like or dislike">
 					<fas class="icon-action" icon="thumbs-up"></fas>
 				</a>
-				<p>0</p>
+				<p>{{ nbLikes }}</p>
 				<!-- <p>{{ usersLiked.length }}</p> -->
 			</div>
 		</div>
@@ -42,7 +42,7 @@ export default {
 		'authorLname': String,
 		'commentText': String,
 		'nbLikes': Number,
-		'usersLiked': Array
+		// 'usersLiked': Array
 	},
 	emits: ['deleteComment', 'likeComment'],
 	setup(props, context) {
@@ -63,6 +63,9 @@ export default {
 			context.emit('deleteComment', id);
 		}
 
+
+			// Nécessite l'envoi du contenu de la table de jointure Like_Comments
+		
 		// Si user a déjà aimé le commentaire quand arrive sur la page
 		// if ( props.usersLiked.includes(store.state.user.id)) {
 		// 	hasLiked.value = true;
@@ -91,7 +94,7 @@ export default {
 			context.emit('likeComment', data);
 		}
 
-		return { authorEQuser, deleteAcomment, likeAcomment };
+		return { authorEQuser, deleteAcomment, likeAcomment, hasLiked };
 
 
 	},
@@ -105,7 +108,7 @@ export default {
 		justify-content: flex-start;
 		align-items: flex-start;
 		margin: 25px auto;
-
+		width: 90%;
 
 		.userPicContainer {
 			width: 35px;
