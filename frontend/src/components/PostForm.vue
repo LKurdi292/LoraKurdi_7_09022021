@@ -7,6 +7,10 @@
 			
 				<textarea v-model="content">
 				</textarea>
+
+				<label class="labelFile">Add an image to your post</label><br>
+				<input ref="postImage" type="file" name="postImage" id="imageInput" accept="image/*" @change="onFileSelected">
+
 				<div class="buttonContainer">
 					<button type="button" @click.prevent="publish" class="button" :disabled="!isFormValid" title="Publish post">Publish</button>
 					<button type="button" class="button" @click.prevent="annuler" title="Cancel">Cancel</button>
@@ -29,23 +33,24 @@ export default {
 
 		const title = ref("");
 		const content = ref("");
-		// const image = ref("");
+		const postImage = ref("");
 
-		// const fd = new FormData();
-		// fd.append('image', image);
-		// fd.append('title', title);
-		// fd.append('text', content);
+		// Construire le Form Data
+		const postFD = new FormData();
 
+		function onFileSelected(event) {
+			postImage.value = event.target.files[0];
+			postFD.set('imageURL', postImage.value, postImage.value.name);
+		}
+		
 		const postData = {
 			title : '',
-			text: '',
-			// imageURL: ''
+			text: ''
 		};
 
 		function fillInPostData() {
 			postData.title = title.value;
 			postData.text = content.value;
-			// postData.imageURL = image.value;
 			postData.id = store.state.user.id;
 			return postData;
 		}
@@ -54,13 +59,19 @@ export default {
 		function resetForm() {
 			title.value = "";
 			content.value = "";
+			postImage.value = "";
 			firstField.value.focus();
 		}
 
 		// Envoyer un post
 		function publish() {
 			const postData = fillInPostData();
-			emit('publishPost', postData);
+
+			// On ajoute le contenu de postData à postFD
+			for (let e in postData) {
+				postFD.set(e, postData[e]);
+			}
+			emit('publishPost', postFD);
 			resetForm();
 		}
 
@@ -81,7 +92,7 @@ export default {
 			emit('cancel');
 		}
 
-		return {title, content, publish, annuler, isFormValid, firstField };
+		return {title, content, publish, annuler, isFormValid, firstField, postImage, onFileSelected };
 	},
 };
 </script>
@@ -107,8 +118,8 @@ export default {
 	
 	form {
 		width: 100%;
-		font-size: 18px;
 		padding: 0 15px 0 0;
+		font-size: 14px;
 		// border: 1px red solid;
 
 		input {
@@ -121,9 +132,20 @@ export default {
 
 		textarea {
 			width: 95%;
+			margin: 20px auto;
 			height: 400px;
 			outline: none;
 			padding: 2%;
+		}
+
+		label.labelFile {
+			font-size: 15px;
+			margin: 20px 0;
+		}
+		
+		#imageInput {
+			width: 90%;
+			margin: 25px auto;
 		}
 	}
 	

@@ -3,12 +3,12 @@
 		<div class="postHeader">
 			<div class="leftSideHeader">
 				<div class="userPicContainer">
-					<img :src="{imageURL}">
+					<img v-bind:src="authorImage || imgToDisplay">
 				</div>
 
 				<div class="authorAndDate">
 					<p>{{ authorFname }} {{ authorLname }}</p>
-					<p> le {{ formattedPublicationDate }} </p>
+					<p>le {{ formattedPublicationDate }}</p>
 				</div>
 			</div>
 
@@ -18,8 +18,11 @@
 		</div>
 
 		<div class="postContent">
-			<p class="postContent_title">{{ postTitle }}</p>
-			<p class="postContent_content">{{ postContent }}</p>
+			<p class="postContent__title">{{ postTitle }}</p>
+			<p class="postContent__text">{{ postText }}</p>
+			<div class="postContent__image" v-show="postHasImage">
+				<img :src=imageURL>
+			</div>
 		</div>
 
 		<div class="postNumbers">
@@ -77,10 +80,11 @@ export default {
 		'authorId': Number,
 		'authorFname': String,
 		'authorLname': String,
+		'authorImage': String,
 		'imageURL': String,
 		'publicationDate': String,
 		'postTitle': String,
-		'postContent': String,
+		'postText': String,
 		'nbLikes': Number,
 		'comments': Array,
 		'usersLiked': Array,
@@ -96,6 +100,16 @@ export default {
 		let writingComment = ref(false);
 		let commentText = ref("");
 		const firstField = ref(null);
+		const postHasImage = ref(false);
+		const imgToDisplay = ref("");
+
+		if (props.imageURL != null) {
+			postHasImage.value = true;
+		}
+
+		if (props.authorImage == null) {
+			imgToDisplay.value = "../assets/dev_images/user-regular.svg";
+		}
 
 		// Focus de la souris sur le 1er champ texte
 		onUpdated( () => {
@@ -191,7 +205,7 @@ export default {
 		}
 
 
-		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert, delComment, firstField, likeTheComment };
+		return { formattedPublicationDate, authorEQuser, likePost, hasLiked, triggerWritingComment, writingComment, commentPost, commentText, showAlert, delComment, firstField, likeTheComment, postHasImage, imgToDisplay };
 
 	}
 }
@@ -222,6 +236,9 @@ export default {
 			.userPicContainer {
 				width: 50px;
 				height: 50px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 				margin: 0 15px 0 0;
 				border-radius: 50%;
 
@@ -229,14 +246,14 @@ export default {
 					border-radius: 50%;
 					width: 100%;
 					height: 100%;
-					object-fit: cover;
+					// object-fit: cover;
 				}
 			}
 	
 			.authorAndDate {
 				p {
 					margin: 0;
-					font-size: 12px;
+					font-size: 14px;
 				}
 				p:last-child {
 					letter-spacing: 1px;
@@ -248,22 +265,50 @@ export default {
 			button {
 				border-radius: 3px;
 				color: white;
-				background-color: rgba(0, 0, 0, 0.5);
 				height: 35px;
 				z-index: 1;
 				cursor: pointer;
 				border: none;
-				box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 				font-weight: bold;
+				background-color: rgba(0, 0, 0, 0.5);
+				box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 			}
 		}
 	}
 
 	.postContent {
 		padding: 0 10px;
-		&_title {
+		margin: 20px auto 30px;
+
+
+		&__title {
 			font-weight: bold;
 			margin-top: 0;
+		}
+
+		&__text {
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			overflow: auto;
+			// border: 1px black solid;
+		}
+
+		&__image {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			margin: 0 auto;
+			height: auto;
+			// border: 1px black solid;
+			
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				// border: 1px red dashed;
+			}
 		}
 	}
 
@@ -276,7 +321,7 @@ export default {
 		text-align: center;
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-around;
 
 		.likeContainer a, .commentContainer a {
 			display: flex;

@@ -20,9 +20,10 @@ function getAllPosts(token) {
 }
 
 // Créer un post
-function createPost(postData, token) {
-	return apiClient.post('/posts', postData, 
+function createPost(postFD, token) {
+	return apiClient.post('/posts', postFD, 
 		{ headers: {
+			"Content-Type": "multipart/form-data",
 			"Authorization": "BEARER " + token
 		}}
 	);

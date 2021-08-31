@@ -26,7 +26,7 @@ exports.getAllPosts = (req, res, next) => {
 			attributes: ['content', 'likes', 'userId', 'id'],
 			include: [{
 				model: User,
-				attributes: ['firstName', 'lastName']
+				attributes: ['firstName', 'lastName', 'imageURL']
 			}]
 		}
 		]
@@ -90,15 +90,14 @@ exports.createPost = (req, res, next) => {
 		return
 	}
 
-	if (req.body.imageURL) {
+	if (req.file) {
 		const post = {
 			userId : req.body.id,
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),
 			likes: 0,
-			// imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-			imageURL: req.body.imageURL
+			imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
 		};
 		Post.create(post)
 		.then(() => res.status(201).json({ message: 'Post créé !'}))
@@ -109,7 +108,8 @@ exports.createPost = (req, res, next) => {
 			title : req.body.title,
 			publicationText : req.body.text,
 			publicationDate : Date.now(),
-			likes: 0
+			likes: 0,
+			imageURL: null
 		};
 		sendPostToDB(post).then(newPost => res.status(201).json({newPost}));
 	};
@@ -228,7 +228,6 @@ exports.likeApost = (req, res, next) => {
 										}
 									}
 								})
-								console.log("********** like a post: ", posts);
 								res.status(201).send({posts});
 							})
 							.catch(error => { 
@@ -292,7 +291,6 @@ exports.likeApost = (req, res, next) => {
 										}
 									}
 								})
-								console.log("********** dislike a post: ", posts);
 								res.status(201).send({posts});
 							})
 							.catch(error => { 

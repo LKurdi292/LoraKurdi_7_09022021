@@ -274,7 +274,14 @@ export default {
 			} else {
 				updateData.bio = currentUser.value.bio;
 			}
+		}
 
+		function scrollToTop() {
+			window.scrollTo({
+				top: 0,
+				left: 0,
+				behavior: 'smooth'
+			});
 		}
 
 		// Mise à jour du profil
@@ -303,7 +310,7 @@ export default {
 				checkingPassword.value = false;
 				changing.value = false;
 				refCurrentPassword = ref(currentPassword.value);
-
+				scrollToTop();
 
 				// Affichage du message de confirmation d'update puis disparition au bout 	de 2.5s
 				setTimeout(()=> {
@@ -333,7 +340,7 @@ export default {
 	.account {
 		width: 70%;
 		margin: 0 auto;
-		padding: 3% 3% 8% 3%;
+		padding: 3%;
 		text-decoration: none;
 
 		h1 {

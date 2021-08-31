@@ -33,7 +33,7 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :imageURL="post.User.imageURL" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment" @likeAcomment="likeComment">
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :authorImage="post.User.imageURL" :imageURL="post.imageURL" :publicationDate="post.createdAt" :postText="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment" @likeAcomment="likeComment">
 				</Post>
 			</div>
 		</div>
@@ -228,7 +228,7 @@ div.submissionSuccess, div.deletePostSuccess {
 }
 
 .wallContainer {
-	width: 70%;
+	width: 60%;
 	margin: 10px auto 40px;
 	padding: 2% 0;
 	// border: 1px solid black;

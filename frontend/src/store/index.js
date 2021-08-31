@@ -60,6 +60,19 @@ const mutations = {
 	SET_ALL_USERS(state, allUsers) {
 		state.allUsers = allUsers;
 	},
+	ADD_FALSE_IMAGE_TO_AUTHORS(state) {
+		const posts = state.posts;
+		posts.forEach(post => {
+			if (post.User.imageURL == null) {
+				const index = state.posts.indexOf(post);
+				post.User.imageURL ="@/assets/user-regular.svg";
+				if (post.Comments.User.imageURL == null) {
+					post.Comments.User.imageURL ="@/assets/dev_images/user-regular.svg";
+				}
+				state.posts.splice(index, 1, post); 
+			}
+		});
+	},
 	CLEAR_STORE(state) {
 		state.posts = [],
 		state.user = {},
@@ -110,6 +123,7 @@ const actions = {
 		if (response.status === 200) {
 			context.commit('SET_POSTS', response.data.posts);
 			context.commit('ADD_USERSLIKED_TO_POST');
+			console.log('store posts: ', state.posts);
 		}
 	},
 	

@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
+const multer = require('../middlewares/multer-config');
 
 const postCtrl = require('../controllers/posts');
 
@@ -10,7 +11,7 @@ const postCtrl = require('../controllers/posts');
 router.get('/', postCtrl.getAllPosts);
 
 // Créer un nouveau post
-router.post('/', auth, postCtrl.createPost);
+router.post('/', auth, multer, postCtrl.createPost);
 
 // Supprimer un post by id
 router.delete('/:id', auth, postCtrl.deletePost);
@@ -18,11 +19,5 @@ router.delete('/:id', auth, postCtrl.deletePost);
 // Liker un post
 // ne fonctionne pas avec auth
 router.put('/like', postCtrl.likeApost);
-
-// Récupérer les 5 derniers posts
-//router.get('/pages/:start/5', auth, postCtrl.getLastPosts);
-
-// Faire une recherche de posts par date
-//router.get('/:date', postCtrl.getByDate);
 
 module.exports = router;
