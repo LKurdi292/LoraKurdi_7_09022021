@@ -4,6 +4,7 @@ const User = db.User;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js');
+const fs = require('fs');
 
 
 
@@ -25,7 +26,8 @@ exports.signup = (req, res, next) => {
 			firstName : req.body.firstName,
 			lastName : req.body.lastName, 
 			isAdmin : req.body.isAdmin,
-			subscriptionDate : Date.now()
+			subscriptionDate : Date.now(),
+			// imageURL: null
 		};
 		// Sauvegarder dans la base
 		User.create(user)
@@ -61,7 +63,8 @@ exports.login = (req, res, next) => {
 					email: req.body.email,
 					password: req.body.password,
 					bio: user.bio,
-					isAdmin: user.isAdmin
+					isAdmin: user.isAdmin,
+					imageURL: user.imageURL
 				},
 				subscriptionDate: user.subscriptionDate,
 				token: jwt.sign(
@@ -96,46 +99,148 @@ exports.updateMyAccount = (req, res, next) => {
 	// Hasher le mdp
 	bcrypt.hash(req.body.password, 10)
 	.then(hash => {
-		User.update({
-			email: encrypted,
-			password: hash,
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			bio: req.body.bio} ,
-			{where :{ id : connectedId }}
-		)
-		.then(() => {
+
+		// Si une nouvelle image est uploadée
+		if (req.file) {
 			User.findByPk(connectedId)
-			.then((user ) => {
-				res.status(200).json({ 
-					message: "Votre compte a été mis à jour avec succès.", 
-					user: {
-						id: user.id,
-						firstName: user.firstName,
-						lastName: user.lastName,
-						email: req.body.email,
-						password: req.body.password,
-						bio: user.bio,
-						isAdmin: user.isAdmin
-					}
-				});
+			.then((user) => {
+
+				// Suppression de l'ancienne image si présente
+				if (user.imageURL.length > 0) {
+
+					// extraction du nom de l'ancienne image à supprimer
+					const previousImage = user.imageURL.split('/images/')[1];
+
+					fs.unlink(`images/${previousImage}`, () => {
+						User.update({
+							email: encrypted,
+							password: hash,
+							firstName: req.body.firstName,
+							lastName: req.body.lastName,
+							bio: req.body.bio,
+							imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+							}, {
+							where :{ id : connectedId }
+							}
+						)
+						.then(() => {
+							User.findByPk(connectedId)
+							.then((user) => {
+								res.status(200).json({ 
+									message: "Votre compte a été mis à jour avec succès.", 
+									user: {
+										id: user.id,
+										firstName: user.firstName,
+										lastName: user.lastName,
+										email: req.body.email,
+										password: req.body.password,
+										bio: user.bio,
+										isAdmin: user.isAdmin,
+										imageURL: user.imageURL
+									}
+								});
+							})
+							.catch(error => { 
+								res.status(500).send({ 
+									error, 
+									message: "Impossible de renvoyer les données mis à jour du compte"
+								})
+							})
+						})
+						.catch(error => { 
+							res.status(500).send({ 
+								error, 
+								message: "Impossible de mettre à jour du compte"
+							})
+						})
+					})
+				} else { // première fois que le user ajoute une image à son profil, pas d'image précédente à supprimer
+					User.update({
+						email: encrypted,
+						password: hash,
+						firstName: req.body.firstName,
+						lastName: req.body.lastName,
+						bio: req.body.bio,
+						imageURL: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+						}, {
+						where :{ id : connectedId }
+						}
+					)
+					.then(() => {
+						User.findByPk(connectedId)
+						.then((user) => {
+							res.status(200).json({ 
+								message: "Votre compte a été mis à jour avec succès.", 
+								user: {
+									id: user.id,
+									firstName: user.firstName,
+									lastName: user.lastName,
+									email: req.body.email,
+									password: req.body.password,
+									bio: user.bio,
+									isAdmin: user.isAdmin,
+									imageURL: user.imageURL
+								}
+							});
+						})
+						.catch(error => { 
+							res.status(500).send({ 
+								error, 
+								message: "Impossible de renvoyer les données mis à jour du compte"
+							})
+						})
+					})
+					.catch(error => { 
+						res.status(500).send({ 
+							error, 
+							message: "Impossible de mettre à jour du compte"
+						})
+					})
+				}
+			})
+		} else { // Maj du compte sans nouvelle image, formData envoyé sans File, mais avec l'url de l'ancienne
+			User.update({
+				email: encrypted,
+				password: hash,
+				firstName: req.body.firstName,
+				lastName: req.body.lastName,
+				bio: req.body.bio,
+				imageURL: req.body.imageURL
+				}, {
+				where :{ id : connectedId }
+				}
+			)
+			.then(() => {
+				User.findByPk(connectedId)
+				.then((user) => {
+					res.status(200).json({ 
+						message: "Votre compte a été mis à jour avec succès.", 
+						user: {
+							id: user.id,
+							firstName: user.firstName,
+							lastName: user.lastName,
+							email: req.body.email,
+							password: req.body.password,
+							bio: user.bio,
+							isAdmin: user.isAdmin,
+							imageURL: user.imageURL
+						}
+					});
+				})
+				.catch(error => { 
+					res.status(500).send({ error, message: "Impossible de renvoyer les données mises à jour du compte" });
+				})
 			})
 			.catch(error => { 
 				res.status(500).send({ 
 					error, 
-					message: "Une erreur est survenu lors de la mise à jour du compte"
+					message: "Impossible de mettre à jour le compte"
 				})
 			})
-		})
-		.catch(error => { 
-			res.status(500).send({ 
-				error, 
-				message: "Une erreur est survenu lors de la mise à jour du compte"
-			})
-		})
+		}
 	})
 	.catch(error => { 
-		res.status(500).send( console.log(error));
+		res.status(500).send({error, message: "Unable to decrypt password"});
 	});
 };
 

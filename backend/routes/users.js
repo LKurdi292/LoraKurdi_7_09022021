@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
 const userCtrl = require('../controllers/users');
+const multer = require('../middlewares/multer-config');
 
 
 // S'inscrire
@@ -12,7 +13,7 @@ router.post('/auth/signup', userCtrl.signup);
 router.post('/auth/login', userCtrl.login);
 
 // Modifier son compte
-router.put('/users/myaccount/:id', auth, userCtrl.updateMyAccount);
+router.put('/users/myaccount/:id', auth, multer, userCtrl.updateMyAccount);
 
 // Supprimer son compte
 router.delete('/users/myaccount/:id', auth, userCtrl.deleteMyAccount);

@@ -3,7 +3,7 @@
 		<div class="postHeader">
 			<div class="leftSideHeader">
 				<div class="userPicContainer">
-
+					<img :src="{imageURL}">
 				</div>
 
 				<div class="authorAndDate">
@@ -54,7 +54,7 @@
 		</div>
 
 		<div v-show="comments.length > 0" v-for="comment in comments" :key="comment.id">
-			<Comment :authorFname="comment.User.firstName" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes" @deleteComment="delComment" @likeComment="likeTheComment">
+			<Comment :authorFname="comment.User.firstName" :imageURL="comment.User.imageURL" :authorLname="comment.User.lastName" :authorId="comment.userId" :commentId="comment.id" :commentText="comment.content" :nbLikes="comment.likes" @deleteComment="delComment" @likeComment="likeTheComment">
 			</Comment>
 		</div>
 
@@ -77,6 +77,7 @@ export default {
 		'authorId': Number,
 		'authorFname': String,
 		'authorLname': String,
+		'imageURL': String,
 		'publicationDate': String,
 		'postTitle': String,
 		'postContent': String,
@@ -223,7 +224,13 @@ export default {
 				height: 50px;
 				margin: 0 15px 0 0;
 				border-radius: 50%;
-				border: 1px red dashed;
+
+				img {
+					border-radius: 50%;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+				}
 			}
 	
 			.authorAndDate {

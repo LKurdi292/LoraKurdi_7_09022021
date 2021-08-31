@@ -2,7 +2,7 @@
 	<div class="commentContainer">
 
 		<div class="userPicContainer">
-
+			<img :src="{imageURL}">
 		</div>
 
 		<div class="commentContent">
@@ -42,6 +42,7 @@ export default {
 		'authorLname': String,
 		'commentText': String,
 		'nbLikes': Number,
+		'imageURL': String
 		// 'usersLiked': Array
 	},
 	emits: ['deleteComment', 'likeComment'],
@@ -115,7 +116,13 @@ export default {
 			height: 35px;
 			margin: 0;
 			border-radius: 50%;
-			border: 1px red dashed;
+
+			img {
+				border-radius: 50%;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
 		}
 	}
 

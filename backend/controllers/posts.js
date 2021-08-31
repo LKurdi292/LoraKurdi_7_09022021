@@ -139,7 +139,7 @@ exports.deletePost = (req, res, next) => {
 				attributes: ['content', 'likes', 'userId', 'id'],
 				include: [{
 					model: User,
-					attributes: ['firstName', 'lastName']
+					attributes: ['firstName', 'lastName', 'imageURL']
 				}]
 			}
 			]
@@ -209,7 +209,7 @@ exports.likeApost = (req, res, next) => {
 								attributes: ['content', 'likes', 'userId', 'id'],
 								include: [{
 									model: User,
-									attributes: ['firstName', 'lastName']
+									attributes: ['firstName', 'lastName', 'imageURL']
 								}]
 							}
 							]
@@ -273,7 +273,7 @@ exports.likeApost = (req, res, next) => {
 								attributes: ['content', 'likes', 'userId', 'id'],
 								include: [{
 									model: User,
-									attributes: ['firstName', 'lastName']
+									attributes: ['firstName', 'lastName', 'imageURL']
 								}]
 							}
 							]

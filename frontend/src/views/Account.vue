@@ -7,8 +7,9 @@
 
 
 		<div class="picContainer">
-			<div class="roundContainer">
-				<img src="" alt="">
+			<!-- redirection du clic vers l'input file caché dans le form -->
+			<div class="roundContainer" @click="$refs.newImage.click()" title="Upload a profile pic">
+				<img :src=$store.state.user.imageURL>
 			</div>
 		</div>
 
@@ -21,7 +22,7 @@
 			<p>Your profile has been successfully updated</p>
 		</div>
 
-		<form>
+		<form enctype="multipart/form-data">
 			<div class="labelInputContainer">
 				<label for="firstName">First Name</label>
 				<input id='firstName' type="text" ref="firstField" :value="currentUser.firstName" @change="updateFirstName" alt="Your first name" title="Your first name">
@@ -39,7 +40,7 @@
 
 			<div class="labelInputContainer">
 				<label for="password">Actual Password</label>
-				<input id='password' type="password" :disabled="!changing" :value="$store.state.user.password" @keyup.enter="checkOldPassword" alt="Your password" title="Your password">
+				<input id='password' type="password" :disabled="!changing" :value="refCurrentPassword" @change="checkOldPassword" alt="Your password" title="Your password">
 				
 				<p v-show="checkingPassword" class="orange">Type your actual password and press enter</p>
 				<p class="red" v-show="wrongPassword">Wrong password, try again</p>
@@ -65,7 +66,8 @@
 				<p v-show="!identical" class="red">Doesn't match first entry</p>
 			</div>
 
-
+			<!-- Upload d'une image redirigé vers cet input file depuis l'image de profile au dessus du form -->
+			<input class="hiddenInput" ref="newImage" type="file" name="picture" accept="image/*" @change="onFileSelected">
 
 			<div class="labelInputContainer">
 				<label for="bio">Tell us more about yourself</label>
@@ -100,12 +102,31 @@ export default {
 		const route = useRoute();
 		const router = useRouter();
 		let userId = computed(() => store.state.user.id);
-		const subscribed = computed(()=> store.state.subscribed);
+		const subscribed = computed(() => store.state.subscribed);
+		console.log("subscribed: ", subscribed.value);
 		let isAdmin = computed( () => store.state.user.isAdmin);
 		let account = ref("");
 		const formattedDate = moment(subscribed).format('DD/MM/YYYY');
 		let currentUser = computed(() => store.state.user);
 		let currentPassword = computed(() => currentUser.value.password);
+		let refCurrentPassword = ref(currentPassword.value);
+
+		const firstField = ref(null);
+		let changing = ref(false);
+		let checkingPassword = ref(false);
+		let wrongPassword = ref(false);
+		let displayNewDiv = ref(false);
+		let weakPassword = ref(false);
+		let updateDone = ref(false);
+		let identical = ref(true);
+		let confirm = ref(false);
+
+		let newEmail = "";
+		let newFirstName = "";
+		let newLastName = "";
+		let newBio = "";
+		let newPassword = ref("");
+		let newImage = ref(null);
 
 		//Display account type
 		if (isAdmin.value) {
@@ -113,7 +134,6 @@ export default {
 		} else {
 			account.value = 'Default';
 		}
-
 
 		// Alert for deleting account
 		const Swal = useSwal();
@@ -134,35 +154,24 @@ export default {
 			})
 		}
 
+		// New Profile Pic
+		const formData = new FormData();
 
-		const firstField = ref(null);
-		const updateMessage = ref("");
-		let changing = ref(false);
-		let checkingPassword = ref(false);
-		let wrongPassword = ref(false);
-		let displayNewDiv = ref(false);
-		let weakPassword = ref(false);
-		let updateDone = ref(false);
-		let identical = ref(true);
-		let confirm = ref(false);
-
-		let newEmail = "";
-		let newPassword = ref("");
-		let newFirstName = "";
-		let newLastName = "";
-		let newBio = "";
+		function onFileSelected(event) {
+			newImage.value = event.target.files[0];
+			formData.set('imageURL', newImage.value, newImage.value.name);
+		}
 
 		// Fonctions
 		function changePassword() {
 			changing.value = true;
 			checkingPassword.value = true;
-			// le reset du password actuel ne marche pas
-			currentPassword.value = "";
+			refCurrentPassword.value = "";
 		}
 
 		function cancelChanging() {
 			changing.value = false;
-			currentPassword.value = computed(() => store.state.user.password);
+			refCurrentPassword.value = currentPassword.value;
 			checkingPassword.value = false;
 			wrongPassword.value = false;
 			confirm.value  =false;
@@ -174,7 +183,10 @@ export default {
 		function checkOldPassword(e) {
 			if (e.target.value !== currentPassword.value) {
 				wrongPassword.value = true;
+				checkingPassword.value = true;
+				// e.target.value = "";
 			} else {
+				wrongPassword.value = false;
 				checkingPassword.value = false;
 				displayNewDiv.value = true;
 			}
@@ -182,22 +194,18 @@ export default {
 
 		function updateEmail(e) {
 			newEmail = e.target.value.trim();
-			// console.log("update email: ", newEmail);
 		}
 
 		function updateFirstName(e) {
 			newFirstName = e.target.value.trim();
-			// console.log("update firstName: ", newFirstName);
 		}
 
 		function updateLastName(e) {
 			newLastName = e.target.value.trim();
-			// console.log("update lastName: ", newLastName);
 		}
 
 		function updateBio(e) {
 			newBio = e.target.value.trim();
-			// console.log("update bio: ", newBio);
 		}
 
 		// Regex de compléxité du password
@@ -209,11 +217,11 @@ export default {
 				confirm.value = true;
 			} else {
 				weakPassword.value = true;
-				// isFormValid.value = false;
 			}
 		}
 
 		const updateData = {
+			userId: userId,
 			email : "",
 			password : "",
 			firstName : "",
@@ -223,22 +231,21 @@ export default {
 
 		function updatePassword() {
 			updateData.password = newPassword.value;
-			// console.log("update password: ", newPassword.value);
 		}
 
 		// Vérification que les 2 div New password sont identiques
 		function isIdentical(e) {
 			if (e.target.value !== newPassword.value) {
 				identical.value = false;
-				// isFormValid.value = false;
+				
 			} else {
-				// isFormValid.value = true;
+				
 				identical.value = true;
 				updatePassword();
 			}
 		}
 
-		// Fonction de remplissage de l'objet updateData pour la requête
+		// Fonction de remplissage de l'objet updateData
 		function fillInUpdateData() {
 			if (newEmail.length > 0) {
 				updateData.email = newEmail;
@@ -270,45 +277,54 @@ export default {
 
 		}
 
-		// const isFormValid = computed(() => {
-		// 	if (updateData.email !== "" && updateData.password !== "") {
-		// 		return true;
-		// 	} else {
-		// 		return false;
-		// 	}
-		// })
-
+		// Mise à jour du profil
 		async function updateProfile() {
-			// remplissage à l'envoi du formulaire
 			fillInUpdateData();
-			
-			const id = route.params.id;
-			const params = {updateData, id};
+
+			//S'il n'y pas de nouvelle image on ajoute l'imageURL actuelle à formData (ajout d'une nouvelle image traité plus haut)
+			if (newImage.value == null) {
+				formData.set('imageURL', store.state.user.imageURL);
+			}
+
+			// On ajoute le contenu de updateData à formData
+			for (let e in updateData) {
+				formData.set(e, updateData[e]);
+			}
 			
 			// appel axios dans les actions du store
-			const message = await store.dispatch('fetchUpdateAccount', params);
+			updateDone.value = await store.dispatch('fetchUpdateAccount', formData);
 
-			// message non utilisé
-			updateMessage.value = message;
+			if (updateDone.value) {
+				// reset des variables
+				newImage.value = null;
+				displayNewDiv.value = false;
+				confirm.value = false;
+				isIdentical.value = true;
+				checkingPassword.value = false;
+				changing.value = false;
+				refCurrentPassword = ref(currentPassword.value);
 
-			// Affichage du message de confirmation d'update puis disparition au bout de 2.5s
-			updateDone.value = true;
-			setTimeout(()=> {
-				updateDone.value = false;
-			}, 2500);
+
+				// Affichage du message de confirmation d'update puis disparition au bout 	de 2.5s
+				setTimeout(()=> {
+					updateDone.value = false;
+				}, 2500);
+			}
 		}
 
 		// Suppression de compte et redirection vers la page signup
 		const redirectSignUp = route.query.redirect || '/signup';
 		async function deleteAccount() {
 			const id = route.params.id;
-			const message = await store.dispatch('fetchDeleteAccount', id);
-			console.log(message);
-			router.push(redirectSignUp);
+			const accountDeleted = await store.dispatch('fetchDeleteAccount', id);
+
+			if (accountDeleted) {
+				router.push(redirectSignUp);
+			}
 		}
 
 
-		return { userId, currentUser, formattedDate, currentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert, account };
+		return { userId, currentUser, formattedDate, refCurrentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert, account, onFileSelected, newImage };
 	}
 }
 </script>
@@ -356,13 +372,27 @@ export default {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			border: 1px red solid;
+			// border: 1px red solid;
 
 			.roundContainer {
-				width: 160px;
-				height: 160px;
+				width: 180px;
+				height: 180px;
 				border-radius: 50%;
-				border: 1px blue solid;
+				// border: 1px blue solid;
+
+				&:hover {
+					cursor: pointer;
+					background-color: rgb(253, 245, 245);
+					transform: opacity(0.2);
+					
+				}
+
+				img {
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+					object-fit: cover;
+				}
 			}
 		}
 
@@ -379,6 +409,10 @@ export default {
 		background-color: rgb(247, 217, 203);
 		padding-top: 40px;
 	
+		.hiddenInput {
+			display: none;
+		}
+
 		.labelInputContainer:not(:last-child) {
 			width: 500px;
 			margin: 0 auto 30px;

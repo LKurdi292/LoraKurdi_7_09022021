@@ -33,7 +33,7 @@
 		<!-- Affichage des posts -->
 		<div class="wallContainer">
 			<div class="post" v-for="post in posts" :key="post.id">
-				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment" @likeAcomment="likeComment">
+				<Post :authorFname="post.User.firstName" :authorLname="post.User.lastName" :imageURL="post.User.imageURL" :publicationDate="post.createdAt" :postContent="post.publicationText" :postTitle="post.title" :nbLikes="post.likes" :authorId="post.userId" :postId="post.id" :comments="post.Comments" :usersLiked="post.usersLiked" @likeApost="likePost" @commentApost="commentPost" @deletePost="postToDelete" @deleteAcomment="deleteComment" @likeAcomment="likeComment">
 				</Post>
 			</div>
 		</div>

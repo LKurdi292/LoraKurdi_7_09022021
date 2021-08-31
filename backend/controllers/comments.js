@@ -52,7 +52,7 @@ exports.deleteComment = (req, res, next) => {
 				attributes: ['content', 'likes', 'userId', 'id'],
 				include: [{
 					model: User,
-					attributes: ['firstName', 'lastName']
+					attributes: ['firstName', 'lastName', 'imageURL']
 				}]
 			}
 			]
@@ -137,7 +137,7 @@ exports.likeComment = (req, res, next) => {
 									include: [
 										{
 											model: User,
-											attributes: ['firstName', 'lastName']
+											attributes: ['firstName', 'lastName', 'imageURL']
 										}
 									]
 								}
@@ -220,7 +220,7 @@ exports.likeComment = (req, res, next) => {
 									include: [
 										{
 											model: User,
-											attributes: ['firstName', 'lastName']
+											attributes: ['firstName', 'lastName', 'imageURL']
 										}
 									]
 								}

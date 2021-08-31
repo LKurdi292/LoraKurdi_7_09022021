@@ -80,18 +80,18 @@ const actions = {
 		context.commit('SET_TOKEN', response.data.token);
 		context.commit('SET_SUBSCRIPTION_DATE', response.data.subscriptionDate);
 		context.commit('LOG_USER');
+		console.log("store: ", state.user);
 		return state.userLogged;
 	},
 
 	// Update account
-	async fetchUpdateAccount (context, params) {
-		const data = params.updateData;
-		const id = params.id;
-		const response = await userService.updateAccount(data, id, state.token);
-
+	async fetchUpdateAccount (context, formData) {
+	
+		const response = await userService.updateAccount(formData, state.user.id, state.token);
+	
 		if (response.status === 200) {
 			context.commit("SET_USER_INFO", response.data.user);
-			return response.data.message;
+			return true;
 		}
 	},
 
@@ -100,7 +100,7 @@ const actions = {
 		const response = await userService.deleteAccount(id, state.token);
 		if (response.status === 200) {
 			context.commit('CLEAR_STORE');
-			return response.data.message;
+			return true;
 		}
 	},
 

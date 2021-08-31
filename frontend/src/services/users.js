@@ -40,12 +40,15 @@ function logIn(data) {
 
 
 // Modifier son compte
-function updateAccount(data, id, token) {
-	return apiClient.put('users/myaccount/'+ id, data,
+function updateAccount(formData, id, token) {
+	return apiClient.put('users/myaccount/'+ id, formData,
 		{ headers: {
+			"Content-Type": "multipart/form-data",
 			"Authorization": "BEARER " + token
 		}}
 	);
+
+
 }
 
 
