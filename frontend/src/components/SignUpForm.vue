@@ -152,4 +152,39 @@ export default {
 			cursor: pointer;
 		}
 	}
+
+	@media screen and (max-width: 1200px) {
+		h1 {
+			font-size: 24px;
+			margin: 15px auto;
+		}
+		form {
+			input, select, option {
+				width: 450px;
+				font-size: 12px;
+			}
+
+			button {
+				width: 200px;
+				font-size: 16px;
+				margin-top: 20px;
+			}
+		}
+	}
+	@media screen and (max-width: 599px) {
+		form {
+			text-align: center;
+			input, select, option {
+				width: 200px;
+				font-size: 12px;
+				height: 30px;
+			}
+
+			button {
+				width: 200px;
+				font-size: 16px;
+				margin-top: 20px;
+			}
+		}
+	}
 </style>

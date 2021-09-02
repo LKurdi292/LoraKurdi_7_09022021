@@ -52,9 +52,6 @@ export default {
 
 
 <style lang="scss" scoped>
-// @import "../sass/main.scss";
-
-
 	body {
 		width: 100%;
 		margin: 0;
@@ -71,21 +68,16 @@ export default {
 		justify-content: center;
 		align-items: center;
 		background-color: white;
-		// @include responsive('for-tablet-landscape') {
-		// display: none;
-		// }
 	}
 	img {
 		width: 280px;
 		height: 100%;
-		// border: 1px red dashed;
 	}
 	
 	div.leftSide {
 		position: relative;
 		width: 55%;
 		background-color: #fce4e2;
-		// border-left: 1px red dashed;
 	}
 
 	.logFormContainer {
@@ -124,7 +116,7 @@ export default {
 			.logoContainer {
 				position: absolute;
 				top: 3%;
-				width: 70px;
+				width: 110px;
 			}
 			.leftSide {
 				width: 100%;
