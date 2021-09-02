@@ -9,14 +9,14 @@
 		<div class="picContainer">
 			<!-- redirection du clic vers l'input file caché dans le form -->
 			<div class="roundContainer" @click="$refs.newImage.click()" title="Upload a profile pic">
-				<img :src=$store.state.user.imageURL>
+				<img alt="profile picture" :src="$store.state.user.imageURL || imgToDisplay">
 			</div>
 		</div>
 
 		<p id="subscribed">Subscribed on {{ formattedDate }} </p>
 
 
-		<p>Type of account: <strong>{{ account }}</strong></p>
+		<p class="accountType">Type of account: <strong>{{ account }}</strong></p>
 
 		<div class="confirmProfileChangesContainer" v-show="updateDone">
 			<p>Your profile has been successfully updated</p>
@@ -67,7 +67,8 @@
 			</div>
 
 			<!-- Upload d'une image redirigé vers cet input file depuis l'image de profile au dessus du form -->
-			<input class="hiddenInput" ref="newImage" type="file" name="picture" accept="image/*" @change="onFileSelected">
+			<label for="chosenPicture"></label>
+			<input class="hiddenInput" id="chosenPicture" ref="newImage" type="file" name="picture" accept="image/*" @change="onFileSelected">
 
 			<div class="labelInputContainer">
 				<label for="bio">Tell us more about yourself</label>
@@ -127,6 +128,11 @@ export default {
 		let newBio = "";
 		let newPassword = ref("");
 		let newImage = ref(null);
+		const imgToDisplay = ref("");
+
+		if (store.state.user.imageURL == null) {
+			imgToDisplay.value = "user-regular.svg";
+		}
 
 		//Display account type
 		if (isAdmin.value) {
@@ -331,7 +337,7 @@ export default {
 		}
 
 
-		return { userId, currentUser, formattedDate, refCurrentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert, account, onFileSelected, newImage };
+		return { userId, currentUser, formattedDate, refCurrentPassword, firstField, changing, changePassword, cancelChanging, updateProfile, updateDone, updateEmail, updatePassword, updateFirstName, updateLastName, updateBio, checkOldPassword, wrongPassword, displayNewDiv, identical, checkingPassword, newPassword, testingNewPassword, isIdentical, weakPassword, confirm, showAlert, account, onFileSelected, newImage, imgToDisplay };
 	}
 }
 </script>
@@ -358,13 +364,6 @@ export default {
 			display: flex;
 			align-items: center;
 
-			// @include responsive('smallDesktop') {
-				// width: 90%;
-			// }
-			// @include responsive('phone') {
-				// width: 100%;
-			// }
-
 			p {
 				margin: 0;
 				font-style: italic;
@@ -379,19 +378,17 @@ export default {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			// border: 1px red solid;
 
 			.roundContainer {
 				width: 180px;
 				height: 180px;
 				border-radius: 50%;
-				// border: 1px blue solid;
+				border: 1px black solid;
 
 				&:hover {
 					cursor: pointer;
 					background-color: rgb(253, 245, 245);
 					transform: opacity(0.2);
-					
 				}
 
 				img {
@@ -407,7 +404,6 @@ export default {
 			text-align: center;
 			margin-bottom: 50px;
 		}
-
 	}
 
 	form {
@@ -470,7 +466,7 @@ export default {
 			border-radius: 4px;
 			padding: 8px 10px;
 			margin: 0 25px;
-			background-color: #fc3914;
+			background-color: #AB1F03;
 			color: white;
 			border: none;
 			font-weight: bold;
@@ -481,9 +477,10 @@ export default {
 			}
 		}
 		#delete {
-			color: black;
+			color: white;
 			border-radius: 0;
-			background-color: red;
+			background-color: #AB1F03;
+			border: 3px solid black;
 		}
 
 		.red {
@@ -492,11 +489,75 @@ export default {
 		}
 		
 		.orange {
-			color: orange;
+			color: #AB1F03;
 			font-weight: bold;
 		}
 		.bold {
 			font-weight: bold;
+		}
+	}
+
+	@media screen and (max-width: 1200px) {
+		.account {
+			width: 90%;
+			padding: 3% 0 0;
+		}
+	}
+
+	@media screen and (max-width: 599px) {
+		.account {
+			width: 100%;
+			padding: 3% 0 0;
+			
+			h1 {
+				width: 80%;
+				margin: 0 auto 50px;
+				text-align: center;
+			}
+			.picContainer {
+				height: 100px;
+
+				.roundContainer {
+					width: 100px;
+					height: 100px;
+				}
+			}
+			p.accountType {
+				// text-align: center;
+				width: 80%;
+				margin: auto;
+				font-size: 14px;
+			}
+
+			#subscribed {
+				font-size: 14px;
+			}
+
+			form {
+				margin-top: 20px;
+				font-size: 14px;
+
+				.labelInputContainer:not(:last-child) {
+					width: 200px;
+					input {
+						font-size: 14px;
+					}
+				}
+
+				#id {
+					width: 80%;
+					margin: auto;
+				}
+				.chngPassButtonsContainer {
+					width: 80%;
+				}
+				.EndFormButtonsContainer {
+					width: 85%;
+				}
+			}
+		}
+		button {
+			width: 50%;
 		}
 	}
 </style>

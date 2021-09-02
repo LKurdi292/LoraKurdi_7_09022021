@@ -62,4 +62,24 @@ export default {
 			font-weight: normal;
 		}
 	}
+
+	@media screen and (max-width: 599px) {
+		div.leftSide {
+			width: 100%;
+			h1 {
+				font-size: 24px;
+			}
+			h2 {
+				font-size: 17px;
+			}
+		}
+
+		.logoContainer {
+			position: absolute;
+			top: 5%;
+			left: 40%;
+			transform-origin: center;
+			width: 70px;
+		}
+	}
 </style>

@@ -93,7 +93,6 @@ const actions = {
 		context.commit('SET_TOKEN', response.data.token);
 		context.commit('SET_SUBSCRIPTION_DATE', response.data.subscriptionDate);
 		context.commit('LOG_USER');
-		console.log("store: ", state.user);
 		return state.userLogged;
 	},
 
@@ -123,7 +122,6 @@ const actions = {
 		if (response.status === 200) {
 			context.commit('SET_POSTS', response.data.posts);
 			context.commit('ADD_USERSLIKED_TO_POST');
-			console.log('store posts: ', state.posts);
 		}
 	},
 	

@@ -3,7 +3,7 @@
 		<div class="postHeader">
 			<div class="leftSideHeader">
 				<div class="userPicContainer">
-					<img v-bind:src="authorImage || imgToDisplay">
+					<img alt="profile picture" v-bind:src="authorImage || imgToDisplay">
 				</div>
 
 				<div class="authorAndDate">
@@ -21,7 +21,7 @@
 			<p class="postContent__title">{{ postTitle }}</p>
 			<p class="postContent__text">{{ postText }}</p>
 			<div class="postContent__image" v-show="postHasImage">
-				<img :src=imageURL>
+				<img alt="posted image" :src=imageURL>
 			</div>
 		</div>
 
@@ -52,7 +52,8 @@
 			<div class="userPicContainer">
 
 			</div>
-			<input ref="firstField" type="text" placeholder="Write a comment..." v-model="commentText">
+			<!-- @keyup.enter="" -->
+			<input ref="firstField" type="text" placeholder="Write a comment..." v-model="commentText" >
 			<fas class="iconSendComment" icon="chevron-circle-right" @click.prevent="commentPost" ></fas>
 		</div>
 
@@ -108,7 +109,7 @@ export default {
 		}
 
 		if (props.authorImage == null) {
-			imgToDisplay.value = "../assets/dev_images/user-regular.svg";
+			imgToDisplay.value = "user-regular.svg";
 		}
 
 		// Focus de la souris sur le 1er champ texte
@@ -214,12 +215,10 @@ export default {
 <style lang="scss" scoped>
 
 	.postContainer {
-		margin-bottom: 40px;
-		padding: 0 25px 10px;
+		padding: 10px 20px;
 		border-radius: 5px;
 		box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
 		background-color: white;
-		// border: orangered 1px solid;
 	}
 
 	.postHeader {
@@ -246,7 +245,8 @@ export default {
 					border-radius: 50%;
 					width: 100%;
 					height: 100%;
-					// object-fit: cover;
+					object-fit: cover;
+					border: 1px black solid;
 				}
 			}
 	
@@ -337,7 +337,7 @@ export default {
 			}
 			
 			&:hover {
-				color: rgb(230, 57, 20);
+				color: #AB1F03;
 				cursor: pointer;
 			}
 		}
@@ -352,7 +352,7 @@ export default {
 		}
 	}
 	.orange {
-		color: rgb(230, 57, 20);
+		color: #AB1F03;
 	}
 
 	.commentInputContainer {
@@ -367,7 +367,7 @@ export default {
 			height: 35px;
 			margin: 0;
 			border-radius: 50%;
-			border: 1px red dashed;
+			// border: 1px red dashed;
 		}
 
 		input {
@@ -391,7 +391,7 @@ export default {
 			width: 35px;
 			height: 25px;
 			cursor: pointer;
-			color: rgb(230, 57, 20);
+			color: #AB1F03;
 		}
 	}
 

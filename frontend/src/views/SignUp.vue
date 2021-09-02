@@ -26,7 +26,6 @@
 import SignUpForm from "@/components/SignUpForm.vue";
 import userServices from "@/services/users.js";
 import {ref} from 'vue';
-// import { useStore } from 'vuex';
 
 export default {
 	name: "SignUp",
@@ -103,7 +102,7 @@ export default {
 
 		a {
 			font-style: normal;
-			color: rgb(230, 57, 20);
+			color: #AB1F03;
 
 			&:hover {
 				font-weight: bold;
@@ -130,7 +129,7 @@ export default {
 
 		a {
 			text-decoration: underline;
-			color: #fc3914;
+			color: #AB1F03;
 			font-weight: bold;
 			cursor: pointer;
 		}

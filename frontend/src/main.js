@@ -7,9 +7,9 @@ import Swal from "./useSwal";
 // Font-Awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core';
 
-import { faTrash, faHome, faSignOutAlt, faPen, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight, faUsersCog } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faHome, faSignOutAlt, faPen, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight, faUsersCog, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faTrash, faHome, faSignOutAlt, faPen, faThumbsUp, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight, faUsersCog);
+library.add(faTrash, faHome, faSignOutAlt, faPen, faThumbsUp, faUser, faUserCircle, faLock, faEnvelope, faHeart, faComment, faEye, faThumbsUp, faChevronCircleRight, faUsersCog, faBars);
 
 createApp(App).use(router).use(store).use(Swal).component('fas', FontAwesomeIcon).mount('#app');

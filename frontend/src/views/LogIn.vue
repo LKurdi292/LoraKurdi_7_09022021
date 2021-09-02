@@ -52,21 +52,28 @@ export default {
 
 
 <style lang="scss" scoped>
+// @import "../sass/main.scss";
+
+
 	body {
+		width: 100%;
 		margin: 0;
 		padding: 0;
 		height: 100vh;
 		display: flex;
 		align-content: center;
-
 	}
+
 	.logoContainer {
-		width: 35%;
+		width: 45%;
 		margin: 0 auto;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		background-color: white;
+		// @include responsive('for-tablet-landscape') {
+		// display: none;
+		// }
 	}
 	img {
 		width: 280px;
@@ -74,14 +81,14 @@ export default {
 		// border: 1px red dashed;
 	}
 	
-	div.rightSide, div.leftSide {
+	div.leftSide {
 		position: relative;
-		width: 65%;
+		width: 55%;
 		background-color: #fce4e2;
 		// border-left: 1px red dashed;
 	}
 
-	.logFormContainer, .signFormContainer {
+	.logFormContainer {
 		height: 400px;
 		width: 500px;
 		margin: 5% auto;
@@ -101,9 +108,40 @@ export default {
 
 		a {
 			text-decoration: underline;
-			color: #fc3914;
+			color: #AB1F03;
 			font-weight: bold;
 			cursor: pointer;
+		}
+	}
+	
+	@media screen and (max-width: 1200px) {
+		body {
+			background-color: #fce4e2;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			.logoContainer {
+				position: absolute;
+				top: 3%;
+				width: 70px;
+			}
+			.leftSide {
+				width: 100%;
+				.logFormContainer {
+					position: relative;
+					top: 0;
+					left: 0;
+				}
+			}
+		}
+	}
+
+	@media screen and (max-width: 599px) {
+		.logFormContainer {
+			height: 400px;
+			width: 300px;
+			// margin: 5% auto;
 		}
 	}
 </style>

@@ -3,16 +3,19 @@
 	<h1>Sign Up</h1>
 
 	<form v-on:submit.prevent="createUser">
+		<label for="email"></label>
 		<input type="text" v-model="email" placeholder="Enter your email" id="email" ref="firstField"><br/>
 
+		<label for="firstName"></label>
 		<input type="text" v-model="firstName" id="firstName" placeholder="Enter your first name"><br/>
 		
+		<label for="lastName"></label>
 		<input type="text" v-model="lastName" id="lastName" placeholder="Enter your last name"><br/>
 
+		<label for="password"></label>
 		<input type="text" v-model="password" id="password" placeholder="Choose a password"><br/>
 
 		<label for="account">Account</label><br/>
-		
 		<select v-model="account" id="account">
 			<option v-for="account in accountTypes" :value="account.value" :key="account.id">{{ account.name }}</option>
 		</select><br/>
@@ -122,7 +125,7 @@ export default {
 			margin: 30px auto 0;
 			height: auto;
 			padding: 3.5% 2%;
-			background-color: #fc3914;
+			background-color: #AB1F03;
 			color: white;
 			border: none;
 			font-weight: bold;
@@ -144,7 +147,7 @@ export default {
 
 		a {
 			text-decoration: underline;
-			color: #fc3914;
+			color: #AB1F03;
 			font-weight: bold;
 			cursor: pointer;
 		}

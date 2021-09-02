@@ -3,17 +3,25 @@
 			<h3>Write a post</h3>
 
 			<form>
-				<input ref="firstField" type="text" v-model="title" placeholder="Title"/><br />
+				<div class="formGroup">
+					<label for="title"></label>
+					<input ref="firstField" type="text" v-model="title" id="title" placeholder="Title"/>
+				</div>
 			
-				<textarea v-model="content">
+				<div class="formGroup">
+					<label for="content"></label>
+					<textarea v-model="content" id="content">
 				</textarea>
+				</div>
 
-				<label class="labelFile">Add an image to your post</label><br>
-				<input ref="postImage" type="file" name="postImage" id="imageInput" accept="image/*" @change="onFileSelected">
+				<div class="formGroup">
+					<label class="labelFile">Add an image to your post</label><br>
+					<input ref="postImage" type="file" name="postImage" id="imageInput" accept="image/*" @change="onFileSelected">
+				</div>
 
 				<div class="buttonContainer">
 					<button type="button" @click.prevent="publish" class="button" :disabled="!isFormValid" title="Publish post">Publish</button>
-					<button type="button" class="button" @click.prevent="annuler" title="Cancel">Cancel</button>
+					<button type="button" class="button" @click.prevent="annuler" title="Cancel edition">Cancel</button>
 				</div>
 			</form>
 	</div>
@@ -122,6 +130,8 @@ export default {
 		font-size: 14px;
 		// border: 1px red solid;
 
+		
+
 		input {
 			outline: none;
 			height: 25px;
@@ -157,7 +167,7 @@ export default {
 	
 		.button {
 			width: 100px;
-			background-color: rgb(230, 57, 20);
+			background-color: #AB1F03;
 			border: none;
 			font-weight: bold;
 			color: white;
@@ -172,4 +182,31 @@ export default {
 		}
 	}
 
+
+	@media screen and (max-width: 599px) {
+		.background {
+			width: 90%;
+			margin: auto;
+			padding: 10px;
+			border-radius: 0;
+			left: 0;
+
+			h3 {
+				width: 90%;
+				margin: 10px auto;
+			}
+			top: 10%;
+		}
+		form {
+			width: 90%;
+			margin: auto;
+			padding: 0;
+		}
+
+		.buttonContainer {
+			width: 80%;
+			margin: 10px auto;
+			justify-content: space-between;
+		}
+	}
 </style>

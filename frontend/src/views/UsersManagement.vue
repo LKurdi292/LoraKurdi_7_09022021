@@ -132,4 +132,11 @@ export default {
 			margin: 5px;
 		}
 	}
+
+	@media screen and (max-width: 599px) {
+		h1 {
+			text-align: center;
+			font-size: 24px;
+		}
+	}
 </style>

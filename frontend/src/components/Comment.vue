@@ -2,7 +2,7 @@
 	<div class="commentContainer">
 
 		<div class="userPicContainer">
-			<img :src="{imageURL}">
+			<img  alt="profile picture" :src="{imageURL}">
 		</div>
 
 		<div class="commentContent">
@@ -112,8 +112,8 @@ export default {
 		width: 90%;
 
 		.userPicContainer {
-			width: 35px;
-			height: 35px;
+			width: 45px;
+			height: 45px;
 			margin: 0;
 			border-radius: 50%;
 
@@ -180,7 +180,7 @@ export default {
 		align-items: center;
 
 		&:hover {
-			color: rgb(230, 57, 20);
+			color: #AB1F03;
 		}
 		
 		a {
@@ -194,6 +194,6 @@ export default {
 	}
 
 	.orange {
-		color: rgb(230, 57, 20);
+		color: #AB1F03;
 	}
 </style>

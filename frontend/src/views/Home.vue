@@ -5,7 +5,7 @@
 		<ModalPostForm @publishPost="createPost" @cancel="cancelEdition" v-show="editMode"></ModalPostForm>
 	
 		<h1>
-			<img src="../assets/dev_images/hello.svg" />
+			<img src="../assets/dev_images/hello.svg" alt="Say hi"/>
 			Hello {{ $store.state.user.firstName }}
 		</h1>
 
@@ -15,7 +15,8 @@
 
 		<div class="userActionsContainer">
 			<!-- Recherche par filtre -->
-			<input class="filterBox" type="text" placeholder="Filter posts by title" v-model="letters" @keyup="filter" />
+			<!-- <label for="filter"></label> -->
+			<input class="filterBox" type="text" placeholder="Filter posts by title" v-model="letters" @keyup="filter" id="filter"/>
 
 			<button v-on:click="triggerEdition" title="Write a post">Write a post</button>
 
@@ -175,7 +176,6 @@ h1 {
 
 h3 {
 	letter-spacing: 1px;
-	// font-size: 18px;
 	font-weight: normal;
 	line-height: 40px;
 }
@@ -204,7 +204,7 @@ h3 {
 		width: 200px;
 		font-size: 18px;
 		padding: 12px;
-		background-color: rgb(230, 57, 20);
+		background-color: #AB1F03;
 		color: white;
 		border: none;
 		font-weight: bold;
@@ -232,6 +232,82 @@ div.submissionSuccess, div.deletePostSuccess {
 	margin: 10px auto 40px;
 	padding: 2% 0;
 	// border: 1px solid black;
+
+	.post {
+		margin-bottom: 40px;
+	}
+}
+
+@media screen and (max-width: 1200px) {
+	.home {
+		width: 100%;
+		padding: 50px 0;
+
+		h2, h3 {
+			width: 80%;
+			margin: 20px auto;
+		}
+
+		.userActionsContainer {
+			width: 75%;
+		}
+
+		.wallContainer {
+			width: 70%;
+		}
+	}
+}
+
+@media screen and (max-width: 599px) {
+	.home {
+		width: 100%;
+		padding: 30px 0;
+
+		h1 {
+			margin: 0 auto 30px;
+			font-size: 24px;
+
+			img {
+				width: 15px;
+			}
+		}
+
+		h2, h3 {
+			width: 90%;
+			margin: 10px auto;
+			line-height: 20px;
+		}
+
+		h2 {
+			font-size: 18px;
+		}
+		h3 {
+			font-size: 16px;
+		}
+
+		.userActionsContainer {
+			width: 80%;
+
+			.filterBox {
+				width: 200px;
+				font-size: 14px;
+				height: 30px;
+			}
+
+			button {
+				width: 120px;
+				font-size: 14px;
+			}
+		}
+
+		div.submissionSuccess, div.deletePostSuccess {
+			font-size: 14px;
+		}
+
+		.wallContainer {
+			width: 80%;
+		}
+	}
 }
 
 </style>
