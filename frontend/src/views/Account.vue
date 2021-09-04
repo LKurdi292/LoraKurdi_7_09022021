@@ -42,7 +42,7 @@
 				<label for="password">Actual Password</label>
 				<input id='password' type="password" :disabled="!changing" :value="refCurrentPassword" @change="checkOldPassword" alt="Your password" title="Your password">
 				
-				<p v-show="checkingPassword" class="orange">Type your actual password and press enter</p>
+				<p v-show="checkingPassword" class="orange">Type your actual password</p>
 				<p class="red" v-show="wrongPassword">Wrong password, try again</p>
 			</div>
 			

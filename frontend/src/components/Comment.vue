@@ -2,7 +2,7 @@
 	<div class="commentContainer">
 
 		<div class="userPicContainer">
-			<img  alt="profile picture" :src="{imageURL}">
+			<img  alt="profile picture" v-bind:src="imageURL || imgToDisplay">
 		</div>
 
 		<div class="commentContent">
@@ -52,7 +52,12 @@ export default {
 		let authorEQuser = ref(false);
 		let like = ref(0);
 		let hasLiked = ref(false);
+		const imgToDisplay = ref("");
 		
+		if (props.imageURL == null) {
+			imgToDisplay.value = "user-regular.svg";
+		}
+
 		// Affichage du bouton Supprimer un commentaire
 		if (props.authorId === store.state.user.id) {
 			authorEQuser.value = true;
@@ -95,7 +100,7 @@ export default {
 			context.emit('likeComment', data);
 		}
 
-		return { authorEQuser, deleteAcomment, likeAcomment, hasLiked };
+		return { authorEQuser, deleteAcomment, likeAcomment, hasLiked, imgToDisplay };
 
 
 	},
